@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/wholesaleGroupPurchase/order/wholesaleGroupPurchaseOrder.js"></script>
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="wholesaleGroupPurchaseOrder.id" id="orderId" value="$!{order.id}"/>
+				<input type ="hidden" id="orderStatus" value="$!{order.status}">
+				<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+						<th style="width:11%">订单号：</th>
+						<td style="width:22%">
+							$!{order.orderNumber}
+                        </td>
+						<th style="width:11%">制单日期：</th>
+						<td>
+							$!{order.createTime}
+						</td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							$!{order.zcUserInfo.userName}
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">订单金额：</th>
+						<td id="orderAmount">
+                        </td>
+						<th style="width:11%">订单状态：</th>
+                        <td id="status">
+						</td>
+						<th style="width:11%"></span>审核人：</th>
+                        <td style="width:20%">
+							$!{order.checkMan}
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">审核日期：</th>
+						<td>
+							$!{order.checkDate}
+						</td>
+						<th style="width:11%">客户：</th>
+						<td>
+							<input id="customer" name="order.customerInfo.id" value="${order.customerInfo.id}" type="text"/>
+                        </td>
+						<th style="width:11%">仓库：</th>
+						<td style="width:22%">
+							<input id="branch" name="order.branch.id" value="$!{order.branch.id}" type="text"/>
+                        </td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">付款方式：</th>
+						<td style="width:22%">
+							<select name="wholesaleGroupPurchaseOrder.payType" id="payType" style="width:135px"  >
+								$!{order.payType}
+							</select>
+						</td>
+						<th style="width:11%">备注：</th>
+						<td>
+							<input  id="remark" name="wholesaleGroupPurchaseOrder.remark" value="$!{order.remark}" type="text" class="easyui-textbox"/>
+                        </td>
+						<th style="width:11%">原因：</th>
+						<td>
+							$!{order.reason}
+                        </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChooseGoods()" plain="true">选择商品</a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="saveAndCommit('searchForm')" plain="true">保存</a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="submitCheck('searchForm')" plain="true">提交</a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="removeGoods()" plain="true">移除</a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="openBatch()" plain="true">导入</a>
+				##<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="exportExcel('$!{order.orderNumber}','$!{order.id}')" plain="true">导出</a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="exportBatch()" plain="true">导出</a>
+    	</form>
+		
+    </div>
+    <table id="dgEdit" width="100%"></table>
+</div>
+</body>
+<div id="showWinBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch" id="myBatch" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th style="text-align: right;">请选择导入文件</th>
+				<td  colspan="3">
+					<input type="file" name="sourceBrocastBatch" id="sourceBrocastBatch" class="text_input" style="width: 270px;height: 22px"/>
+				</td>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="batchImport('$!{order.id}')">导入</a>
+			</div>
+		</form>
+	</div>
+</div>
+<div id="showexportBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch1" id="myBatch1" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th style="text-align: right;">点击导出按钮(导出文件为EXCEL文件)</th>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="exportExcel('$!{order.orderNumber}','$!{order.id}')">导出</a>
+			</div>
+		</form>
+	</div>
+</div>
+
+<div id="selectOptions" class="easyui-window" style="width:900px;height:400px;">
+</div>
+<style>
+</style>
+<script type="text/javascript">
+	$(function(){
+	$('#showWinBatch').window('close');
+	$('#showexportBatch').window('close');
+	$('#selectOptions').window('close');
+	initSelectCode("PayType", "payType");
+	viewSelectCode('PayType','$!{order.payType}');
+	$("#payType option[value='$!{order.payType}']").attr("selected", true);
+	var status='$!{order.status}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#status').text(newstatus);
+	//$('#effectiveDate').datetimebox('setValue', '$!{order.effectiveDate}');
+	var price = '$!{order.orderAmount}';
+	var roundDigit = accuracy();
+	var num =new Number(roundDigit);
+	var money = new Number(price);
+	$('#orderAmount').text(money.toFixed(num));
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode !=13){
+		}else{
+			addPyGoods();
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dgEdit').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/wholesaleGroupPurchase/order/listOrderItems?time="+new Date(), //数据来源
+		queryParams:{
+			'orderItem.orderId':$('#orderId').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px";
+			}},
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'商品编号',width:'12%',sortable:true,align:'left'},
+			{field:'GOODSNAME',title:'商品名',width:'29%',sortable:true,sortable:true,align:'left'},
+			{field:'SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods},
+			{field:'UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left'},
+			{field:'GOODSPRICE',title:'单价',width:'8%',sortable:true,sortable:true,formatter:formatterNumber,align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'NUMS',title:'数量',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2, onChange : function(newValue, oldValue){}}}},
+			{field:'RATE',title:'税率',width:'8%',sortable:true,sortable:true,formatter:formatterNumber,align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'RATEAMOUNT',title:'税额',width:'8%',sortable:true,sortable:true,formatter:formatterNumber,align:'right'},
+			{field:'PRICESUM',title:'小计金额',sortable:true,sortable:true,formatter:formatterNumber, align:'right'}
+			
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dgEdit').datagrid('beginEdit',i);
+    		}
+		}
+	});
+});
+
+//批量导入
+function openBatch(){
+	document.myBatch.reset();
+	$('#showWinBatch').window({  
+		title:'批量导入',
+   		closable: true,
+		modal: false,
+		draggable:false
+	});
+	$("#showWinBatch").window('open');
+}
+
+//批量导出
+function exportBatch(){
+	document.myBatch1.reset();
+	$('#showexportBatch').window({  
+		title:'批量导出',
+   		closable: true,
+		modal: false,
+		draggable:false
+	});
+	$("#showexportBatch").window('open');
+}
+
+
+$(window).resize(function(){
+    $('#dgEdit').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+//仓库下拉框
+$('#branch').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/wholesaleGroupPurchase/order/listBranch',
+	panelHeight:'200px',
+    valueField:'ID',
+    textField:'BRANCH_NAME'
+});
+//客户下拉框
+$('#customer').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/customer/customerinfo/listCustomer',
+	panelHeight:'200px',
+    valueField:'id',
+    textField:'name'
+});
+
+	
+</script>
+</html>

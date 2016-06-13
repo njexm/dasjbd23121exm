@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="returnId" id="returnId" value="$!{purchaseReturn.id}"/>
+				<table width="100%" style="table-layout: fixed;">
+					<tr>
+						<th style="width:11%">退货单号：</th>
+						<td style="width:22%">
+							$!{purchaseReturn.odd}
+                        </td>
+						<th style="width:11%">创建日期：</th>
+						<td style="width:22%">
+							$!{purchaseReturn.updateTime}
+                        </td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							$!{purchaseReturn.returnMan}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">退货总额：</th>
+						<td style="width:22%" id="totalMoney">
+                        </td>
+						<th style="width:11%">退单状态：</th>
+						<td style="width:22%" id="returnStatus">
+                        </td>
+						<th style="width:11%">审核人：</th>
+						<td style="width:22%">
+							$!{purchaseReturn.checkMan}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">退货仓库：</th>
+						<td style="width:22%">
+							$!{purchaseReturn.branch.branch_name}
+                        </td>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							$!{purchaseReturn.checkDate}
+                        </td>
+						<th style="width:11%">备注：</th>
+						<td colspan="2">
+							$!{purchaseReturn.remark}
+                        </td>
+					</tr>
+				</table>
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	             <td width="20%" align="left" >
+						货号：
+						<input id="serialnumber" name="serialnumber" type="text" class="easyui-textbox"/>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()" plain="true">查询</a>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+        </form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="previewPrint()" plain="true">打印预览</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:800px;height:450px;">
+</div>
+<div id="flt"  name="flt" style="right:1px; POSITION:absolute; top:10px; z-index:99;"></div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseReturn/purchase_return.js"></script>
+<script type="text/javascript">
+$(function(){ 	
+	var money1='$!{purchaseReturn.totalMoney}';
+	var money2=formatterNumber(money1);
+	$('#totalMoney').text(money2);
+	$('#selectOptions').window('close');
+	var status='$!{purchaseReturn.statue}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#returnStatus').text(newstatus);
+	if(status=='2'){
+		$('#flt').append('<img src="${rc.contextPath}/resources/image/pass.png" >');
+	}
+});
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchase/purchaseReturn/listPurchaseReturnItemsJson?time="+new Date(), //数据来源
+		queryParams:{
+			'serialnumber':$('#serialnumber').val(),
+			'returnId':$('#returnId').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			//{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+			//	return "height:30px;";
+			//}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'13%'},
+			{field:'GOODSNAME',title:'商品名',width:'45%'},
+			{field:'GOODSPRICE',title:'单价',width:'9%',align:'right',formatter:formatterNumber},
+			{field:'RETURNNUM',title:'退货数量',width:'9%',align:'right'},
+			{field:'MONEY',title:'总价',width:'9%',align:'right',formatter:formatterNumber},
+			{field:'UNIT',title:'单位',width:'5%'},
+			{field:'SPECIFICATIONS',title:'规格',width:'9%',formatter:showGoods},
+			{field:'RETURNNUMS',title:'退货数量',hidden:true,align:'right',formatter:actualNum},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+function searchData(){
+	var queryParams = {
+		'serialnumber':$('#serialnumber').val(),
+		'returnId':$('#returnId').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+</script>
+</html>

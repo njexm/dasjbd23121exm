@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="15%">货号：</th>
+    	             <td width="20%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="serialNumber" type="text" class="easyui-textbox"/></td>
+					 <td>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+        </form>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-save" onclick="createPurchase()" plain="true">生成采购订单</a>
+		<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteGoods()" plain="true">删除</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="ddialog" class="easyui-dialog" title="采购订单生成中..." style="width:400px;height:100px"   
+        data-options="iconCls:'icon-save',resizable:true,modal:true">   
+    <div id="progressbar"  data-options="value:60"  style="width:80%;margin-right: auto; margin-left: auto;margin-top: 10px">
+		您的采购订单正在载入中，请耐心等待.....
+	</div>    
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseShoppingCart.js"></script>
+<script >
+	$(function(){
+	$("#ddialog").dialog('close');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'购物车商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchase/purchaseShopping/listShoppingCartJson?time="+new Date(), //数据来源
+		queryParams:{
+			'serialNumber':$('#serialNumber').val(),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'13%',align:'left'},
+			{field:'GOODSNAME',title:'商品名',width:'40%',align:'left'},
+			{field:'UNIT',title:'单位',width:'5%',align:'left'},
+			{field:'SPECIFICATIONS',title:'规格',width:'7%',formatter:showGoods,align:'left'},
+			{field:'CLASSIFY',title:'类型',width:'8%',align:'left'},
+			{field:'GOODSPRICE',title:'单价',width:'6%',formatter:formatterNumber,align:'right'},
+			{field:'ORDERNUM',title:'份数',width:'5%',align:'right'},
+			{field:'ACTUALNUM',title:'数量',width:'5%',formatter:formatterNumber,align:'right'},
+			{field:'TOTALMONEY',title:'总价',width:'7%',formatter:formatterNumber,align:'right'},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+});
+
+function searchData(){
+	var queryParams = {
+			'serialNumber':$('#serialNumber').val(),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</html>

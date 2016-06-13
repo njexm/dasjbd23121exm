@@ -1,0 +1,172 @@
+package com.proem.exm.controller.dispatching;
+
+import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.cisdi.ctp.utils.common.StringUtils;
+import com.proem.exm.controller.BaseController;
+import com.proem.exm.entity.Customer;
+import com.proem.exm.entity.dispatching.Dispatching;
+import com.proem.exm.entity.order.ZcOrder;
+import com.proem.exm.entity.order.ZcOrderItem;
+import com.proem.exm.entity.warehouse.Sorte;
+import com.proem.exm.entity.warehouse.SorteItem;
+import com.proem.exm.service.dispatching.DispatchingService;
+import com.proem.exm.utils.AjaxResult;
+import com.proem.exm.utils.DataGrid;
+import com.proem.exm.utils.Page;
+
+
+@Controller
+// (模块名/类名)-小写
+@RequestMapping("dispatching/dispatchings")
+public class DispatchingController extends BaseController {
+	private static final Customer Customer = null;
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	@Autowired
+	DispatchingService dispatchingService;
+	// 初始化跳转页面
+	@RequestMapping("initDispatching")
+	public ModelAndView initProcess(HttpServletRequest request,
+			HttpServletResponse response, Model model)
+			throws UnsupportedEncodingException {
+		String faName = request.getParameter("faName");
+		if (StringUtils.isBlank(faName)) {
+			faName = "连锁配送";
+		} else {
+			faName = new String(faName.getBytes("iso8859-1"), "utf-8");
+		}
+		String fasonName = request.getParameter("fasonName");
+		if (StringUtils.isBlank(fasonName)) {
+			fasonName = "连锁配送";
+		} else {
+			fasonName = new String(fasonName.getBytes("iso8859-1"), "utf-8");
+		}
+		String sonName = request.getParameter("sonName");
+		if (StringUtils.isBlank(sonName)) {
+			sonName = "连锁配送查询";
+		} else {
+			sonName = new String(sonName.getBytes("iso8859-1"), "utf-8");
+		}
+		String title = "  " + faName + " > " + fasonName + " > " + sonName + "";
+		model.addAttribute("title", title);
+		ModelAndView view = createIframeView("dispatching/dispatchings/dispatching_list");
+		return view;
+	}
+	
+	//加载要货单详情页面
+	@RequestMapping(value = "listDispatchingItemJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listDispatchingItemJson(
+			@ModelAttribute Dispatching dispatching,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			dataGrid = dispatchingService.getStoresDataGridObjDispatching(page,
+					dispatching);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+
+	//获得未处理要货单列表
+	@RequestMapping(value = "listDispatchingJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listDispatchingJson(@ModelAttribute Dispatching dispatching,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		/*String dispatchingid=(String)request.getParameter("dispatching_id");		
+		dispatching.setDispatchingId(dispatchingid);
+		dispatching.setBranchFromName((String)request.getParameter("branch_fromName"));
+		dispatching.setBranchToName((String)request.getParameter("statues"));
+		dispatching.setStatues((String)request.getParameter("ware_name"));
+		dispatching.setWareName((String)request.getParameter("branch_toName"));*/
+		try {
+			dataGrid = dispatchingService.getPagedDataGridObjDispatching(page,
+					dispatching);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+	
+	// 打开连锁配送页面
+	@RequestMapping("gotoEdit")
+	public ModelAndView gotoEdit(HttpServletRequest request,
+			HttpServletResponse response, String nums) {	
+		String[] numsStr = nums.split(",");
+		List<String> list=new ArrayList<String>();
+/*		if (idStr != null && idStr.length > 0) {
+			for (int i = 0; i < idStr.length; i++) {
+				String id=idStr[i];
+			    ZcOrder zcOrder = (ZcOrder) dispatchingService.getObjById(id, "zcOrder");
+			    list.add(zcOrder);
+			}			
+		}*/
+		for (int i = 0; i < numsStr.length; i++) {
+			list.add(numsStr[i]);
+		}
+		request.setAttribute("list", list);		
+		ModelAndView view = createIframeView("dispatching/dispatchings/dispatching_edit");
+		return view;
+	}
+	
+	// 取消订单
+		@RequestMapping(value = "delete", method = RequestMethod.POST, produces = "application/json")
+		@ResponseBody
+		public AjaxResult delete(HttpServletRequest request,
+				HttpServletResponse response, String id, Page page) {
+			AjaxResult ajaxResult = null;
+			try {
+				List<ZcOrder> zcorder = dispatchingService.getListByObj(ZcOrder.class,
+						" id = '" + id + "'");
+				if (zcorder != null && zcorder.size() > 0) {
+					for (int j = 0; j < zcorder.size(); j++) {
+						ZcOrder zcOrder = zcorder.get(j);
+						dispatchingService.deleteObjById(zcOrder.getId(),
+								SorteItem.class.getName());
+					}
+				}
+				dispatchingService.deleteObjById(id, ZcOrder.class.getName());
+				logManageService.insertLog(request, "取消了勾选的订单", "订单");
+				ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.SUCCESS,
+						AjaxResult.INFO);
+			} catch (Exception e) {
+				e.printStackTrace();
+				ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.FAIL,
+						AjaxResult.INFO);
+			}
+			return ajaxResult;
+		}
+	
+		//打开要货单详情页面
+		@RequestMapping("openDispatchingItem")
+		public ModelAndView itemList1(HttpServletRequest request,
+				HttpServletResponse response, Model model) {
+			String id = request.getParameter("id");
+/*			Dispatching dispatching = (Dispatching) dispatchingService.getObjById(id, "Dispatching");
+			model.addAttribute("dispatching", dispatching);*/
+			model.addAttribute("dispatchingId", id);
+			ModelAndView view = createIframeView("dispatching/dispatchings/dispatchings_item_list");
+			return view;
+		}
+		
+}

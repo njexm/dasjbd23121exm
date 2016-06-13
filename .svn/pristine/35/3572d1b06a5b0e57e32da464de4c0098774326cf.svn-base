@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="">
+    	<form class="" id="listForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="10%">所属区域：</th>
+    	             <td width="20%" align="left">
+    	             	<select name="area" id="area" style="width:100px;"  class="easyui-combobox" onchange="searchData()">
+    						<option value="">--请选择--</option>
+    						<option value="本地">本地</option>
+    						<option value="外地">外地</option>
+    					</select>
+    	             </td>
+					 <td>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+						<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm()">清空</a>
+                     </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="add('${rc.contextPath}/customer/customerinfo/add','新增客户',700,550)" plain="true">新增</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="edit('编辑客户基本信息',700,550)" plain="true">编辑</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteInfo()" plain="true">删除</a>
+	</div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/wholesaleGroupPurchase/customer/customerinfo.js"></script>
+<script type="text/javascript">
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/customer/customerinfo/listCustomerJson?time="+new Date(), //数据来源
+		queryParams:{
+			'area':$("#area").combobox('getValue')
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CODE',title:'编码',width:'10%',sortable:true,"formatter":function(value,res){
+				if(value==null){
+					value="该用户暂无编码";
+				}
+				return "<a href='#' onclick=detail('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'NAME',title:'公司名称',width:'10%',sortable:true,sortable:true},
+			##{field:'MNEMONICCODE',title:'助记码',width:'10%',sortable:true,sortable:true},
+			##{field:'DEFAULTPRICE',title:'默认价格',width:'10%',sortable:true,sortable:true},
+			##{field:'DISCOUNT',title:'折扣',width:'10%',sortable:true,sortable:true},
+			##{field:'OWNEDSTORES',title:'所属门店',width:'10%',sortable:true,sortable:true},
+			##{field:'PREFERENTIALWAY',title:'优惠方式',width:'10%',sortable:true,sortable:true},
+			##{field:'SETTLEMENTCYCLE',title:'结账周期',width:'10%',sortable:true,sortable:true},
+			##{field:'SETTLEMENTDATE',title:'月结账日期',width:'10%',sortable:true,sortable:true},
+			##{field:'SETTLEMENTWAY',title:'结算方式',width:'10%',sortable:true,sortable:true},
+			{field:'CREDITLIMIT',title:'信誉额度',width:'10%',sortable:true,sortable:true},
+			{field:'SALEMAN',title:'业务员',width:'10%',sortable:true,sortable:true},
+			{field:'AREA',title:'区域',width:'10%',sortable:true,sortable:true},
+			{field:'TYPE',title:'类型',width:'10%',sortable:true,sortable:true},
+			##{field:'LINKMAN',title:'联系人',width:'10%',sortable:true,sortable:true},
+			####{field:'ADDRESS',title:'地址',width:'10%',sortable:true,sortable:true},
+			##{field:'MAIL',title:'邮件',width:'10%',sortable:true,sortable:true},
+			{field:'TELEPHONE',title:'电话',width:'10%',sortable:true,sortable:true},
+			##{field:'BANK',title:'开户行',width:'10%',sortable:true,sortable:true},
+			{field:'MOBILEPHONE',title:'手机号码',width:'10%',sortable:true,sortable:true},
+			##{field:'TAXREGISTRATION',title:'税务登记号',width:'10%',sortable:true,sortable:true},
+			##{field:'FAX',title:'传真',width:'10%',sortable:true,sortable:true},
+			##{field:'LICENSE',title:'营业执照号',width:'10%',sortable:true,sortable:true},
+			##{field:'POSTCODE',title:'邮编',width:'10%',sortable:true,sortable:true},
+			##{field:'ACCOUNT',title:'账号',width:'10%',sortable:true,sortable:true},
+			{field:'FROZEN',title:'冻结业务',width:'10%',sortable:true,sortable:true},
+			{field:'REMARK',title:'备注',width:'10%',sortable:true,sortable:true},
+			####{field:'DELFLAG',title:'删除标识',width:'10%',sortable:true,sortable:true},
+			####{field:'ZONING_ID',title:'地址',width:'10%',sortable:true,sortable:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'area':$("#area").combobox('getValue')
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+// 清空查询条件
+function clearForm() {
+	$("#area").textbox("setValue","");
+	searchData();
+}
+</script>
+</html>

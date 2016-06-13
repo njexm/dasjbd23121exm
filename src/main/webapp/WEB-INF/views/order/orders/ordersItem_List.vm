@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+    <script type="text/javascript">
+$(function(){ 	
+	var orderStatus='$!{zcHistoryOrder.orderStatus}';
+		if(orderStatus=='active')
+				{
+					$('#orderStatus').text('正常');
+				}else if(orderStatus=='picking')
+				{
+					$('#orderStatus').text('配货中');
+				}else if(orderStatus=='dead')
+				{
+					$('#orderStatus').text('作废');
+				}else if(orderStatus=='finish')
+				{
+					$('#orderStatus').text('完成');
+				}
+			
+	var orderCome='$!{zcHistoryOrder.orderCome}';
+	if(orderCome==0)
+				{
+					$('#orderCome').text('未知');
+				}else if(orderCome==1)
+				{
+					$('#orderCome').text('宜鲜美平台订单');
+				}else if(orderCome==2)
+				{
+					$('#orderCome').text('个人负责订单');
+				}else if(orderCome==3)
+				{
+					$('#orderCome').text('天猫平台订单');
+				}else if(orderCome==4)
+				{
+					$('#orderCome').text('京东平台订单');
+				}else if(orderCome==5)
+				{
+					$('#orderCome').text('微信');
+				}else if(orderCome==6)
+				{
+					$('#orderCome').text('APP自有平台');
+				}else 
+				{
+					$('#orderCome').text('其他');
+				}	
+				
+	var orderAmount='$!{zcHistoryOrder.orderAmount}';
+	//formatterNumber(orderAmount);
+	
+});
+</script>
+
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<input type="hidden" name="zcHistoryOrder.id" id="id" value="$!{zcHistoryOrder.id}"/>
+			<input type="hidden" name="zcHistoryOrder.zcZoning.id" id="id" value="$!{zcHistoryOrder.zcZoning.id}"/>
+			
+    		<div class="cell">
+				<input type="hidden" name="zcOrderHistoryItem.order_id" id="orderId" value="$!{orderId}"/>
+    			<table border="0" cellpadding="0" cellspacing="0">
+					<tr>   				
+    				 <th width="10%">sb货号：</th>
+    	             <td width="23%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>
+                	 <th width="10%">商品名：</th>
+    	             <td width="23%">
+    	             	<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_name" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/>
+    	             	<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+    	             </td>				
+    				 <th width="10%"></th>
+    				 <td width="23%"></td>					
+					</tr>      				
+    				<tr>
+    					<th>订单编号：</th>
+    					<td style="text-decoration:underline">$!{zcHistoryOrder.id}</td>
+    					<th>订单时间：</th>
+    					<td style="text-decoration:underline">$!{zcHistoryOrder.orderDate}</td>  
+    					<th>订单状态：</th>
+    					<td id="orderStatus" style="text-decoration:underline">
+    					</td> 				
+    				</tr>
+    				<tr>
+    					<th>订单来源：</th>
+    					<td id="orderCome" style="text-decoration:underline">$!{zcHistoryOrder.orderCome}</td>
+    					<th>订单商品数量：</th>
+    					<td style="text-decoration:underline" id="num">$!{zcHistoryOrder.goodsNum}</td>  
+    					<th id="orderAmount">订单金额：</th>
+    					<td style="text-decoration:underline" id="money"></td> 				
+    				</tr>
+    				<tr>
+    					<th>会员卡号：</th>
+    					<td style="text-decoration:underline">$!{zcHistoryOrder.memberCardNumber}</td>
+    					<th>收货人：</th>
+    					<td style="text-decoration:underline">$!{zcHistoryOrder.consignee}</td>  
+    					<th>收货电话：</th>
+    					<td style="text-decoration:underline">$!{zcHistoryOrder.cansignPhone}</td> 				
+    				</tr>
+    				<tr>
+    					<th>收货地址：</th>
+    					<td style="text-decoration:underline">$!{zcHistoryOrder.zcZoning.street}</td>
+    				</tr>    				     				   	          
+    	       	</table>
+    		</div>
+        </form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/provider/providerinfo.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/orders/orders.js"></script>
+<script type="text/javascript">	
+	$(function(){
+		var status='$!{zcHistoryOrder.orderStatus}';
+		var newstatus=formatterOrderStatus(status);
+		$('#orderStatus').text(newstatus);
+	
+		var price = '$!{zcHistoryOrder.orderAmount}';
+		var nums='$!{zcHistoryOrder.goodsNum}';
+		var roundDigit = accuracy();
+		var num =new Number(roundDigit);
+		var money = new Number(price);
+		var newnum=new Number(nums);
+		$('#money').text(money.toFixed(num));
+		$('#num').text(newnum.toFixed(num));
+		
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		showFooter: true,
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/order/orders/listOrdersItemJson?time="+new Date(), //数据来源
+		queryParams:{
+			'zcOrderHistoryItem.order_id':$!{orderId},
+			'zcOrderHistoryItem.goodsFile.goods_name':$('#goods_name').val(),
+			'zcOrderHistoryItem.goodsFile.serialNumber':$('#serialNumber').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框*/
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'11%',sortable:true,sortable:true,align:'left'},
+			{field:'NAME',title:'商品名',width:'33%',sortable:true,sortable:true,align:'left'},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'10%',sortable:true,sortable:true,formatter:formatterGuige},
+			{field:'GOODS_UNIT',title:'单位',width:'5%',sortable:true,sortable:true,align:'left'},
+			{field:'NUMS',title:'数量',width:'5%',sortable:true,sortable:true,align:'right',formatter:formatterNumber1},
+			{field:'PRICE',title:'单价',width:'10%',sortable:true,sortable:true,align:'right',formatter:formatterNumber1},
+			{field:'AMOUNT',title:'金额',width:'10%',sortable:true,sortable:true,align:'right',formatter:formatterNumber1},
+			{field:'ADDON',title:'备注',width:'15%',sortable:true,sortable:true,align:'left'}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+			'zcOrderHistoryItem.order_id':$!{orderId},
+			'zcOrderHistoryItem.name':$('#goods_name').val(),
+			'zcOrderHistoryItem.goodsFile.serialNumber':$('#serialNumber').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+function formatterNumber1(val) {
+	var mark = 0;
+	if(val==0 || val == '0'){
+		return val = "0.00";
+	}
+	if(typeof(val) == typeof("123")){
+		if(val.indexOf("font-weight:901") >= 0){
+			val = val.replace("<span style='font-family:华文中宋; color:blue;font-weight:901 '>&nbsp;&nbsp;&nbsp;&nbsp;","");
+			val = val.replace("</span>","");
+			mark = 1;
+		}else if(val.indexOf("font-weight:900") >= 0){
+			val = val.replace("<span style='font-family:华文中宋; color:blue;font-weight:900 '>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;","");
+			val = val.replace("</span>","");
+			mark = 2;
+		}else if(val.indexOf("金额:") >= 0){
+			return val;
+		}
+	}
+	var roundDigit = accuracy();
+	var num =new Number(roundDigit);
+	if (null != val && '' != val) {
+		var number = new Number(val);
+		var result = number.toFixed(num);
+		if(mark == 1){
+			return "<span style='font-family:华文中宋; color:blue;font-weight:900 '>&nbsp;&nbsp"+result+"</span>";
+		}else if(mark == 2){
+			return "<span style='font-family:华文中宋; color:blue;font-weight:900 '>&nbsp;&nbsp;&nbsp;&nbsp;"+result+"</span>";
+		}else{
+			return result;
+		}
+	}
+};
+</script>
+</html>

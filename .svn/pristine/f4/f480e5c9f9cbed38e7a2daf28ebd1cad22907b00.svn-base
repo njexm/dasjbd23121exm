@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form class="registerform" id="baseForm" method="post">
+            <div class="cell">
+        		<table width="100%" align=center valign=middle>
+        		 <input type="hidden" name="zcOrderDigits.id" id="id" value="123456789"></input>
+					<tr>
+    					<th width="50%" align=right>小数精度：</th>
+                        <td width="50%" align=left>
+							<select name="zcOrderDigits.count_odsi" id="digitsValue" style="width:100px;" value="$!{zcOrderDigits.count_odsi}" class="easyui-combobox">
+    							<option	value="1">1</option>
+								<option	value="2">2</option>
+								<option	value="3">3</option>
+								<option	value="4">4</option>
+								<option	value="5">5</option>
+								<option	value="6">6</option>
+								<option	value="7">7</option>
+								<option	value="8">8</option>
+    						</select>
+    					</td>
+    				</tr>
+	  				#*<tr>
+    					<th width="10%">金额小数位数：</th>
+                        <td width="30%">
+							<select name="zcOrderDigits.moneyAccuracy" id="moneyAccuracy" style="width:100px;" value="$!{zcOrderDigits.moneyAccuracy}" class="easyui-combobox">
+    							<option	value="1">1</option>
+								<option	value="2" selected>2</option>
+								<option	value="3">3</option>
+								<option	value="4">4</option>
+								<option	value="5">5</option>
+								<option	value="6">6</option>
+								<option	value="7">7</option>
+								<option	value="8">8</option>
+    						</select>
+    					</td>
+    				</tr>*#
+		</table>
+    		</div>
+    		<div class="box_03">
+           		<div class="box_inner_03">
+           			<div class="btn_area_setl btn_area_bg">
+           				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="saveDigits();">更改</a>
+       					<a href="#" onclick="window.parent.closeWinForm();" class="easyui-linkbutton" iconCls="icon-new-reduce">取消<b></b></a>
+           			</div>
+           		</div>
+       		</div>
+        </form>
+    </div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/orders/orders.js"></script>
+<script type="text/javascript">
+$(function(){
+	var value = '$!{zcOrderDigits.moneyAccuracy}';
+	$('#digitsValue').combobox('setValue',value);
+	
+});
+</script>
+</html>

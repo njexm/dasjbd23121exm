@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="">
+    	<form class="" id="" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="10%">用户名：</th>
+    	             <td width="15%">
+						<input  id="userName" name="userName" type="text" class="easyui-textbox"  style="width:80%;"/>
+					 </td>
+    	             <td width="">
+    					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-new-search'" style="width:80px" onclick="searchUserInfo();">搜索</a>
+    	             </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="add('${rc.contextPath}/userInfo/add','新增用户',600,300)" plain="true">新增用户</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="edit('编辑用户',600,300)" plain="true">编辑</a>
+		#*<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="openAuthority('用户权限:'+getName(),600,300)" plain="true">权限管理</a>*#
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="destroyInfo()" plain="true">删除</a>
+		<a href="javascript:void(0)" class="easyui-linkbutton" iconCls="icon-new-print" plain="true" onclick="roleIframe()">分配角色</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="js_info" class="easyui-dialog" style="width:450px;height:400px;padding:10px 10px;" closed="true"  modal="true" buttons="#dlg-buttons1">
+<table id="dg_js"></table>
+<div id="toolbar1" style="padding-top:10px;">
+	<input type="hidden" name="userId" id="userId"/>
+	<!--<div class="search">
+		<div class="query-condition-cell" style="float:left;margin-left:10px;">
+			<span>角色名称:</span>
+			
+			<input type="text" id="name_role" class="easyui-textbox" style="width:140px;float:left;" name="name_role"/>
+		</div>
+		<div class="query-condition-button" style="float:left;">
+			<input id="searchDataID" type="button" value="查询" onclick="findJSInfo()" class="new-linkbutton"/>
+		</div>
+	</div>-->
+	<div style="clear:both;padding-top:10px;">
+	</div>
+</div>	
+</div>
+<div id="dlg-buttons1">
+<a href="javascript:void(0)" class="easyui-linkbutton c6"  onclick="selectJSInfo()" style="width:60px;color:#fff;">确定</a>
+<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#js_info').dialog('close')" style="width:60px;color:#fff;">取消</a>
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/system/userInfo.js"></script>
+<script type="text/javascript">
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'icon-search', //图标
+		singleSelect:true, //单选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/userInfo/listOfJson?time="+new Date(), //数据来源
+		queryParams:{
+			'zcUserInfo.userName':$('#userName').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'LOGINNAME',title:'用户名',width:'15%',sortable:true},
+			{field:'USERNAME',title:'真实姓名',width:'15%',sortable:true,sortable:true},
+			{field:'SEXTYPE',title:'性别',width:'5%',sortable:true,sortable:true,"formatter":function(value,res){
+				var msg="";
+				if(value==1)
+				{
+					msg="男";
+				}
+				else if(value==2)
+				{
+					msg="女";
+				}
+				else
+				{
+					msg="未知";
+				}
+				return msg;
+			}},
+			{field:'MOBILEPHONE',title:'手机',width:'10%',sortable:true},
+			{field:'EMAIL',title:'邮箱',width:'15%',sortable:true,sortable:true},
+			{field:'BRANCH_ADDRESS',title:'地址',width:'36%',sortable:true,sortable:true,"formatter":function(value,res){
+				return res.PROVINCE+res.CITY+res.COUNTY+res.STREET;
+			}},
+			{field:'BRANCH_NAME_ID',title:'分店',sortable:true,sortable:true,hidden:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function getName(){
+	var rows = $('#dg').datagrid('getSelections');
+	if(rows.length==0)
+	{
+		return "";
+	}
+	if(rows.length>1)
+	{
+		return "";
+	}else{
+	var row = rows[0];
+	ss = row.USERNAME;
+	return ss;
+	}
+}
+function searchUserInfo(){
+	
+	var queryParams = {
+		'zcUserInfo.userName':$('#userName').val(),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</html>

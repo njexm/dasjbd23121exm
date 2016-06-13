@@ -1,0 +1,12 @@
+<div title="用户信息" style="padding:10px">
+	<div style="width:1300px;">
+		aaaaaaa
+	</div>
+</div>
+	
+<!--script type="text/javascript" src="${request.contextPath}/resources/js/index/index.js"></script-->
+<script type="text/javascript">
+	//$(function(){
+	//	Index.init();
+	//})
+</script>

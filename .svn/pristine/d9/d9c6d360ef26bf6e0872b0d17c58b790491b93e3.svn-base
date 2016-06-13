@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="baseForm" method="post">
+    		<div class="cell">
+				<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+						<th style="width:11%">采购单号：</th>
+						<td style="width:22%">
+							<input  id="odd" name="purchaseOrder.odd" type="text" readonly/>
+                        </td>
+						<th style="width:11%">制单日期：</th>
+						<td>
+							<input  id="createtime" name="purchaseOrder.createTime" type="text" readonly>
+							</input>
+                        </td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							<input type="hidden" name="purchaseOrder.purchaseMan" id="userId" value="$!{user.ctpUser.id}"></input>
+							<input  id="purchaseMan" name="" type="text" value="$!{user.userName}" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%"><span style='color:red'>*&nbsp;</span>供应商：</th>
+                        <td style="width:20%">
+							<input  id="providerId" name="purchaseOrder.providerInfo.id" type="text"/>
+						</td>
+						<th style="width:11%">订单状态：</th>
+						<td>
+							<input  id="state" name="purchaseOrder.state" type="text" disabled >
+							</input>
+						</td>
+						<th style="width:11%">审核人：</th>
+                        <td>
+							<input  type="text" id="checkMan" name="" disabled  >
+                            </input>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%"><span style='color:red'>*&nbsp;</span>采购仓库：</th>
+                        <td style="width:20%">
+							<input  id="storehouseId" name="purchaseOrder.zcStorehouse.id" type="text"/>
+						</td>
+						<th style="width:11%">审核日期：</th>
+						<td>
+							<input  id="checkDate" name="purchaseOrder.checkDate" type="text" disabled />
+						</td>
+						<th style="width:11%">备注：</th>
+						<td>
+							<input  id="remark" name="purchaseOrder.remark" type="text" />
+                        </td>
+    	           </tr>
+    	       	</table>
+				<form class="form-signin" method="post" id="addForm" name="addForm">
+    				<table border="0" cellpadding="0" cellspacing="0">
+        	           <tr>
+        	             <td width="20%" align="left" class="pinying">
+							<div id="search">
+    						拼音码：
+    						<input id="pyNum" name="pyNum" type="text" onkeyup="clear();this.value=this.value.toUpperCase()"/>
+							<button class="easyui-linkbutton" iconCls="icon-new-add" type="button" id="submit"  onclick="addPyGoods();" plain="true">添加</button>
+                            </div>
+    					 </td>
+    				   </tr>
+        	       	</table>
+				</form>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="saveLineToPurchase('baseForm')" plain="true">新增</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseGoods();searchData();" plain="true">选择商品</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteChose()" plain="true">删除</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="openBatch()" plain="true">导入</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="exportBatch()" plain="true">导出</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:900px;height:400px;">
+</div>
+<div id="showWinBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch" id="myBatch" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th style="text-align: right;">请选择导入文件</th>
+				<td  colspan="3">
+					<input type="file" name="sourceBrocastBatch" id="sourceBrocastBatch" class="text_input" style="width: 270px;height: 22px"/>
+				</td>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="importIntoAdd()">导入</a>
+			</div>
+		</form>
+	</div>
+</div>
+<div id="showexportBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch1" id="myBatch1" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th style="text-align: right;">点击导出按钮(导出文件为EXCEL文件)</th>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="exportExcelAdd()">导出</a>
+			</div>
+		</form>
+	</div>
+</div>
+<style>
+</style>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseOrder/purchaseOrder.js"></script>
+<script type="text/javascript">
+	$(function(){
+	$('#showWinBatch').window('close');
+	$('#showexportBatch').window('close');
+	$('#selectOptions').window('close');
+	var timesencond=formatterCompleteDateMillsecond();
+	$('#odd').val('CGDD'+timesencond);
+	$('#createtime').val(formatterDate(new Date()));
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode !=13){
+		}else{
+			addPyGoods();
+		}
+	};
+	debugger;
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchase/purchaseOrder/listGoodsItemsNullOrderJson?time="+new Date(), //数据来源
+		queryParams:{
+			'providerId':$('#providerId').combobox('getValue'),
+			'storehouseId':$('#storehouseId').combobox('getValue'),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px";
+			}},
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'商品编号',width:'12%',sortable:true,align:'left'},
+			{field:'GOODSNAME',title:'商品名',width:'43%',sortable:true,sortable:true,align:'left'},
+			{field:'STORE',title:'库存',width:'8%',sortable:true,sortable:true,align:'left',formatter:function(value,rec){
+				if(value=='' || value=='undefined' || value==null){
+					return '0.00';
+				}else{
+					return formatterNumber(value);
+				}
+			}},
+			{field:'GOODSPRICE',title:'单价',width:'8%',sortable:true,sortable:true,formatter:formatterNumber,align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'ACTUALNEED',title:'采购需求数量',width:'9%',align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods},
+			{field:'UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left'},
+			{field:'PRODUCEDATE',title:'生产日期',width:'14%',hidden:true,sortable:true,sortable:true,editor:{type:'datebox'}},
+			{field:'PRICESUM',title:'商品金额',sortable:true,sortable:true,hidden:true,formatter:function(value,rec){
+				if(value!=rec.GOODSPRICE*rec.ORDERNUM){
+					return rec.GOODSPRICE*rec.ORDERNUM;
+				}
+			}}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);				
+    		}
+			
+		}
+	});
+	// 取得div层
+	var $search = $('#search');
+	// 取得输入框JQuery对象
+	var $pyNum = $search.find('#pyNum');
+	// 关闭浏览器提供给输入框的自动完成
+	$('#pyNum').attr('autocomplete', 'off');
+	// 创建自动完成的下拉列表，用于显示服务器返回的数据,插入在搜索按钮的后面，等显示的时候再调整位置
+	var $autocomplete = $('<div class="autocomplete" style="height:200px;OVERFLOW-Y:auto;OVERFLOW-X:hidden;background-color:white"></div>').hide()
+			.insertAfter('#submit');
+	var setSelectedItem = function(item) {
+		// 更新索引变量
+		selectedItem = item;
+		// 按上下键是循环显示的，小于0就置成最大的值，大于最大值就置成0
+		if (selectedItem < 0) {
+			selectedItem = $autocomplete.find('li').length - 1;
+		} else if (selectedItem > $autocomplete.find('li').length - 1) {
+			selectedItem = 0;
+		}
+		// 首先移除其他列表项的高亮背景，然后再高亮当前索引的背景
+		$autocomplete.find('li').removeClass('highlight').eq(selectedItem)
+				.addClass('highlight');
+	};
+	// 清空下拉列表的内容并且隐藏下拉列表区
+	var clear = function() {
+		$autocomplete.empty().hide();
+	};
+	// 注册事件，当输入框失去焦点的时候清空下拉列表并隐藏
+	$('#pyNum').blur(function() {
+		setTimeout(clear, 500);
+	});
+	// 下拉列表中高亮的项目的索引，当显示下拉列表项的时候，移动鼠标或者键盘的上下键就会移动高亮的项目，想百度搜索那样
+	var selectedItem = null;
+	// timeout的ID
+	var timeoutid = null;
+	// 设置下拉项的高亮背景
+	var ajax_request = function() {
+		// ajax服务端通信
+		jQuery.ajax({
+			'url' : Utils.getRootPath() + '/purchase/purchaseOrder/dataFrom', // 服务器的地址
+			'data' : {
+				'pyNum' : $('#pyNum').val()
+			}, // 参数
+			'dataType' : 'json', // 返回数据类型
+			'type' : 'POST', // 请求类型
+			'success' : function(data) {
+			// 设置下拉列表的位置，然后显示下拉列表
+					var ypos = $('#pyNum').position().top;
+					var xpos = $('#pyNum').position().left;
+					$(".autocomplete").css('width', $('#pyNum').css('width'));
+					$(".autocomplete").css({
+						'z-index':1000,
+						'position':'absolute',
+						'left' : xpos + "px"
+					});
+					setSelectedItem(0);
+					// 显示下拉列表
+					$autocomplete.show();
+				if (data.length) {
+					// 遍历data，添加到自动完成区
+					jQuery.each(data, function(index, term) {
+						// 创建li标签,添加到下拉列表中
+						$('<li style="display:block;white-space:nowrap; overflow:hidden; text-overflow:ellipsis;"></li>').text(term).appendTo($autocomplete).addClass('clickable').hover(
+										function() {
+											// 下拉列表每一项的事件，鼠标移进去的操作
+											$(this).siblings().removeClass(
+													'highlight');
+											$(this).addClass('highlight');
+											selectedItem = index;
+										}, function() {
+											// 下拉列表每一项的事件，鼠标离开的操作
+											$(this).removeClass('highlight');
+											// 当鼠标离开时索引置-1，当作标记
+											selectedItem = -1;
+										}).click(function() {
+									// 鼠标单击下拉列表的这一项的话，就将这一项的值添加到输入框中
+									$('#pyNum').val(term);
+									// 清空并隐藏下拉列表
+									$autocomplete.empty().hide();
+								});
+					});// 事件注册完毕
+				}
+			}
+		});
+	};
+	// 对输入框进行事件注册
+	$('#pyNum').keyup(function(event) {
+		// 字母数字，退格，空格
+		if (event.keyCode > 40 || event.keyCode == 8 || event.keyCode == 32) {
+			// 首先删除下拉列表中的信息
+			$autocomplete.empty().hide();
+			clearTimeout(timeoutid);
+			timeoutid = setTimeout(ajax_request, 100);
+		} else if (event.keyCode == 38) {
+			// 上
+			// selectedItem = -1 代表鼠标离开
+			if (selectedItem == -1) {
+				setSelectedItem($autocomplete.find('li').length - 1);
+			} else {
+				// 索引减1
+				setSelectedItem(selectedItem - 1);
+			}
+			event.preventDefault();
+		} else if (event.keyCode == 40) {
+			// 下
+			// selectedItem = -1 代表鼠标离开
+			if (selectedItem == -1) {
+				setSelectedItem(0);
+			} else {
+				// 索引加1
+				setSelectedItem(selectedItem + 1);
+			}
+			event.preventDefault();
+		}
+	}).keypress(function(event) {
+		// enter键
+		if (event.keyCode == 13) {
+			// 列表为空或者鼠标离开导致当前没有索引值
+			if ($autocomplete.find('li').length == 0 || selectedItem == -1) {
+				return;
+			}
+			$('#pyNum').val($autocomplete.find('li').eq(selectedItem).text());
+			$autocomplete.empty().hide();
+			event.preventDefault();
+		}
+	}).keydown(function(event) {
+		// esc键
+		if (event.keyCode == 27) {
+			$autocomplete.empty().hide();
+			event.preventDefault();
+		}
+	});
+	// 注册窗口大小改变的事件，重新调整下拉列表的位置
+	$(window).resize(function() {
+		var ypos = $('#pyNum').position().top;
+		var xpos = $('#pyNum').position().left;
+		$(".autocomplete").css('width', $('#pyNum').css('width'));
+		$(".autocomplete").css({
+			'position' : 'relative',
+			'left' : xpos + "px",
+			'top' : ypos + "px"
+		});
+	});
+});
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+// 批量导入
+function openBatch() {
+	document.myBatch.reset();
+	$('#showWinBatch').window({
+		title : '批量导入',
+		closable : true,
+		modal : false,
+		draggable : false
+	});
+	$("#showWinBatch").window('open');
+}
+// 批量导出
+function exportBatch() {
+	var data = $('#dg').datagrid('getData');
+	if (data.rows.length<=0) {
+		$.messager.alert('提示', '没有商品可以导出', 'warning');
+		return;
+	}
+	document.myBatch1.reset();
+	$('#showexportBatch').window({
+		title : '批量导出',
+		closable : true,
+		modal : false,
+		draggable : false
+	});
+	$("#showexportBatch").window('open');
+}
+function searchData(){
+	var queryParams = {
+		'providerId':$('#providerId').combobox('getValue'),
+		'storehouseId':$('#storehouseId').combobox('getValue'),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+	$('#providerId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME',
+        panelHeight:'200px'
+	});
+	$('#storehouseId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+        valueField:'ID',
+		panelHeight:'200px',
+        textField:'BRANCH_NAME'
+	});
+	
+</script>
+</html>

@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+						<td style="width:100%" align="left" >
+							开始日期：
+							<input id="startDate" name="startDate" type="text" class="easyui-datetimebox"/>
+							结束日期：
+							<input id="endDate" name="endDate" type="text" class="easyui-datetimebox"/>
+							供应商：
+							<input  id="provider" name="provider" type="easyui-combobox"/>
+							类&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别：
+							<input id="classify" name="classify" type="text" class="easyui-textbox"/>
+                        </td>
+					</tr>
+					<tr>
+						<td style="width:100%" align="left" >
+							货&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：
+							<input id="serialNumber" name="serialNumber" type="text" class="easyui-textbox"/>
+							分店仓库：
+							<input  id="branchId" name="branchId" type="easyui-textbox"/>
+							品&nbsp;&nbsp;&nbsp;牌：
+							<input id="goods_brand_id" name="goods_brand_id" type="easyui-textbox" class="easyui-textbox"/>
+							<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+                        </td>
+					</tr>
+    	       	</table>
+    		</div>
+    	</form>
+    </div>
+    <table id="dg" class="easyui-datagrid" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseOrder/purchaseOrder.js"></script>
+<script type="text/javascript">
+	$(function(){
+	initParentTree();
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchaseQuery/purchaseQuery/listGoodsQueryJson?time="+new Date(), //数据来源
+		queryParams:{
+			'startDate':$('#startDate').datetimebox('getValue'),
+			'endDate':$('#endDate').datetimebox('getValue'),
+			'provider':$('#provider').combobox('getValue'),
+			'classify':$('#classify').combobox('getValue'),
+			'serialNumber':$('#serialNumber').val(),
+			'branchId':$('#branchId').combobox('getValue'),
+			'goods_brand_id':$('#goods_brand_id').combobox('getValue'),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'13%',align:'left',sortable:true,sortable:true},
+			{field:'GOODSNAME',title:'商品名称',width:'21%',align:'left',sortable:true,sortable:true},
+			{field:'UNIT',title:'单位',align:'left',width:'4%',sortable:true,sortable:true},
+			{field:'SPECIFICATIONS',title:'规格',width:'5%',align:'left',sortable:true,sortable:true,formatter:showGoods},
+			{field:'ACTUAL_NUM',title:'进货数量',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'GOODSMONEY',title:'进货金额',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'RETURNNUM',title:'退货数量',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'RETURNMONEY',title:'退货金额',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'ACTUALPURCHASE',title:'实采数量',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'ACTUALMONEY',title:'实采金额',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'LOWEST_PRICE',title:'销售金额',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'DIFFERENCEPRICE',title:'进销差价',width:'5%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'PROVIDER_NICKNAME',title:'供应商',width:'13%',align:'left',sortable:true,sortable:true},
+			
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'startDate':$('#startDate').datebox('getValue'),
+		'endDate':$('#endDate').datebox('getValue'),
+		'provider':$('#provider').combobox('getValue'),
+		'classify':$('#classify').combobox('getValue'),
+		'serialNumber':$('#serialNumber').val(),
+		'branchId':$('#branchId').combobox('getValue'),
+		'goods_brand_id':$('#goods_brand_id').combobox('getValue'),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+$('#provider').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	
+$('#branchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	
+$('#goods_brand_id').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/commodityClassify/selectListJson?type='+2,
+        valueField:'ID',
+        textField:'CLASSIFY_NAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	
+	// 初始化父级菜单下拉框
+function initParentTree() {
+	$('#classify').combotree({
+		url : Utils.getRootPath() + "/commodityClassify/getTreeData",
+		onLoadSuccess : function(node, data) {
+			var optionValue = $('#classify').attr("optionValue");
+			if (optionValue != undefined && optionValue != "") {
+				$('#classify').combotree('setValue', optionValue);
+			}
+		},
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+}
+
+</script>
+</html>

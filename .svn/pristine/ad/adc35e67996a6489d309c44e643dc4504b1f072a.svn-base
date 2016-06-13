@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+		<form class="baseform" id="baseform" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <input type="hidden" name="zcSwitchhouse.createUser.id" id="userId" value="$!{user.ctpUser.id}"></input>
+    	           <tr>
+    	           	 <th width="10%">单据号:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcSwitchhouse.switch_Number" id="switch_Number" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					 <th width="10%"><span style="color:red">*
+                     </span>转出仓库:</th>
+    	             <td width="23%">
+						<select name="zcSwitchhouse.fromBranch.id" id="fromBranchId" style="width:80%;"  >
+                        </select>
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>转入仓库:</th>
+    	             <td width="23%">
+						<select name="zcSwitchhouse.toBranch.id" id="toBranchId" style="width:80%;"  >
+                        </select>
+					 </td>
+				   </tr>
+				    <tr>
+    	           	 <th width="10%">制单人:</th>
+    	             <td width="23%">
+						<input  type="text"  id="userName" value="$!{user.userName}" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					  <th width="10%">制单日期:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcSwitchhouse.createTime" id="createTime" style="width:80%;"  readonly >
+                       </input>
+					 </td>
+					  <th width="10%">审核人:</th>
+    	             <td width="23%">
+						<input  type="text" name="" id="" style="width:80%;" readonly  >
+                        </input>
+					 </td>
+				   </tr>
+				      <tr>
+    	           	  <th width="10%">审核日期:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcSwitchhouse.checkDate" id="" style="width:80%;" readonly  >
+                        </input>
+					 </td>
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>业务员:</th>
+    	             <td width="23%">
+						<select name="zcSwitchhouse.operatorUser.id" id="operatorUserId" style="width:80%;"  >
+                        </select>
+					 </td>
+				   </tr>
+				   <tr>
+					 <th width="10%">备注:</th>
+    	             <td colspan="8">
+						<input  type="text" name="zcSwitchhouse.remark" id="" style="width:80%;">
+                        </input>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="saveBaseInfo('baseform')" plain="true">保存</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseGoods()" plain="true">选择商品</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="removeGoods()" plain="true">删除</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:900px;height:500px;">
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/switchchange.js/"></script>
+<script type="text/javascript">
+	$(function(){
+	$('#selectOptions').window('close');
+	initSelectCode('storeChangeType','changeType');
+	initSelectCodeByDefaultValue('changeReason','changeReason');
+	var timesencond=formatterCompleteDateMillsecond();
+	$('#switch_Number').val('ZCD'+timesencond);
+	$('#createTime').val(formatterDate(new Date()));
+	$('#fromBranchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/branch/branchDo/selectListJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	$('#toBranchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/branch/branchDo/selectListJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	$('#operatorUserId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/selectListJson',
+        valueField:'USERID',
+        textField:'USERNAME'
+	});
+	//去除回车键
+	
+	var winHeight = $(window).height();
+	var lastIndex;
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		width:'100%',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/switchChange/listGoodsItemsNullOrderJson?time="+new Date(), //数据来源
+		queryParams:{
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'11%',sortable:true},
+			{field:'GOODS_NAME',title:'商品名',width:'28%',sortable:true,sortable:true},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'12%',sortable:true,sortable:true,formatter:showGoods},
+			{field:'GOODS_UNIT',title:'单位',width:'12%',sortable:true,sortable:true},
+			{field:'GOODS_PRICE',title:'单价',width:'12%',formatter:formatterNumber,align:'right',sortable:true,sortable:true},
+			{field:'CHANGENUMBER',title:'数量',width:'12%',formatter:formatterNumber,align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'REMARK',title:'备注',width:'12%',editor:{type:'text'}}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);
+    		}
+		}
+	});
+	
+});
+
+
+function searchData(){
+	var queryParams = {
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</html>

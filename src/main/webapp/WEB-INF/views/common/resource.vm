@@ -1,0 +1,51 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/css/style.css"/>
+	
+<!-- ie7 CSS-->
+<!--[if IE 7]>
+<link rel="stylesheet" href="${rc.contextPath}/resources/plugins/css/font-awesome-ie7.min.css"/>
+<link rel="stylesheet" href="${rc.contextPath}/resources/plugins/css/bootstrap-ie7.css"/>
+<![endif]-->
+
+<!--[if lt IE 9]>
+<link rel="stylesheet" href="${rc.contextPath}/resources/css/ie.css" media="screen" />
+<script type="text/javascript" src="${rc.contextPath}/resources/js/html5shiv.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/respond.min.js"></script>
+<![endif]-->
+
+<!-- jquery -->
+<script type="text/javascript" src="${rc.contextPath}/resources/js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/jquery.form.js"></script>
+
+<!-- EasyUI CSS and JavaScript-->
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+
+
+<!-- My97DatePicker -->
+<link rel="stylesheet" href="${rc.contextPath}/resources/plugins/My97DatePicker/skin/WdatePicker.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/plugins/My97DatePicker/WdatePicker.js"></script>
+
+<!-- 自定义CSS -->
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/resources/css/common.css"></link>
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/resources/css/form.css"></link>
+<link rel="stylesheet" type="text/css" href="${rc.contextPath}/resources/css/style.css"></link>
+
+<!-- Utils.js -->
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/Utils.js"></script>
+<!-- validate.js -->
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/validate.js"></script>
+<!-- 2014Area.js-->
+<!--<script type="text/javascript" src="${rc.contextPath}/resources/js/units/2014Area.js"></script>-->
+<!-- commen.js-->
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/commen.js"></script>
+<!-- LodopFuncs.js-->
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<!-- print.js-->
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/loading.js"></script>
+#*
+
+*#
+

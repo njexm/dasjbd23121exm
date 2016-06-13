@@ -1,0 +1,9 @@
+<input type="hidden" value="$!{iuser.gender}" id="hiddenGender"/>
+<input type="hidden" value="$!{iuser.id}" id="id"/>
+
+<div class="div_5">
+	<div id="leftGrid"></div>
+</div>
+<div class="div_6">
+	<div id="rightGrid"></div>
+</div>

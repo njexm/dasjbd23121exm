@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+    	<meta http-equiv="Cache-Control" content="no-store" />
+    	<meta http-equiv="Pragma" content="no-cache" />
+    	<meta http-equiv="Expires" content="0" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta name="description" content="CISDIOA"/>
+        <meta name="author" content="CISDIOA"/>
+		 #parse(${resource_path})
+		<script type="text/javascript" src="${rc.contextPath}/resources/plugins/echarts/dist/echarts.js"></script>
+		<style type="text/css">
+			.nomal {
+				width:100%;
+				height:48%;
+				##border-bottom:1px solid #7a9bd1;
+			}
+			.echartsDemo {
+				width:50%;
+				height:100%;
+				margin:5px auto;
+				float:left;
+			}
+			.detailDemo {
+				float:right;
+				white-space:nowrap;
+				font-size:12px;
+				font-family:微软雅黑;
+				text-align:left;
+				text-decoration:none;
+				line-height:25px;
+				color:#333;
+				margin-right:10px;
+			}
+		</style>
+	</head>
+	<body>
+		<div class="easyui-panel" title="" style="width:100%;height:100%;padding:5px;border:0">
+		<div class="easyui-layout" data-options="fit:true" style="padding-left:8px;padding-right:3px;;border:0">
+			<div data-options="region:'east'" style="width:20%;padding-top:5px;padding-left:11px;;border:0">
+				<div id="dbsx" class="easyui-panel" title="待办事项" style="width:98%;height:48%;margin-bottom:12px;"
+					data-options="
+						tools:[{
+						iconCls:'icon-more',
+						handler:function(){
+							##加载更多
+							}
+							}]">
+    				
+                </div>
+				<div id="tzgg" class="easyui-panel" title="通知公告" style="width:98%;height:48%;"
+					data-options="
+						tools:[{
+						iconCls:'icon-more',
+						handler:function(){
+							##加载更多
+							}
+							}]">
+    				
+                </div>
+    			</div>
+    			<div data-options="region:'center'" style="padding-left:10px;padding-right:3px;width:80%;margin-left:13px;;border:0">
+    				<div class="nomal" id="demo1">
+        			<div class="echartsDemo" style="width:49.9%;height:100%;">
+        				<div class="easyui-panel" title="订单统计" style="width:98%;height:99%;">
+            				<div id="demoOne" style="width:100%;height:95%;margin:5px auto 0 auto;"></div>
+                        </div>
+        			</div>
+        			
+        			<div class="echartsDemo" style="width:49.9%;height:100%;">
+        				<div class="easyui-panel" title="销售统计" style="width:98%;height:99%;">
+            				<div id="demoTwo" style="width:100%;height:95%;margin:5px auto 0 auto;"></div>
+                        </div>
+        			</div>
+    			</div>
+        		<div class="nomal" id="demo2">
+        			<div class="echartsDemo" style="width:49.9%;height:100%;">
+        				<div class="easyui-panel" title="商品排行" style="width:98%;height:99%;">
+            				<div id="demoThree" style="width:100%;height:95%;margin:5px auto 0 auto;"></div>
+                        </div>
+        			</div>
+        			<div class="echartsDemo" style="width:49.9%;height:100%;">
+        				<div class="easyui-panel" title="亭点排行" style="width:98%;height:99%;">
+            				<div id="demoFour" style="width:100%;height:90%;margin:5px auto 0 auto;"></div>
+                        </div>
+        			</div>
+        		</div>
+    			</div>
+    		</div>
+    	</div>
+	
+		<div id="demoOne2" style="width:1000px;height:400px;margin:10px auto;display:none;"></div>
+		<div id="demoTwo2" style="width:1000px;height:400px;margin:10px auto;display:none;"></div>
+		<div id="demoThree2" style="width:1000px;height:400px;margin:10px auto;display:none;"></div>
+		<div id="demoFour2" style="width:1000px;height:400px;margin:10px auto;display:none;"></div>
+	</body>
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/echartsDemo/echartsDemo.js"></script>
+    <script>
+		$(function(){
+			$('#dbsx').panel({    
+    			href:'${rc.contextPath}/system/waittooDeal',
+				method:'get',
+				dataType:'json',
+    			onLoad:function(data){    
+    			}    
+			}); 
+			
+			$('#tzgg').panel({    
+    			href:'${rc.contextPath}/notice/waittooDeal',
+				method:'get',
+				dataType:'json',
+    			onLoad:function(data){
+    			}    
+			}); 
+		});
+	</script>
+</html>

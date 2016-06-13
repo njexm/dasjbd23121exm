@@ -1,0 +1,195 @@
+package com.proem.exm.entity.dispatchingstore;
+
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.cisdi.ctp.model.gen.Root;
+import com.proem.exm.entity.basic.associator.Associator;
+import com.proem.exm.entity.system.CtpUser;
+import com.proem.exm.entity.system.ZcZoning;
+
+/**
+ * 订单拉取实体类
+ * @author acer
+ *
+ */
+@Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Table(name = "ZC_DISPATCHING_STORE")
+public class DispatchingStore extends Root {
+
+	private static final long serialVersionUID = -7593818398089799059L;
+
+	/**
+	 * 要货单编号
+	 */
+	private String dispatchingId;
+	/**
+	 * 要货分店编号
+	 */
+	private double branchFromId;
+	/**
+	 * 要货分店名称
+	 */
+	private String branchFromName;
+	/**
+	 * 
+	 
+	private Date orderDate;*/
+	/**
+	 * 申请人id
+	 
+	private String proposerId;*/
+	/**
+	 * 审批人id
+	 */
+	private CtpUser user;
+	/**
+	 * 发货分店id
+	 */
+	private String branchToId;
+	/**
+	 * 发货分店名称
+	 */
+	private String branchToName;
+	/**
+	 * 要货商品id
+	 */
+	private String wareId;
+	/**
+	 * 商品名称
+	 */
+	private String wareName;
+	/**
+	 * 商品数量
+	 */
+	private String wareNum;
+	/**
+	 * 商品单价
+	 */
+	private String warePrice;
+	/**
+	 * 商品金额
+	 */
+	private String wareAmount;
+	@Column(name = "STARTTIME")
+	public Date getStartTime() {
+		return startTime;
+	}
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+	@Column(name = "ENDTIME")
+	public Date getEndTime() {
+		return endTime;
+	}
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+	private Date startTime;
+	private Date endTime;
+	/**
+	 * 要货单状态
+	 */
+	private String statues;
+	
+	
+	@Column(name = "STATUES")
+	public String getStatues() {
+		return statues;
+	}
+	public void setStatues(String statues) {
+		this.statues = statues;
+	}
+	public static long getSerialversionuid() {
+		return serialVersionUID;
+	}
+	@Column(name = "DISPATCHING_ID")
+	public String getDispatchingId() {
+		return dispatchingId;
+	}
+	public void setDispatchingId(String dispatchingId) {
+		this.dispatchingId = dispatchingId;
+	}
+	@Column(name = "BRANCH_FROM_ID")
+	public double getBranchFromId() {
+		return branchFromId;
+	}
+	public void setBranchFromId(double branchFromId) {
+		this.branchFromId = branchFromId;
+	}
+	@Column(name = "BRANCH_FROM_NAME")
+	public String getBranchFromName() {
+		return branchFromName;
+	}
+	public void setBranchFromName(String branchFromName) {
+		this.branchFromName = branchFromName;
+	}
+	@ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REFRESH},fetch = FetchType.LAZY)
+	@JoinColumn(name="PROPOSER_ID")
+	public CtpUser getUser() {
+		return user;
+	}
+	public void setUser(CtpUser user) {
+		this.user = user;
+	}
+	@Column(name = "BRANCH_TOID")
+	public String getBranchToId() {
+		return branchToId;
+	}
+	public void setBranchToId(String branchToId) {
+		this.branchToId = branchToId;
+	}
+	@Column(name = "BRANCH_TONAME")
+	public String getBranchToName() {
+		return branchToName;
+	}
+	public void setBranchToName(String branchToName) {
+		this.branchToName = branchToName;
+	}
+	@Column(name = "WARE_ID")
+	public String getWareId() {
+		return wareId;
+	}
+	public void setWareId(String wareId) {
+		this.wareId = wareId;
+	}
+	@Column(name = "WARE_NAME")
+	public String getWareName() {
+		return wareName;
+	}
+	public void setWareName(String wareName) {
+		this.wareName = wareName;
+	}
+	@Column(name = "WARE_NUM")
+	public String getWareNum() {
+		return wareNum;
+	}
+	public void setWareNum(String wareNum) {
+		this.wareNum = wareNum;
+	}
+	@Column(name = "WARE_PRICE")
+	public String getWarePrice() {
+		return warePrice;
+	}
+	public void setWarePrice(String warePrice) {
+		this.warePrice = warePrice;
+	}
+	@Column(name = "WARE_AMOUNT")
+	public String getWareAmount() {
+		return wareAmount;
+	}
+	public void setWareAmount(String wareAmount) {
+		this.wareAmount = wareAmount;
+	}
+
+}

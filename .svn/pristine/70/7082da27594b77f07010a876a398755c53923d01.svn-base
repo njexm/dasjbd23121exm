@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body style="background-color: #fff">
+    
+    <div class="wrap_form_middle_right">
+    <div class="adjust_box">
+    	<div class="box_inner">
+    		<form class="registerform" id="baseForm" method="post">
+    			<input type="hidden" name="id" id="id"/>
+    			<div class="cell">
+    				<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width: 15%;">订单来源：</th>
+    						 <td width="28%">
+								<select name="zcOrder.orderCome" id="orderCome" style="width:44%;" reg="Require" tip="请选择订单平台">
+									<option value="">--请选择--</option>
+									##<option value="2">个人负责订单</option>
+									<option value="1">宜鲜美平台订单</option>
+									<option value="3">天猫平台订单</option>
+									<option value="4">京东平台订单</option>
+									<option value="5">微信</option>
+									<option value="6">APP自有平台</option>
+									<option value="7">其他</option>
+								</select>
+							 </td>
+    					</tr>
+						<tr>
+							<th style="width: 15%;">订单日期：</th>
+    						<td width="52%">
+								<input type="text" id="orderDate" name="zcOrder.orderDate" readonly="true" class="Wdate" style="width:44%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" reg="Require" tip="请选择起始日期"/>
+								-
+								<input type="text" id="updateTime" name="zcOrder.updateTime" readonly="true" class="Wdate" style="width:44%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" reg="Require" tip="请选择结束日期"/>
+							</td>
+                        </tr>
+    				</table>
+    			</div>
+    			<div class="box_03">
+           			<div class="box_inner_03">
+           				<div class="btn_area_setl btn_area_bg">
+           					<a href="#" onclick="PushInfo('baseForm')" iconCls="icon-new-save" class="easyui-linkbutton">拉取<b></b></a>
+       						<a href="#" onclick="window.parent.closeWinForm();" iconCls="icon-new-checknopass" class="easyui-linkbutton" >取消<b></b></a>
+           				</div>
+           			</div>
+       			</div>
+        	</form>
+    	</div>
+    </div>
+    </div>
+</body>
+<div id="ddialog" class="easyui-dialog" title="订单加载中.." style="width:400px;height:100px"   
+        data-options="iconCls:'icon-new-save',resizable:true,modal:true">
+	<div id="progressbar"  data-options="value:60"  style="width:100%;margin:0 auto;margin-top: 10px;text-align:center;">
+		<img src="${rc.contextPath}/resources/image/ajax1.gif"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;您所拉取的订单正在载入中，请耐心等待.....&nbsp;&nbsp;&nbsp;
+	</div>
+</div> 
+<script type="text/javascript" src="${rc.contextPath}/resources/js/orders/orders.js"></script>
+<script type="text/javascript">
+	$(function(){
+	$("#ddialog").dialog('close');	
+	});
+</script>
+</html>

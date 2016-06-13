@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file --> 
+    #parse(${resource_path})
+</head>
+<body>
+
+<div id="printPage" style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="baseForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="id" id="id" value="$!{branchRequire.id}"/>
+				<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+						<th style="width:11%">要货单号：</th>
+						<td style="width:22%">
+							$!{branchRequire.YHDNumber}
+                        </td>
+						<th style="width:11%">制单日期：</th>
+						<td>
+							$!{branchRequire.createTime}
+                        </td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							$!{branchRequire.zcUserInfo.userName}
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">要货分店：</th>
+						<td style="width:22%">
+							$!{branchRequire.branchTotal.branch_name}
+                        </td>
+						<th style="width:11%">发货分店：</th>
+						<td>
+							$!{branchRequire.deliverBranchTotal.branch_name}
+                        </td>
+						<th style="width:11%"></span>审核人：</th>
+                        <td style="width:22%">
+							$!{user.userName}
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">数量：</th>
+						<td style="width:22%">
+							$!{branchRequire.nums}
+                        </td>
+						<th style="width:11%">金额：</th>
+                        <td style="width:22%">
+							$!{branchRequire.money}
+						</td>
+						<th style="width:11%">订单状态：</th>
+                        <td id="status">
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">备注：</th>
+						<td>
+							$!{branchRequire.remark}
+                        </td>
+						<th style="width:11%">原因：</th>
+						<td>
+							$!{branchRequire.reason}
+                        </td>
+    	           </tr>
+    	       	</table>
+				<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	             <td width="20%" align="left" >
+						货号：
+						<input id="serialNumber" name="serialNumber" type="text" class="easyui-textbox"/>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()" plain="true">查询</a>
+					 </td>
+				   </tr>
+    	       	</table>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-checkpass" onclick="checkPass()" plain="true">审核通过</a>
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-checknopass" onclick="checkNoPass(1)" plain="true">审核不通过</a>
+    		</div>
+    	</form>
+		##<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="previewPrint()" plain="true">打印预览</a>
+    </div>
+    <table id="dgCheck" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:800px;height:450px;">
+</div>
+<div id="flt"  name="flt" style="right:1px; POSITION:absolute; top:10px; z-index:99;"></div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/dispatching/dispatching.js"></script>
+<script type="text/javascript">
+$(function(){ 	
+	$('#selectOptions').window('close');
+	var status='$!{branchRequire.status}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#status').text(newstatus);
+	if(status=='2'){
+		$('#flt').append('<img src="${rc.contextPath}/resources/image/pass.png" >');
+	}
+});
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dgCheck').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/dispatching/dispatchings/listDispatchingItemJson?time="+new Date(), //数据来源
+		queryParams:{
+			'branchRequire.id':$('#id').val(),
+			'serialNumber':$('#serialNumber').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'商品编号',width:'12%',sortable:true,align:'left'},
+			{field:'GOODSNAME',title:'商品名',width:'25%',sortable:true,sortable:true,align:'left'},
+			{field:'SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods},
+			{field:'UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left'},
+			{field:'GOODSPRICE',title:'单价',width:'8%',sortable:true,sortable:true,formatter:formatterNumber,align:'right'},
+			{field:'NUMS',title:'数量',width:'9%',align:'right',sortable:true,formatter:formatterNumber},
+			{field:'MONEY',title:'金额',width:'8%',sortable:true,sortable:true,formatter:formatterNumber,align:'right'},
+			{field:'REMARK',title:'备注',width:'20%',sortable:true,sortable:true}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			$('#dgCheck').datagrid('clearSelections');
+		}
+	});
+	
+});
+
+function searchData(){
+	var queryParams = {
+		'serialNumber':$('#serialNumber').val(),
+		'branchRequire.id':$('#id').val()
+	};
+	$('#dgCheck').datagrid('options').queryParams = queryParams;
+	$("#dgCheck").datagrid('load');
+}
+
+$(window).resize(function(){
+    $('#dgCheck').datagrid('resize',{
+    	width:'100%'
+    });
+});
+</script>
+</html>

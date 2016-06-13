@@ -1,0 +1,301 @@
+package com.proem.exm.controller.dispatching;
+
+import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.cisdi.ctp.utils.common.StringUtils;
+import com.proem.exm.controller.BaseController;
+import com.proem.exm.entity.basic.branch.Branch;
+import com.proem.exm.entity.branch.require.BranchRequire;
+import com.proem.exm.entity.branch.require.BranchRequireItem;
+import com.proem.exm.entity.system.ZcUserInfo;
+import com.proem.exm.entity.warehouse.ZcStorehouse;
+import com.proem.exm.service.dispatching.DispatchingService;
+import com.proem.exm.utils.AjaxResult;
+import com.proem.exm.utils.Constant;
+import com.proem.exm.utils.DataGrid;
+import com.proem.exm.utils.Page;
+
+/**
+ * 
+ * @author xuehr 要货单controller
+ * 
+ */
+@Controller
+@RequestMapping("dispatching/dispatchings")
+public class DispatchingController extends BaseController {
+
+	@Autowired
+	private DispatchingService dispatchingService;
+
+	@InitBinder("branchRequire")
+	public void initBranchRequire(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("branchRequire.");
+	}
+
+	// 初始化跳转页面
+	@RequestMapping("initDispatching")
+	public ModelAndView initProcess(HttpServletRequest request,
+			HttpServletResponse response, Model model)
+			throws UnsupportedEncodingException {
+		String faName = request.getParameter("faName");
+		if (StringUtils.isBlank(faName)) {
+			faName = "连锁配送";
+		} else {
+			faName = new String(faName.getBytes("iso8859-1"), "utf-8");
+		}
+		String fasonName = request.getParameter("fasonName");
+		if (StringUtils.isBlank(fasonName)) {
+			fasonName = "连锁配送";
+		} else {
+			fasonName = new String(fasonName.getBytes("iso8859-1"), "utf-8");
+		}
+		String sonName = request.getParameter("sonName");
+		if (StringUtils.isBlank(sonName)) {
+			sonName = "连锁配送查询";
+		} else {
+			sonName = new String(sonName.getBytes("iso8859-1"), "utf-8");
+		}
+		String title = "  " + faName + " > " + fasonName + " > " + sonName + "";
+		model.addAttribute("title", title);
+		ModelAndView view = createIframeView("dispatching/dispatchings/dispatching_list");
+		return view;
+	}
+
+	/**
+	 * 加载要货单明细页面数据
+	 * 
+	 * @param dispatching
+	 * @param serialNumber
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "listDispatchingItemJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listDispatchingItemJson(
+			@ModelAttribute BranchRequire dispatching, String serialNumber,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			dataGrid = dispatchingService.getStoresDataGridObjDispatching(page,
+					dispatching, serialNumber);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+
+	/**
+	 * 要货单列表数据展示
+	 * 
+	 * @param branchRequire
+	 * @param minAmount
+	 * @param maxAmount
+	 * @param startTime
+	 * @param endTime
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "listDispatchingJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listDispatchingJson(
+			@ModelAttribute BranchRequire branchRequire, String minAmount,
+			String maxAmount, String startTime, String endTime,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			dataGrid = dispatchingService.getPagedDataGridObjDispatching(page,
+					branchRequire, minAmount, maxAmount, startTime, endTime);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+
+	/**
+	 * 打开审核页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("gotoCheck")
+	public ModelAndView gotoCheck(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		BranchRequire branchRequire = (BranchRequire) dispatchingService
+				.getObjById(id, BranchRequire.class.getName());
+		model.addAttribute("branchRequire", branchRequire);
+		ZcUserInfo user = (ZcUserInfo) request.getSession().getAttribute(
+				"userInfo");
+		model.addAttribute("user", user);
+		ModelAndView view = createIframeView("dispatching/dispatchings/dispatching_check");
+		return view;
+	}
+
+	/**
+	 * 打开要货单明细页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("openDispatchingItem")
+	public ModelAndView itemList1(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		BranchRequire obj = (BranchRequire) dispatchingService.getObjById(id,
+				BranchRequire.class.getName());
+		model.addAttribute("branchRequire", obj);
+		ModelAndView view = createIframeView("dispatching/dispatchings/dispatchings_item_list");
+		return view;
+	}
+	
+	/**
+	 * 要货单审核不通过
+	 * 
+	 * @param ordersView
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "checkNoPass", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public AjaxResult checkNoPass(String id, String type, String reason,
+			HttpServletRequest request, HttpServletResponse response) {
+		AjaxResult ajaxResult = null;
+		ZcUserInfo userInfo = (ZcUserInfo) request.getSession().getAttribute(
+				"userInfo");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			BranchRequire branchRequire = (BranchRequire) dispatchingService.getObjById(id, BranchRequire.class.getName());
+			branchRequire.setStatus(Constant.CHECK_STATUS_NOPASS);
+			branchRequire.setCheckMan(userInfo);
+			if (branchRequire.getReason() != null && branchRequire.getReason().length() > 0) {
+				branchRequire.setReason(branchRequire.getReason() + ";" + reason);
+			} else {
+				branchRequire.setReason(reason);
+			}
+			branchRequire.setCheckDate(df.parse(df.format(new Date())));
+			dispatchingService.updateObj(branchRequire);
+			logManageService.insertLog(request, "审核不通过系统修改审核状态待处理", "要货单");
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+					AjaxResult.INFO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+					AjaxResult.INFO);
+		}
+		return ajaxResult;
+	}
+	
+	/**
+	 * 审核通过
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "checkPass", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public AjaxResult checkPass(HttpServletRequest request,
+			HttpServletResponse response) {
+		AjaxResult ajaxResult = null;
+		String id = request.getParameter("id");
+		ZcUserInfo userInfo = (ZcUserInfo) request.getSession().getAttribute(
+				"userInfo");
+		SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		try {
+			BranchRequire branchRequire = (BranchRequire) dispatchingService.getObjById(id, BranchRequire.class.getName());			
+			List<BranchRequireItem> list = dispatchingService.getListByObj(BranchRequireItem.class, " require_id = '"+branchRequire.getId()+"'");
+			boolean isEnough = true;
+			for(int i = 0; i< list.size(); i++){
+				BranchRequireItem obj = list.get(i);
+				List<Branch> branchList = dispatchingService.getListByObj(Branch.class, " branchtotal_id = '"+branchRequire.getDeliverBranchTotal().getId()+"'");
+				if(branchList == null || branchList.size() == 0){
+					isEnough = false;
+					break;
+				}else{
+					Branch branch = branchList.get(0);
+					List<ZcStorehouse> storeList = dispatchingService.getListByObj(ZcStorehouse.class, " branch_id = '"+branch.getId()+"' and goodsFile_id = '"+obj.getGoodsFile().getId()+"'"); 
+					if(storeList == null){
+						isEnough = false;
+						break;
+					}else if(storeList.size() == 0 || storeList.size() > 1){
+						isEnough = false;
+						break;
+					}else{
+						ZcStorehouse store = storeList.get(0);
+						if(Float.parseFloat(store.getStore()) < Float.parseFloat(obj.getNums())){
+							isEnough = false;
+							break;
+						}else{
+							continue;
+						}
+					}
+				}
+			}
+			//判断库存是否充足
+			if(isEnough){
+				branchRequire.setStatus(Constant.CHECK_STATUS_PASS);
+				branchRequire.setCheckMan(userInfo);
+				branchRequire.setCheckDate(df.parse(df.format(new Date())));
+				dispatchingService.updateObj(branchRequire);
+				for(int i = 0; i< list.size(); i++){
+					BranchRequireItem obj = list.get(i);
+					///根据分店Id获取分店仓库
+					List<Branch> branchList = dispatchingService.getListByObj(Branch.class, " branchtotal_id = '"+branchRequire.getDeliverBranchTotal().getId()+"'");
+					Branch branch = branchList.get(0);
+					//根据分店仓库id获取库存
+					List<ZcStorehouse> storeList = dispatchingService.getListByObj(ZcStorehouse.class, " branch_id = '"+branch.getId()+"' and goodsFile_id = '"+obj.getGoodsFile().getId()+"'"); 
+					ZcStorehouse store = storeList.get(0);
+					//原来的库存份数
+					float oldStore = Float.parseFloat(store.getStore());
+					//更新库存份数
+					store.setStore(String.valueOf((oldStore - Float.parseFloat(obj.getNums()))));
+					//原来的库存商品金额
+					float oldMoney = Float.parseFloat(store.getStoreMoney());
+					float storeMoney = oldMoney * (Float.parseFloat(store.getStore())/oldStore);
+					//更新库存商品金额
+					store.setStoreMoney(String.valueOf(storeMoney));
+					dispatchingService.updateObj(store);
+					
+				}
+				ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+						AjaxResult.INFO);
+			}else{
+				ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.WARNING,
+						AjaxResult.INFO);
+			}
+			logManageService.insertLog(request, "审核通过系统自动修改审核状态为通过", "要货单");
+		} catch (Exception e) {
+			e.printStackTrace();
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+					AjaxResult.INFO);
+		}
+		return ajaxResult;
+	}
+
+}

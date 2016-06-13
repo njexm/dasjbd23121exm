@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="edge" />
+		#parse("common/resource.vm")
+		<script type="text/javascript" src="${rc.contextPath}/resources/js/roleManage/roleManage.js"></script>
+				<link rel="stylesheet" type="text/css" href="${rc.contextPath}/resources/plugins/ztree/zTreeStyle/zTreeStyle.css"/>
+		<script type="text/javascript" src="${rc.contextPath}/resources/plugins/ztree/jquery.ztree.core-3.5.min.js"></script>
+		<script type="text/javascript" src="${rc.contextPath}/resources/plugins/ztree/jquery.ztree.excheck-3.5.min.js"></script>
+		<style type="text/css">
+			
+		</style>
+	</head>
+	<body margin="0">
+		<input type="hidden" value="26835c1a-7e88-4aee-9c53-94ad4dc9be5b" id="currentUserId"/>
+		<div class="div_0" id="queryCondiction">
+			<div class="div_1">
+				<a href="#" class="easyui-linkbutton" onclick="addRole();" data-options="iconCls:'icon-new-add',plain:true">添加角色</a>
+				<a href="#" class="easyui-linkbutton" onclick="updateRole();" data-options="iconCls:'icon-new-edit',plain:true">修改角色</a>
+				<a href="#" class="easyui-linkbutton" onclick="deleteRoles();" data-options="iconCls:'icon-new-delete',plain:true">删除角色</a>
+				<a href="#" class="easyui-linkbutton" onclick="distributeMenu();" data-options="iconCls:'icon-new-check',plain:true">分配菜单</a>
+			</div>
+			<div class="div_1">
+				<div class="div_2" align="right">角色名称：</div>
+				<div class="div_3">
+					<input id="roleName" class="inputStyle" type="text"/>
+				</div>
+				<div class="div_2" align="right">创建者：</div>
+				<div class="div_3">
+					<input id="createrName" class="inputStyle" type="text"/>
+				</div>
+				<div class="div_4">
+					<a href="javascript:void(0);" id="queryBtn" class="easyui-linkbutton a_btn">查询</a>
+				</div>
+			</div>
+		</div>
+		<div id="roleDataGrid"></div>
+		<div id="dlg"></div>
+		<div id="menuDlg"></div>
+	</body>
+</html>

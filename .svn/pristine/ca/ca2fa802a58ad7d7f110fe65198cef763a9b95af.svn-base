@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <td style="width:100%" align="left" >
+							开始日期：
+							<input id="startTime" name="warehouseQuery.startTime" type="text" class="easyui-datetimebox"/>
+							结束日期：
+							<input id="endTime" name="warehouseQuery.endTime" type="text" class="easyui-datetimebox"/>
+							类别：
+							<input id="classify" name="warehouseQuery.classify.id" type="text" class="easyui-textbox"/>
+							品牌：
+							<input id="brand" name="warehouseQuery.brand.id" type="easyui-textbox" class="easyui-textbox"/>
+							供应商：
+							<input  id="providerInfo" name="warehouseQuery.providerInfo.id" type="easyui-combobox"/>
+							门店名称：
+							<input  id="branch" name="warehouseQuery.branch.id" type="easyui-textbox"/>
+                        </td>
+					</tr>
+					<tr>
+						<td style="width:100%" align="left" >
+							货&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;号：
+							<input id="serialNumber" name="warehouseQuery.serialNumber" type="text" class="easyui-textbox"/>
+							品&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名：
+							<input id="goodsName" name="warehouseQuery.goodsName" type="text" class="easyui-textbox"/>
+							<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+						</td>
+					</tr>
+    	       	</table>
+    		</div>
+    	</form>
+    </div>
+    <table id="dg" class="easyui-datagrid" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseOrder/purchaseOrder.js"></script>
+<script type="text/javascript">
+	$(function(){
+	initParentTree();
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/wareHouseQuery/wareHouseQueryDo/listGoodsDetailJson?time="+new Date(), //数据来源
+		queryParams:{
+			'warehouseQuery.startTime':$('#startTime').datetimebox('getValue'),
+			'warehouseQuery.endTime':$('#endTime').datetimebox('getValue'),
+			'warehouseQuery.classify.id':$('#classify').combobox('getValue'),
+			'warehouseQuery.brand.id':$('#brand').combobox('getValue'),
+			'warehouseQuery.providerInfo.id':$('#providerInfo').combobox('getValue'),
+			'warehouseQuery.branch.id':$('#branch').combobox('getValue'),
+			'warehouseQuery.serialNumber':$('#serialNumber').val(),
+			'warehouseQuery.goodsName':$('#goodsName').val(),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:15,
+		pageList:[15,30,50],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'CHANGETYPE',sortable:true,sortable:true,hidden:true},
+			{field:'STREET',title:'门店地址 ',width:'10%',align:'left',sortable:true,sortable:true},
+			{field:'BRANCH_CODE',title:'门店编号 ',width:'6%',align:'left',sortable:true,sortable:true},
+			{field:'BRANCH_NAME',title:'门店名称',width:'10%',align:'left',sortable:true,sortable:true},
+			{field:'SERIALNUMBER',title:'货号',width:'10%',align:'left',sortable:true,sortable:true},
+			{field:'GOODS_NAME',title:'商品名称',width:'20%',align:'left',sortable:true,sortable:true},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'6%',align:'left',sortable:true,sortable:true,formatter:showGoods},
+			{field:'CLASSIFY_CODE',title:'品牌编号',width:'7%',align:'left',sortable:true,sortable:true,formatter:function(value,res){
+				if(value==''||value=='undefiend'||value==null){
+					return '其他';
+				}else{
+					return value;
+				}
+			}},
+			{field:'CLASSIFY_NAME',title:'品牌名称',width:'7%',align:'left',sortable:true,sortable:true,formatter:function(value,res){
+				if(value==''||value=='undefiend'||value==null){
+					return '其他';
+				}else{
+					return value;
+				}
+			}},
+			{field:'CREATETIME',title:'日期',width:'12%',align:'left',sortable:true,sortable:true,formatter:formatterCompleteDate},
+			{field:'GOODS_PURCHASE_PRICE',title:'成本价',width:'7%',align:'right',sortable:true,sortable:true},
+			{field:'INPUTNUMBER',title:'进项数量',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='1'){
+					return value;
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'INPUTMONEY',title:'进项成本金额',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='1'){
+					return value;
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'WITHOUTTAXMONEY',title:'不含税进项金额',width:'9%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='1'){
+					return value;
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'INPUTTAX',title:'进项税率',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='1'){
+					return '0.17';
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'INPUTTAXMONEY',title:'进项税额',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='1'){
+					return value;
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'OUTPUTNUMBER',title:'出项数量',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='2'){
+					return value;
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'OUTPUTMONEY',title:'出项成本金额',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='2'){
+					return value;
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'OUTPUTTAX',title:'销项税率',width:'7%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='2'){
+					return '0.17';
+				}else{
+					return '0.00';
+				}
+			}},
+			{field:'SELLTAXMONEY',title:'销项税额',width:'7%',align:'right',sortable:true,sortable:true},
+			{field:'SELLMONEY',title:'进项金额（售价）',width:'9%',align:'right',sortable:true,sortable:true},
+			{field:'SELLDIFFERENCE',title:'进销差价',width:'7%',align:'right',sortable:true,sortable:true},
+			{field:'STORECHANGE_NUMBER',title:'单号',width:'14%',align:'left',sortable:true,sortable:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'warehouseQuery.startTime':$('#startTime').datetimebox('getValue'),
+		'warehouseQuery.endTime':$('#endTime').datetimebox('getValue'),
+		'warehouseQuery.classify.id':$('#classify').combobox('getValue'),
+		'warehouseQuery.brand.id':$('#brand').combobox('getValue'),
+		'warehouseQuery.providerInfo.id':$('#providerInfo').combobox('getValue'),
+		'warehouseQuery.branch.id':$('#branch').combobox('getValue'),
+		'warehouseQuery.serialNumber':$('#serialNumber').val(),
+		'warehouseQuery.goodsName':$('#goodsName').val(),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+$('#branch').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	// 初始化父级菜单下拉框
+function initParentTree() {
+	$('#classify').combotree({
+		url : Utils.getRootPath() + "/commodityClassify/getTreeData",
+		onLoadSuccess : function(node, data) {
+			var optionValue = $('#classify').attr("optionValue");
+			if (optionValue != undefined && optionValue != "") {
+				$('#classify').combotree('setValue', optionValue);
+			}
+		},
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+}
+
+	$('#brand').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/commodityClassify/selectListJson?type='+2,
+        valueField:'ID',
+        textField:'CLASSIFY_NAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	
+	$('#providerInfo').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+</script>
+</html>

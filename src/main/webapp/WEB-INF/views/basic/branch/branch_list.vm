@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="">
+    	<form class="" id="" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="10%">分店编号：</th>
+    	             <td width="15%">
+						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="branch_code" name="branchsView.branch_code" type="text" class="easyui-textbox"/>
+					 </td>
+    	             <th width="10%">分店名称：</th>
+					 <td width="15%">
+						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="branch_name" name="branchsView.branch_name" type="text" class="easyui-textbox"/>
+					 </td>
+    	             <td width="">
+    					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-new-search'" style="width:80px" onclick="searchData()">搜索</a>
+    					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-new-reduce'" style="width:80px" onclick="clearForm()">清空</a>
+    	             </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="add('${rc.contextPath}/branchTotal/add','新增分店',650,300)" plain="true">新增分店</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="edit('编辑分店信息',650,300)" plain="true">编辑</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteInfo()" plain="true">删除</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/branch/branchs.js"></script>
+<script type="text/javascript">
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/branchTotal/listBranchsJson?time="+new Date(), //数据来源
+		queryParams:{
+			'branchsView.branch_code':$('#branch_code').val(),
+			'branchsView.branch_name':$('#branch_name').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:50,
+		pageList:[50,100,200],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'BRANCH_CODE',title:'分店编码',width:'10%',sortable:true,sortable:true},
+			{field:'BRANCH_NAME',title:'分店名称',width:'20%',sortable:true,sortable:true},
+			{field:'BRANCH_ADDRESS',title:'分店地址',width:'40%',sortable:true,"formatter":function(value,res){
+				if(res.STREET==null){
+				return res.PROVINCE+res.CITY+res.COUNTY;
+				}else{
+				return res.PROVINCE+res.CITY+res.COUNTY+res.STREET;
+				}
+			}},
+			{field:'USERNAME',title:'负责人',width:'10%',sortable:true,sortable:true},
+			{field:'MOBILEPHONE',title:'联系方式',width:'15%',sortable:true,sortable:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'branchsView.branch_code':$('#branch_code').val(),
+		'branchsView.branch_name':$('#branch_name').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+//清空查询条件
+function clearForm() {
+   	 $("#branch_code").textbox("setValue","");
+   	 $("#branch_name").textbox("setValue","");
+   	 searchData();
+}
+</script>
+</html>

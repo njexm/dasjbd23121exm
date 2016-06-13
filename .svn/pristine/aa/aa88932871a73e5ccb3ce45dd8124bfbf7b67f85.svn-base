@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="baseForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="processGoodsId" id="processGoodsId" value="$!{processGoods.id}"/>
+				<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+						<th style="width:11%">加工单号：</th>
+						<td style="width:22%">
+							$!{processGoods.odd}
+                        </td>
+						<th style="width:11%">制单日期：</th>
+						<td>
+							$!{processGoods.createTime}
+                        </td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							$!{processGoods.createMan.name}
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">备注：</th>
+						<td style="width:22%">
+							$!{processGoods.remark}
+                        </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="updateProcessUseGoods()" plain="true">保存</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="choose()" plain="true">添加材料</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="removeUseGoods()" plain="true">移除</a>
+		##<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="commitCheck()" plain="true">提交</a>
+    </div>
+    <table id="dg" width="100%"></table>
+	<table id="datagrid" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:880px;height:400px;">
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/processGoods.js"></script>
+<script type="text/javascript">
+	$(function(){
+	$('#selectOptions').window('close');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#datagrid').datagrid({
+		title:'成品列表', //标题
+		cache: false,
+		method:'post',
+		width:function(){return document.body.clientWidth*0.9;},
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight/5*2, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/wareHouse/processGoods/listProcessProductGoodsJson?time="+new Date(), //数据来源
+		queryParams:{
+			'processGoodsId':$('#processGoodsId').val(),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:100,
+		pageList:[100,150,200],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:10px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'12%',sortable:true},
+			{field:'GOODSNAME',title:'商品名',width:'43%',sortable:true,sortable:true},
+			{field:'SPECIFICATIONS',title:'规格',width:'12%',sortable:true,sortable:true,formatter:showGoods},
+			{field:'UNIT',title:'单位',width:'9%',sortable:true,sortable:true},
+			{field:'GOODSWEIGHT',title:'成品重量',width:'9%',align:'right',formatter:formatterNumber},
+			{field:'GOODSNUM',title:'成品量',width:'9%',align:'right',formatter:formatterNumber},
+		]],
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+				if(data.rows[i].SERIALNUMBER==""||data.rows[i].SERIALNUMBER==null||data.rows[i].SERIALNUMBER=='undefiend'){
+					$('#datagrid').datagrid('beginEdit',i);
+				}
+    		}
+		},
+	});
+	$('#dg').datagrid({
+		title:'原料列表', //标题
+		cache: false,
+		method:'post',
+		width:function(){return document.body.clientWidth*0.9;},
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight/5*3, //高度
+		fitColumns:true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/wareHouse/processGoods/listProcessUseGoodsJson?time="+new Date(), //数据来源
+		queryParams:{
+			'processGoodsId':$('#processGoodsId').val(),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:100,
+		pageList:[100,150,200],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:25px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'12%',sortable:true},
+			{field:'GOODSNAME',title:'商品名',width:'43%',sortable:true,sortable:true},
+			{field:'STORE',title:'库存',width:'8%',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'SPECIFICATIONS',title:'规格',width:'15%',sortable:true,sortable:true,formatter:showGoods},
+			{field:'UNIT',title:'单位',width:'9%',sortable:true,sortable:true},
+			{field:'USENUM',title:'用量',width:'9%',align:'right',editor:{type:'numberbox',options:{precision:2}},formatter:formatterNumber},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);
+    		}
+		}
+	});
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+	
+</script>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="baseform" id="baseForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    			  <input type="hidden" name="advancePayment.auditMen.id" id="userId" value="$!{user.ctpUser.id}"></input>
+    			    <input type="hidden" name="advancePayment.id" id="advancePaymentId" value="$!{advancePayment.id}"></input>
+    	           <tr>
+						<th style="width:11%">付款单号：</th>
+						<td style="width:22%">
+							<input id="paymentOrder" name="advancePayment.paymentOrder" type="text" value="$!{advancePayment.paymentOrder}" style="width:80%"readonly/>
+                        </td>
+						<th style="width:11%">收支方式：</th>
+                        <td style="width:22%">
+                      		  应付款
+							##<input id="" name="" type="text" class="easyui-textbox" style="width:80%" value="应付款" readonly/> 
+						</td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							<input id="makeMen" name="advancePayment.makeMen.id" type="text"  class="easyui-textbox" style="width:80%" value="$!{advancePayment.makeMen.name}" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">制单日期：</th>
+						<td style="width:22%">
+							<input id="makeDate" name="advancePayment.makeDate" type="text" value="$!{advancePayment.makeDate}" style="width:80%" readonly/>
+                        </td>
+						<th style="width:11%">审核人：</th>
+                        <td style="width:22%">
+							<input id="auditMen" name="advancePayment.auditMen.id" type="text" value="$!{advancePayment.auditMen.name}" style="width:80%" readonly/>
+						</td>
+						<th style="width:11%">审核状态：</th>
+						<td style="width:22%" >
+							<input id="auditStatus" type="text" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%"><span style="color:red">*</span>供应商：</th>
+                        <td style="width:22%">
+							<input id="provider" name="advancePayment.provider.id" type="text" value="$!{advancePayment.provider.nickname}" class="easyui-textbox" style="width:80%"/>
+						</td>
+						<th style="width:11%"><span style="color:red">*</span>付款日期：</th>
+						<td >
+							<input type="text" id="paymentTime" name="advancePayment.paymentTime" readonly="true" class="Wdate" value="$!{advancePayment.paymentTime}" style="width:80%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+                        </td>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							<input id="auditTime" name="advancePayment.auditTime" type="text" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">备注信息：</th>
+                        <td width="22">
+    						<input id="remarks" name="advancePayment.remarks" type="text" value="$!{advancePayment.remarks}" class="easyui-textbox" style="width:80%"/>
+                        </td>
+						<th style="width:11%">不通过原因：</th>
+                        <td width="22">
+    						<input id="reason" name="advancePayment.reason" type="text" value="$!{advancePayment.reason}" class="easyui-textbox" style="width:80%"/>
+                        </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+    	<a href="#" class="easyui-linkbutton" iconCls="icon-new-checkpass" onclick="checkPass()" plain="true">审核通过</a>
+    	<a href="#" class="easyui-linkbutton" iconCls="icon-new-checknopass" onclick="checkNoPass(1)" plain="true">审核不通过</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/settlement/advance_payment.js"></script>
+<script type="text/javascript">
+
+$(function(){ 	
+	var status='$!{advancePayment.auditStatus}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#auditStatus').val(newstatus);
+});
+
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'供应商预付款单', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/advancePayment/advancePaymentDo/listAdvancePaymentDetailJson?time="+new Date(), //数据来源
+		queryParams:{
+			'id':'$!{advancePayment.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CODE',title:'代码',width:'20%',align:'left',sortable:true,sortable:true},
+			{field:'TYPE',title:'费用类型',width:'20%',align:'left',sortable:true,sortable:true},
+			{field:'PREPAYMENT_MONEY',title:'预付款金额',width:'20%',align:'right',formatter:formatterNumber,sortable:true,sortable:true},
+			{field:'REMARK',title:'备注',width:'37%',sortable:true,sortable:true}
+		]],
+		toolbar:'#tb'
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+	$('#provider').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME'
+	});
+</script>
+</html>

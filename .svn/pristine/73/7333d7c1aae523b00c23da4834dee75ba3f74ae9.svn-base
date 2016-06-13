@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<input type="hidden" name="zcOrder.id" id="id" value="$!{zcOrder.id}"/>
+			<input type="hidden" name="zcOrder.zcZoning.id" id="id" value="$!{zcOrder.zcZoning.id}"/>
+			
+    		<div class="cell">
+				<input type="hidden" name="zcOrderItem.order_id" id="orderId" value="$!{orderId}"/>
+    			<table border="0" cellpadding="0" cellspacing="0">
+					<tr>   				
+    				 <th width="10%">要货单号：</th>
+    	             <td width="23%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>
+                	 <th width="10%">要货分店：</th>
+    	             <td width="23%">
+    	             	<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_name" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/>
+    	             	
+    	             </td>	
+					 <th>申请人：</th>
+    					<td width="23%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>    		
+    							
+					</tr>      				
+    				<tr>
+    					<th>发货分店：</th>
+    					<td width="23%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>
+    					<th>要货单时间：</th>
+    					<td width="23%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>  
+    					<th>要货单状态：</th>
+    					<td width="23%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>
+    					</td> 				
+    				</tr>
+    				   			   				     				   	          
+    	       	</table>
+    		</div>
+        </form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript">
+$(function(){
+	//去除回车键
+	var dispatchingId='$!{dispatchingId}';	
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};		
+	var winHeight = $(window).height();	
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //单选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/dispatching/dispatchings/listDispatchingItemJson?id="+dispatchingId, //数据来源
+		queryParams:{			
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:20,
+		pageList:[20,50,100],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}},//显示复选框 */			
+			{field:'ID',title:'商品号',width:'20%',align:'left',sortable:true,sortable:true},
+			{field:'STORE_NAME',title:'商品名称',width:'15%',align:'left',sortable:true,sortable:true},
+			{field:'STORE_SPECIFICATIONS',title:'商品型号',width:'15%',align:'left',sortable:true,sortable:true},
+			{field:'STORE_UNIT',title:'单位',width:'8%',align:'left',sortable:true},
+			{field:'STORE_NUM',title:'数量',width:'10%',align:'left',sortable:true},
+			{field:'STORE_PRICE',title:'单价',width:'10%',align:'left',sortable:true,sortable:true,formatter:formatterCompleteDate},			
+			{field:'STORE_AMOUNT',title:'要货金额',width:'10%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'STORE_REMARK',title:'备注',width:'10%',sortable:true,sortable:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});	
+});
+</script>
+
+
+</html>

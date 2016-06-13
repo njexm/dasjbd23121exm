@@ -1,0 +1,39 @@
+<input type="hidden" value="$!{iuser.gender}" id="hiddenGender"/>
+<input type="hidden" value="$!{iuser.id}" id="id"/>
+
+<div class="div_7">
+	<div class="div_11" align="right">用户名：</div>
+	<div class="div_13">
+		<input id="name" type="text" value="$!{iuser.name}" class="inputStyle"/>
+	</div>
+	<div class="div_11" align="right">密&nbsp;&nbsp;&nbsp;码：</div>
+	<div class="div_13">
+		<input id="pwd" type="password" value="$!{iuser.password}" class="inputStyle"/>
+	</div>
+</div>
+<div class="div_8">
+	<div class="div_11" align="right">职&nbsp;&nbsp;&nbsp;务：</div>
+	<div class="div_13">
+		<input id="position" type="text" value="$!{iuser.position}" class="inputStyle"/>
+	</div>
+	<div class="div_11" align="right">性&nbsp;&nbsp;&nbsp;别：</div>
+	<div class="div_13">
+		<select id="dlggender" class="easyui-combobox" name="dlggender" style="width:90%;">
+			<option value="default">--</option>
+		    <option value="M">男</option>   
+		    <option value="F">女</option>   
+		</select> 
+	</div>
+</div>
+<div class="div_8">
+	<div class="div_11" align="right">邮&nbsp;&nbsp;&nbsp;箱：</div>
+	<div class="div_12">
+		<input id="email" type="text" value="$!{iuser.email}" class="inputStyle" style="width:95%;"/>
+	</div>
+</div>
+<div class="div_8">
+	<div class="div_11" align="right">手&nbsp;&nbsp;&nbsp;机：</div>
+	<div class="div_12">
+		<input id="phone" type="text" value="$!{iuser.phoneNo}" class="inputStyle" style="width:95%;"/>
+	</div>
+</div>

@@ -1,0 +1,7 @@
+<div id="moduleTreeDialog" class="easyui-dialog" style="width:450px;height:400px;padding:10px 10px;" closed="true" modal="true" buttons="#dlg-buttons">
+	<ul id="moduleTree"></ul>
+</div>
+<div id="dlg-buttons">
+	<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:saveGrantModule();" style="width:60px;color:#fff;">确定</a>
+	<a href="javascript:void(0)" class="easyui-linkbutton"  onclick="javascript:$('#moduleTreeDialog').dialog('close')" style="width:60px;color:#fff;">取消</a>
+</div>

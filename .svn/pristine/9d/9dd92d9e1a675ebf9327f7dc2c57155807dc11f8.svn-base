@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body style="background-color: #fff">
+    
+    <div class="wrap_form_middle_right">
+		<div class="adjust_box">
+		<div class="box_inner">
+		<div id="ttEdit" class="easyui-tabs"  style="width: 100%; height: 280px">
+			<div title="基本信息" style="padding: 10px" class="cell">
+				<table width="100%" style="table-layout: fixed;">
+					<tr>
+						<th>订单号：</th>
+						<td>${ordersView.orderNum}</td>
+						<th>订单SKU：</th>
+						<td>${ordersView.sku}</td>
+					</tr>
+					<tr>
+						<th>状态：</th>
+						<td>${ordersView.status}</td>
+						<th>地址：</th>
+						<td>${ordersView.orderAddress}</td>
+					</tr>
+					<tr>
+						<th>修改时间：</th>
+						<td>${ordersView.updateTime}</td>
+						<th></th>
+						<td></td>
+					</tr>
+				</table>
+			</div>
+		</div>
+		<div class="box_03">
+            <div class="box_inner_03">
+                <div class="btn_area_setl btn_area_bg">
+        			<a href="javascript:void(0);" onclick="window.parent.closeWinForm();" class="btn_01">关闭<b></b></a> 
+        		</div>
+    		</div>
+		</div>
+		
+		</div>
+	</div>
+</div>
+</body>
+
+<script type="text/javascript">
+	
+</script>
+</html>

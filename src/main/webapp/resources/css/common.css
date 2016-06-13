@@ -1,0 +1,126 @@
+@CHARSET "UTF-8";
+
+html,body {
+	height: 100%;
+}
+
+.warp {
+	min-height: 100%;
+	padding: 70px 0 60px;
+	margin: 0 auto -60px;
+}
+
+#footer {
+	height: 60px;
+	background-color: #f5f5f5;
+}
+
+#footer p {
+	margin: 20px 0;
+	text-align: center;
+	font-size: 12px;
+}
+
+.pointer-cursor {
+	cursor: pointer;
+}
+
+/* 面板头设置  */
+.panel-heading>span {
+	font-size: 18px;
+}
+
+.panel-heading>.option-group {
+	float: right;
+}
+
+/*按钮图标组*/
+ul.option-group a {
+	padding: 0 4px;
+	font-size: 14px;
+}
+
+ul.option-group {
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+ul.option-group>li {
+	display: inline-block;
+}
+
+/**logo*/
+.logo {
+	width: 50px;
+	height: 40px;
+	margin-right: 3px;
+}
+
+.top-margin-10 {
+	margin-top: -10px;
+}
+
+.bgcenter {
+	width: 100%;
+	background-attachment: fixed;
+}
+
+.area_name {
+	width: 700px;
+	height: 30px;
+	font-weight: 700;
+	font-size: 16px;
+	text-align: center;
+	margin: 10px auto 5px auto;
+	color: #333;
+}
+
+.cell_printarea {
+	width: 830px;
+	border: 1px solid #c1d3e9;
+	border-collapse: collapse;
+	margin: 0 auto;
+}
+
+.text_input {
+	width: 98%;
+	height: 10px;
+}
+
+.top_search {
+	width: 100%;
+	height: auto;
+}
+
+.top_search li {
+	width: 100%;
+	height: 25px;
+}
+
+.top_search_span {
+	width: 24%;
+	height: 100%;
+	border: 1px #ccc dotted;
+	display: block;
+	float: left;
+}
+
+.top_search_span1 {
+	text-align: right;
+	background: #EAF0FD;
+}
+
+.top_search_span2 {
+	text-align: right;
+	background: #EAF0FD;
+}
+
+.top_search_libtn {
+	margin-top: 5px;
+	text-align: center;
+}
+
+.noRefereeHidden {
+	display: none;
+}

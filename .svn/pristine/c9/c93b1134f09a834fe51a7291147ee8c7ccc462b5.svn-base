@@ -1,0 +1,65 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<script type="text/javascript">
+</script>
+<p><a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="PreviewMytable()" plain="true">打印</a></p>
+<div id="div1">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+<DIV style="LINE-HEIGHT: 30px" class=size16 align=center><STRONG><font color="#0000FF">盘点差异单</font></STRONG></DIV>     
+  <TBODY>
+  <TR>
+    <TD width="50%"><font color="#0000FF">盘点范围：<SPAN >$!{checkDifference.checkNumber.checkType}</SPAN></font></TD>
+	<TD width="50%"><font color="#0000FF">盘点日期：<SPAN >$!{checkDifference.createTime}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD><font color="#0000FF">盘点批号：<SPAN >$!{checkDifference.checkNumber.check_number}</SPAN></font></TD>
+	<TD><font color="#0000FF">盘点仓库：<SPAN >$!{checkDifference.checkNumber.branch.branch_name}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD><font color="#0000FF">品牌类别：<SPAN >$!{checkDifference.checkNumber.goods_classify}</SPAN></font></TD> 
+    <TD><font color="#0000FF">备注：<SPAN>$!{checkDifference.checkNumber.remark}</SPAN></font></TD>
+  </TR>
+  </TBODY>
+</TABLE>
+</div>
+<div id="div2">
+	<TABLE border=1 cellSpacing=0 cellPadding=1 width="100%" style="border-collapse:collapse" bordercolor="#333333">
+<thead>
+  <TR>
+    <TD width="25%">
+      <DIV align=center><b>品名</b></DIV></TD>
+    <TD width="12%">
+      <DIV align=center><b>仓库名称</b></DIV></TD>
+    <TD width="8%">
+      <DIV align=center><b>品牌名称</b></DIV></TD>
+    <TD width="15%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="8%">
+      <DIV align=center><b>系统库存</b></DIV></TD>
+    <TD width="10%">
+      <DIV align=center><b>盘点数量</b></DIV></TD>
+	<TD width="10%">
+      <DIV align=center><b>盈亏数量</b></DIV></TD>
+	<TD width="10%">
+      <DIV align=center><b>盘点金额</b></DIV></TD></TR>
+</thead>      
+  <TBODY>  
+	#foreach($num in ${list})
+  <TR>
+    <TD align="center" >$!{num.GOODS_NAME}</TD>
+    <TD align="center" >$!{num.BRANCH_NAME}</TD>
+    <TD align="center" >$!{num.BRANDNAME}</TD>
+    <TD align="center" >$!{num.SERIALNUMBER}</TD>
+    <TD align="center" >$!{num.STORE}</TD>
+    <TD align="center" >$!{num.ACTUALCHECKNUMBER}</TD>
+	<TD align="center" >$!{num.addOrReduceNum}</TD>
+	<TD align="center" >$!{num.checkPrice}</TD>
+  </TR>
+	  #end
+  </TBODY>
+</TABLE>
+</div>

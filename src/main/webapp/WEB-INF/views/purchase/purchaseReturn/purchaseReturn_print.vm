@@ -1,0 +1,83 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<script type="text/javascript">
+$(function(){ 	
+	var goodsMoney = '$!{purchaseReturn.totalMoney}';
+	var roundDigit = accuracy();
+	var num =new Number(roundDigit);
+	var money = new Number(goodsMoney);
+	$('#goodsMoney').text("退货总额："+money.toFixed(num));
+});
+</script>
+<p><a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="PreviewMytable()" plain="true">打印</a></p>
+<div id="div1">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+<DIV style="LINE-HEIGHT: 30px" class=size16 align=center><STRONG><font color="#0000FF">采购退货单</font></STRONG></DIV>     
+  <TBODY>
+  <TR>
+    <TD width="50%"><font color="#0000FF">退货单号：<SPAN >$!{purchaseReturn.odd}</SPAN></font></TD>
+	<TD width="50%"><font color="#0000FF">退货仓库：<SPAN >$!{purchaseReturn.branch.branch_name}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD width="33%"><font color="#0000FF">创建日期：<SPAN >$!{purchaseReturn.createTime}</SPAN></font></TD>
+    <TD><font color="#0000FF">制单人：<SPAN >$!{purchaseReturn.returnMan}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD id="goodsMoney" style="color='#0000FF'">退货总额：</TD> 
+    <TD><font color="#0000FF">订单状态：<SPAN>完成</SPAN></font><font color="#0000FF"></font></TD>
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">审核人：$!{purchaseReturn.checkMan}</font></TD>
+    <TD><font color="#0000FF">审核日期：<SPAN>$!{purchaseReturn.checkDate}</SPAN></font></TD>
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">供应商：<SPAN>$!{purchaseReturn.providerInfo.nickname}</SPAN></font></TD>
+    <TD><font color="#0000FF">备注：$!{purchaseReturn.remark}</font></TD>
+  </TR>
+  </TBODY>
+</TABLE>
+</div>
+<div id="div2">
+	<TABLE border=1 cellSpacing=0 cellPadding=1 width="100%" style="border-collapse:collapse" bordercolor="#333333">
+<thead>
+  <TR>
+    <TD width="13%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="40%">
+      <DIV align=center><b>商品名</b></DIV></TD>
+    <TD width="7%">
+      <DIV align=center><b>单位</b></DIV></TD>
+    <TD width="14%">
+      <DIV align=center><b>规格</b></DIV></TD>
+    <TD width="7%">
+      <DIV align=center><b>单价</b></DIV></TD>
+	<TD width="7%">
+      <DIV align=center><b>总价</b></DIV></TD>
+	<TD width="12%">
+      <DIV align=center><b>退货数量</b></DIV></TD></TR>
+</thead>      
+  <TBODY>  
+	#foreach($num in ${purchaseReturnItemList})
+	<script type="text/javascript">
+	$(function(){
+		var moneys = formatterNumber(${num.totalMoney});
+		$('#${num.id}').text(moneys);
+	});
+	</script>
+  <TR>
+    <TD align="center" >${num.serialnumber}</TD>
+    <TD align="center" >${num.goodsName}</TD>
+    <TD align="center" >${num.unit}</TD>
+    <TD align="center" >${num.specifications}</TD>
+    <TD align="center" >${num.goodsPrice}</TD>
+	<TD align="center" id="${num.id}"></TD>
+	<TD align="center" >${num.returnNum}</TD>
+  </TR>
+	  #end
+  </TBODY>
+</TABLE>
+</div>

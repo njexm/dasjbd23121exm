@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+						<th style="width:10%">开始日期：</th>
+						<td style="width:15%"><input id="createTime" name="purchaseSearch.startTime" type="text" class="easyui-datetimebox"/></td>						
+						<th style="width:10%">结束日期：</th>
+						<td style="width:15%"><input id="updateTime" name="purchaseSearch.endTime" type="text" class="easyui-datetimebox"/></td>
+						<th style="width:10%">供应商：</th>
+						<td style="width:15%"><input  id="provider" name="purchaseSearch.providerInfo.id" type="text"/></td>
+						<th style="width:10%">类别：</th>
+						<td style="width:15%"><input id="classify" name="purchaseSearch.leiBie.id" optionValue="$!{CommodityClassify.classify_name}"/></td>
+					</tr>
+					<tr>
+						<th style="width:10%">货号：</th>
+						<td style="width:15%"><input id="serialNumber" name="serialNumber" type="text" class="easyui-textbox" disable="true"/></td>
+						<th style="width:10%">分店仓库：</th>
+						<td style="width:15%"><input  id="branchId" name="branchId" type="text"/></td>
+						<th style="width:10%">品牌：</th>
+						<td style="width:15%"><input id="goods_brand_id" name="goods_brand_id" type="text" class="easyui-textbox"/></td>
+						<th style="width:10%">分店区域：</th>
+						<td style="width:15%"><input id="classify1" name="classify" type="text" class="easyui-textbox"/></td>
+					</tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()" plain="true">查询</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm()" plain="true">清空</a>
+    </div>
+    <table id="dg" class="easyui-datagrid" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseQuery/purchaseQuery.js"></script>
+<script type="text/javascript">
+	$(function(){
+		
+		initParentTree();
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchaseQuery/purchaseQuery/listClassQueryJson?time="+new Date(), //数据来源, //数据来源
+		queryParams:{
+			'purchaseSearch.startTime':$('#createTime').datetimebox('getValue'),
+			'purchaseSearch.endTime':$('#updateTime').datetimebox('getValue'),
+			'purchaseSearch.providerInfo.id':$('#provider').combobox('getValue'),
+			'purchaseSearch.leiBie.id':$('#classify').combobox('getValue')
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'CLASSIFY_CODE',title:'类别编号',width:'6%',align:'left',sortable:true,sortable:true},
+			{field:'CLASSIFY_NAME',title:'类别名称',width:'19%',align:'left',sortable:true,sortable:true},
+			{field:'ACTUAL_NUM',title:'进货数量',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'RECEIVE_MONEY',title:'进货金额',width:'6%',sortable:true,sortable:true,align:'right',formatter:formatterNumber},
+			{field:'RETURNNUM',title:'退货数量',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'RETURN_MONEY',title:'退货金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'asdfas',title:'赠送数量',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'NUMS',title:'实采数量',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'ACTUAL_MONEY',title:'实采金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'DIFFERENCE',title:'进销差价',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'SELL_MONEY',title:'销售金额',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'SELL_MONEY',title:'不含税销价金额',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'asdfasd',title:'税额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	//var url = "${rc.contextPath}/purchaseQuery/purchaseQuery/listClassQueryJson?time="+new Date(), //数据来源
+	var queryParams = {
+			'purchaseSearch.startTime':$('#createTime').datetimebox('getValue'),
+			'purchaseSearch.endTime':$('#updateTime').datetimebox('getValue'),
+			'purchaseSearch.providerInfo.id':$('#provider').combobox('getValue'),
+			'purchaseSearch.leiBie.id':$('#classify').combobox('getValue')
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	//$('#dg').datagrid('options').url = url;
+	$("#dg").datagrid('load');
+}
+
+$('#provider').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME'
+	});
+$('#branchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	
+$('#goods_brand_id').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/commodityClassify/selectListJson?type='+2,
+        valueField:'ID',
+        textField:'CLASSIFY_NAME'
+	});
+	
+function clearForm(){
+	 $("#createTime").datetimebox("setValue","");
+	 $("#updateTime").datetimebox("setValue","");
+	 $("#provider").combobox("setValue","");
+	 $("#classify").textbox("setValue","");
+	 $("#serialNumber").textbox("setValue","");
+	 $("#branchId").textbox("setValue","");
+	 $("#goods_brand_id").textbox("setValue","");
+	 $("#classify1").textbox("setValue","");
+	 searchData();
+}
+</script>
+</html>

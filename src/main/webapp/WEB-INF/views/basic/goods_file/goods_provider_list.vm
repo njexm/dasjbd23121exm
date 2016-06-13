@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto" id="selectProvider" class="">
+    <div id="tb" class="">
+    	<form class="" id="listForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="goodsFile.id" id="goodsFileId" value="$!{goodsFile.id}"/>
+    			<table border="0" id="" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="20%">供应商区域：</th>
+    	             <td width="20%" align="left">
+    	             	<select name="area" id="area" style="width:245px;"  class="easyui-combobox">
+    						<option value="">--请选择--</option>
+    						<option value="本地">本地</option>
+    						<option value="外地">外地</option>
+    					</select>
+    	             </td>
+					 <td width="15%">
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+                     </td>
+					 <td width="15%">
+						<a type="hidden"></a>
+					 </td>
+					 <td width="15%">
+						<a href="#" onclick="selectProvider()" class="easyui-linkbutton" style="width:80px;">确定</a>
+					 </td>
+					 <td width="15%">
+						<a href="#" onclick="window.parent.closeWinForm2();" class="easyui-linkbutton" style="width:80px;">取消</a>
+					 </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="add3('${rc.contextPath}/provider/poviderinfo/add','新增供应商',800,550)" plain="true">新增</a>
+    </div>
+    <table id="sp" width="100%"></table>
+</div>
+</body>
+
+<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+<script type="text/javascript">
+	$(function(){
+	
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#sp').datagrid({
+		cache: false,
+		title:'供应商基本信息列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/provider/poviderinfo/listProviderJson?time="+new Date(), //数据来源
+		queryParams:{
+			'providerInfoView.area':$("#area").combobox('getValue')
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'PROVIDER_NICKNAME',title:'供应商名',width:'65%',sortable:true,sortable:true},
+			{field:'PROVIDER_AREA',title:'地区',width:'28%',sortable:true,sortable:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#sp').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#sp').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'providerInfoView.area':$("#area").combobox('getValue')
+	};
+	$('#sp').datagrid('options').queryParams = queryParams;
+	$("#sp").datagrid('load');
+}
+</script>
+</html>

@@ -1,0 +1,194 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script>
+	$(function(){
+	$('#selectDG').datagrid({
+		cache: false,
+		title:'商品分类品牌列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:'450', //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/commodityClassify/selectListList?time="+new Date(), //数据来源
+		queryParams:{
+			'type':'$!{type}',
+			'commodityClassify.classify_code':$('#classify_code').val(),
+			'commodityClassify.classify_name':$('#classify_name').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:15,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CLASSIFY_CODE',title:'编码',width:'31%',sortable:true,sortable:true},
+			{field:'CLASSIFY_NAME',title:'名称',width:'31%',sortable:true,sortable:true},
+			{field:'CLASSIFY_TYPE',title:'类别',width:'31%',sortable:true,"formatter":function(value,res){
+				var msg="";
+				if(value==1)
+				{
+					msg="商品类别";
+				}
+				else if(value==2)
+				{
+					msg="商品品牌";
+				}
+				else
+				{
+					msg="未知";
+				}
+				return msg;
+			}},
+		]],
+		toolbar:'#tb1',
+		onLoadSuccess:function(){
+			$('#selectDG').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		},
+		onCheck: function (index, row) {
+			var values=$('#classifyValues').val();
+			var ids=$('#classifyIds').val();
+			var value=row["CLASSIFY_NAME"];
+			var id=row["ID"];
+			var valuesStr=values.split(",");
+			var idStr=ids.split(",");
+			var countValue=0;
+			var countId=0;
+			if(''!= valuesStr && valuesStr.length>0){
+				for(var i=0;i<valuesStr.length;i++){
+					if(value==valuesStr[i]){
+					countValue++;
+					}
+				}
+			}
+			if(''!= idStr && idStr.length>0){
+				for(var i=0;i<idStr.length;i++){
+					if(id==idStr[i]){
+					countId++;
+					}
+				}
+			}
+			if('0'==countValue){
+				if(values==''){
+				$('#classifyValues').val(values+value);
+				}else{
+				$('#classifyValues').val(values+","+value);
+				}
+			}else{
+				$('#classifyValues').val(values);
+			}
+			if('0'==countId){
+				if(ids==''){
+				$('#classifyIds').val(ids+id);
+				}else{
+				$('#classifyIds').val(ids+","+id);
+				}
+			}else{
+				$('#classifyIds').val(ids);
+			}
+			
+		},
+		onUncheck: function (index, row) {
+			var values=$('#classifyValues').val();
+			var ids=$('#classifyIds').val();
+			var value=row["CLASSIFY_NAME"];
+			var id=row["ID"];
+			var valuesStr=values.split(",");
+			var idStr=ids.split(",");
+			var newValueStr='';
+			var newids='';
+			if(''!= valuesStr && valuesStr.length>0){
+				for(var i=0;i<valuesStr.length;i++){
+					if(value==valuesStr[i]){
+					}else{
+					if(newValueStr==''){
+					newValueStr=newValueStr+valuesStr[i];
+					}else{
+					newValueStr=newValueStr+","+valuesStr[i];
+					}
+					}
+				}
+			}
+			if(''!= idStr && idStr.length>0){
+				for(var a=0;a<idStr.length;a++){
+					if(id==idStr[a]){
+					}else{
+					if(newids==''){
+					newids=newids+idStr[a];
+					}else{
+					newids=newids+","+idStr[a];
+					}
+					}
+				}
+			}
+			$('#classifyValues').val(newValueStr);
+			$('#classifyIds').val(newids);
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#selectDG').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function selectList(){
+	var goods_classify= $('#classifyValues').val();
+	var goods_classifyId=$('#classifyIds').val();
+	$('#goods_classify').val(goods_classify);
+	$('#goods_classifyId').val(goods_classifyId);
+}
+
+function searchData(){
+	var queryParams = {
+		'type':'$!{type}',
+		'commodityClassify.classify_code':$('#classify_code').val(),
+		'commodityClassify.classify_name':$('#classify_name').val()
+	};
+	$('#selectDG').datagrid('options').queryParams = queryParams;
+	$("#selectDG").datagrid('load');
+}
+</script>
+<div style="width:100%">
+    <div id="tb1" class="">
+    	<form class="" id="" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+					<tr>
+						<th width="10%">已选内容：</th>
+						<td width="35%" colspan="5">
+						<textarea id="classifyValues" name="zcCheckNumber.remark" maxLength="250" rows="2" cols="10" style="width: 96%;"   ></textarea></td>
+						<input  id="classifyIds" name="commodityClassify.classify_code" type="hidden"  />
+                    </tr>
+    	           <tr>
+    	           	 <th width="10%">编号：</th>
+    	             <td width="15%">
+						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="classify_code" name="commodityClassify.classify_code" type="text" class="easyui-textbox"/>
+					 </td>
+    	             <th width="10%">名称：</th>
+					 <td width="15%">
+						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="classify_name" name="commodityClassify.classify_name" type="text" class="easyui-textbox"/>
+					 </td>
+    	             <td width="28%">
+    					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-new-search'" style="width:80px" onclick="searchData()">搜索</a>
+    	             </td>
+					 <td width="22%">
+						<a href="#" class="easyui-linkbutton" iconCls="icon-new-checkpass" onclick="selectList();$('#selectOptions').window('close');"  plain="true">确定</a>
+						<a href="#" class="easyui-linkbutton" iconCls="icon-new-checknopass" onclick="$('#selectOptions').window('close');" plain="true">取消</a>
+    	             </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+    </div>
+    <table id="selectDG" width="100%"></table>
+</div>

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="baseform" id="baseForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    			   <input type="hidden" name="sorte.id" id="sorteId" value="$!{sorte.id}"></input>
+    	           <tr>
+						<th style="width:11%">单据号：</th>
+						<td style="width:22%">
+							<input id="code" name="sorte.code" value="$!{sorte.code}"  style="width:80%" required  readonly/>
+                        </td>
+						<th style="width:11%">分拣方式：</th>
+                        <td style="width:22%">
+							<select id="sortingMethod" name="sorte.sortingMethod" value="$!{sorte.sortingMethod}" style="width:80%" class="easyui-combobox" readonly>
+								<option value="按分店分拣">按分店分拣</option>
+								<option value="按单分拣">按单分拣</option>
+							</select>
+						</td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							<input id="makeMen" name="sorte.makeMen.id" type="hidden" value="$!{sorte.makeMen.id}"/>
+							<input id="make" type="text" name="sorte.makeMen.name" class="easyui-textbox" style="width:80%" value="$!{sorte.makeMen.name}" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">制单日期：</th>
+						<td style="width:22%">
+							<input id="makeTime" name="sorte.makeTime" type="text" value="$!{sorte.makeTime}" style="width:80%" readonly/>
+                        </td>
+						<th style="width:11%">审核人：</th>
+                        <td style="width:22%">
+							<input id="auditMen" name="sorte.auditMen.id" value="$!{sorte.auditMen.id}" type="hidden" />
+							<input id="audit" value="$!{sorte.auditMen.name}" type="text"  class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+						<th style="width:11%">审核状态：</th>
+						<td style="width:22%">
+							<input id="auditStatus" type="text" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+				   		<th style="width:11%">备注信息：</th>
+                        <td width="72" colspan="3">
+    						<input id="remrks" name="sorte.remrks" type="text" value="$!{sorte.remrks}" class="easyui-textbox" style="width:92%" readonly/>
+                        </td>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							<input id="auditTime" name="sorte.auditTime" type="text" value="$!{sorte.auditTime}" class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="openPrint()" plain="true">打印预览</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:800px;height:450px;">
+</div>
+<style type="text/css">
+	.datagrid-cell, .datagrid-cell-group, .datagrid-header-rownumber, .datagrid-cell-rownumber
+	{
+		text-overflow: ellipsis;
+	}
+</style>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/sorte.js"></script>
+<script type="text/javascript">
+
+$(function(){ 	
+	var status='$!{sorte.auditStatus}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#auditStatus').val(newstatus);
+});
+
+$(function(){
+	$('#selectOptions').window('close');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	var winHeight = $(window).height();
+	var sorteId = $('#sorteId').val();
+	$('#dg').datagrid({
+		cache: false,
+		title:'分拣单信息', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/sorte/sorteDo/listAddJosn?time="+new Date()+"sorteId="+sorteId, //数据来源
+		queryParams:{
+			'id':'$!{sorte.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,400,600],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:28px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'BRANCH_CODE',title:'分店编码',width:'18%',sortable:true,sortable:true,formatter:function(value,res){
+				return "<a href='#' onclick=openGoodsDetail('"+res.STREET+"','"+res.SORTSTATUS+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'BRANCH_NAME',title:'分店名称',width:'20%',sortable:true,sortable:true},
+			{field:'USERNAME',title:'分店负责人',width:'17%',sortable:true,sortable:true},
+			{field:'MOBILEPHONE',title:'联系电话',width:'20%',sortable:true,sortable:true},
+			{field:'REMARK',title:'备注',width:'20%',sortable:true,sortable:true}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+		}
+	});
+});
+</script>
+</html>

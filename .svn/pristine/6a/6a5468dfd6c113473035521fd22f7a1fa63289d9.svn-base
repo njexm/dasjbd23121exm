@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="8%">货号：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>
+    	              <th width="8%">商品名：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goodsName" name="goodsFile.goods_name" type="text" class="easyui-textbox"/></td>
+					 <th width="12%">商品类别：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_classify" name="goodsFile.goods_class.id" optionValue="$!{CommodityClassify.classify_name}"/></td>
+					 <th width="12%">供应商：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="providerId" name="goodsFile.provider.id" type="text" class="easyui-textbox"/></td>
+					 <td>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+						<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm1()">清空</a>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+        </form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="previewPrint()" plain="true">打印预览</a>
+    </div>
+	<div>
+		<table id="dg" width="100%"></table>
+    </div>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:800px;height:450px;">
+</div>
+<div id="ddialog" class="easyui-dialog" title="页面加载中.." style="width:400px;height:100px;background-color:#fff;" data-options="resizable:true,modal:true">   
+    <div id="progressbar"  data-options="value:60"  style="width:100%;margin:0 auto;margin-top: 10px;text-align:center;">
+        <img src="${rc.contextPath}/resources/image/ajax1.gif"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;页面加载中，请耐心等待.....&nbsp;&nbsp;&nbsp;
+	</div>    
+</div> 
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/sorte.js"></script>
+<script >
+	$(function(){
+		initParentTree();
+		
+	$('#selectOptions').window('close');
+	$('#ddialog').window('close');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/sorte/sorteDo/listSorteJson?time="+new Date(), //数据来源
+		queryParams:{
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goodsName').val(),
+			'goodsFile.goods_class.id':$('#goods_classify').combobox('getValue'),
+			'goodsFile.provider.id':$('#providerId').combobox('getValue'),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:150,
+		pageList:[150,200,300],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框*/
+			{field:'GOODSFILE_ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'10%'},
+			{field:'NAME',title:'商品名',width:'35%'},
+			{field:'CLASSIFY_NAME',title:'类别',width:'10%'},
+			{field:'PROVIDER_NICKNAME',title:'供应商',width:'19%'},
+			{field:'NUMS',title:'订单数量(份)',align:'right',width:'12%',formatter:function(value,rec){
+    			if(rec.STORE-rec.NUMS<0){
+    				return "<span style='color:red'>"+value+"</span>";
+    			}else{
+					return value;
+				}
+			}},
+			{field:'STORE',title:'库存数量(份)',align:'right',width:'12%',formatter:function(value){
+				var number = new Number(value);
+				return value = number.toFixed(0);
+			}},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		},
+	});
+});
+function searchData(){
+	var queryParams = {
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goodsName').val(),
+			'goodsFile.goods_class.id':$('#goods_classify').combobox('getValue'),
+			'goodsFile.provider.id':$('#providerId').combobox('getValue'),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+	$('#providerId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME'
+	});
+	
+	function clearForm1(){
+	   $("#goods_classify").textbox("setValue","");
+	   $("#providerId").combobox("setValue","");
+	   $("#serialNumber").textbox("setValue","");
+	   $("#goodsName").textbox("setValue","");
+	   searchData();
+	}
+</script>
+</html>

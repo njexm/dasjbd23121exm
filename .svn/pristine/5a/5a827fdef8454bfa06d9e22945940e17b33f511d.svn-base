@@ -1,0 +1,15 @@
+<input type="hidden" value="$!{role.description}" id="description"/>
+<input type="hidden" value="$!{role.id}" id="roleId"/>
+
+<div class="div_7">
+	<div class="div_9" align="right">角色名称：</div>
+	<div class="div_10">
+		<input id="name" type="text" value="$!{role.name}" class="inputStyle"/>
+	</div>	
+</div>
+<div class="div_8">
+	<div class="div_9" align="right">描&nbsp;&nbsp;&nbsp;&nbsp;述：</div>
+	<div class="div_10">
+		<textarea class="textarea_0" id="roleDescription"></textarea>
+	</div>
+</div>

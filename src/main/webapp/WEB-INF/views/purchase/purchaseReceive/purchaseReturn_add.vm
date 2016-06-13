@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="purchaseReceiveItem.purchaseReceiveId" id="purchaseReceiveId" value="$!{purchaseReceive.id}"/>
+				<table width="100%" style="table-layout: fixed;">
+					<tr>
+						<th style="width:11%">采购收货单号：</th>
+						<td style="width:22%">
+							$!{purchaseReceive.purchaseReceiveOdd}
+                        </td>
+						<th style="width:11%">创建日期：</th>
+						<td style="width:22%">
+							$!{purchaseReceive.createTime}
+                        </td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							$!{purchaseReceive.purchaseMan}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">订单金额：</th>
+						<td style="width:22%" id="money">
+                        </td>
+						<th style="width:11%">订单状态：</th>
+						<td style="width:22%" id="auditStatus">
+                        </td>
+						<th style="width:11%">审核人：</th>
+						<td style="width:22%">
+							$!{purchaseReceive.checkMan}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							$!{purchaseReceive.checkDate}
+                        </td>
+						<th style="width:11%">备注：</th>
+						<td colspan="2">
+							$!{purchaseReceive.remark}
+                        </td>
+					</tr>
+				</table>
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <td width="20%" align="left" >
+						货号：
+						<input id="serialNumber" name="serialNumber" type="text" class="easyui-textbox"/>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()" plain="true">查询</a>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+        </form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="saveLineToReturn()" plain="true">保存</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="ddialog" class="easyui-dialog" title="采购退货单加载中.." style="width:400px;height:100px" data-options="iconCls:'icon-new-save',resizable:true,modal:true">   
+    <div id="progressbar"  data-options="value:60"  style="width:100%;margin:0 auto;margin-top: 10px;text-align:center;">
+        <img src="${rc.contextPath}/resources/image/ajax1.gif"/>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;正在生成采购退货单，请耐心等待.....&nbsp;&nbsp;&nbsp;
+	</div>
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseReturn/purchase_return.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseReceive/purchase_receive.js"></script>
+<script type="text/javascript">
+	$(function(){
+		var price = '$!{purchaseReceive.purchaseMoney}';
+		var roundDigit = accuracy();
+		var num =new Number(roundDigit);
+		var money = new Number(price);
+		$('#money').text(money.toFixed(num));
+		
+	var status='$!{purchaseReceive.auditStatus}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#auditStatus').text(newstatus);
+	$("#ddialog").dialog('close');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	var lastIndex;
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchaseReceive/purchaseReceiveDo/listPurchaseReceiveGoodsItemsJson?time="+new Date(),
+		queryParams:{
+			'purchaseReceive.id':$('#purchaseReceiveId').val(),
+			'serialNumber':$('#serialNumber').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		rowStyler:function(index,row){   
+            if(row.CREATEFLAG=="1"){   
+                return 'background-color:#84C1FF;';
+            }
+   		}, 
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'CREATEFLAG',sortable:true,sortable:true,hidden:true},
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'13%'},
+			{field:'GOODSNAME',title:'商品名',width:'41%'},
+			{field:'GOODSPRICE',title:'单价',width:'8%',align:'right',formatter:formatterNumber},
+			{field:'ACTUAL_NUM',title:'实际数量',width:'7%',align:'right',formatter:formatterNumber},
+			{field:'RETURNNUM',title:'退货数量',width:'7%',align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'GOODSMONEY',title:'总价',width:'7%',align:'right',formatter:formatterNumber},
+			{field:'UNIT',title:'单位',width:'8%'},
+			{field:'SPECIFICATIONS',title:'规格',width:'8%',formatter:showGoods},
+			{field:'ACTUALNEED',title:'份数',hidden:true},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);
+    		}
+		}
+	});
+	
+});
+
+function searchData(){
+	var queryParams = {
+		'purchaseReceive.id':$('#purchaseReceiveId').val(),
+		'serialNumber':$('#serialNumber').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+$(function(){ 	
+	var auditStatus='$!{purchaseReceive.auditStatus}';
+		if(auditStatus=='active')
+				{
+					$('#auditStatus').text('待审核');
+				}else if(auditStatus=='dead')
+				{
+					$('#auditStatus').text('未通过');
+				}else if(auditStatus=='finish')
+				{
+					$('#auditStatus').text('已通过');
+				}else if(auditStatus=="wite")
+				{
+					$('#auditStatus').text('待提交');
+				}
+});
+</script>
+</html>

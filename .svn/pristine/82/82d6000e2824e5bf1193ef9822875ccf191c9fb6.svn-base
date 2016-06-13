@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+<script type="text/javascript" src="${rc.contextPath}/resources/js/settlement/taxManager.js"></script>
+<script type="text/javascript">
+</script>
+</head>
+<style>
+	.td{
+		text-align: center;
+		font-weight: bolder;
+		border: 1px solid #000000;
+	}
+	.tt{
+		width: 98%;
+		margin-top: 5px;
+		margin-left: 8px;
+	}
+	.btn{
+		width: 100%;
+		margin-top: 5px;
+		text-align: center;
+	}
+	.total_td{
+		text-align: center;
+		border-top: 1px solid #ADCD3C;
+	}
+</style>
+<body>
+    <div style="width: 99%;" id="baseinfo">
+		<form id="baseForm" method="post">
+                <table style="width: 98%;margin-left:8px;" cellspacing="0">
+                    <tr>
+        				<td colspan="3" align="center" >
+							<span style='color:red'>*</span>
+							<select name="taxManager.taxType" id="taxType" style="width:130px" reg="Require" tip="请选择发票类型">
+							</select>
+						</td>
+        			</tr>
+                    <tr>
+                        <td align="center" >
+        					<span style='color:red'>*</span>发票代码：
+        					<input id="taxCode" name="taxManager.taxCode" type="text" class="easyui-textbox" reg="TaxCode" tip="请填写10位数字的发票代码"/>
+        				</td>
+        				<td align="center" >
+        					<h1>
+        						=======================================
+                            </h1>
+        				</td>
+        				<td align="left" >
+        					<span style='color:red'>*</span>发票号码：
+        					<input id="taxNumber" name="taxManager.taxNumber" type="text" class="easyui-textbox" reg="TaxNumber" tip="请填写8位数字的发票号码"/>
+        				</td>
+        			</tr>
+        			<tr>
+                        <td align="center"></td>
+        				<td align="center" >
+        					此联不作报销、扣税凭证使用
+        				</td>
+        				<td align="left" >
+        					<span style='color:red'>*</span>开票日期：
+							<input  id="createDate" name="taxManager.createDate" type="text" class="easyui-datebox"/>
+                        </td>
+        			</tr>
+        		</table>
+        		<table style="width: 98%;margin-left:8px;" cellspacing="0">
+                    <tr>
+                        <td rowspan="4" style="width:2%;height:100px;" class="td">购买方</td>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>名&nbsp;&nbsp;&nbsp;&nbsp;称：</td>
+                        <td style="width:30%;" class="td">
+        					<input id="buyerName" name="taxManager.buyerName" type="text" class="easyui-textbox" reg="Require" tip="请填写购买方名称"/>
+        				</td>
+        				<td rowspan="4" style="width:2%;height:100px;" class="td">密码区</td>
+        				<td rowspan="4" style="width:58%;" class="td">
+        				</td>
+        			</tr>
+                    <tr>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>纳税人识别号：</td>
+        				<td style="width:30%;" class="td">
+        					<input id="buyerCheckNum" name="taxManager.buyerCheckNum" type="text" class="easyui-textbox" reg="Require" tip="请填写购买方纳税人识别号"/>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>地址、电话：</td>
+        				<td style="width:30%;" class="td">
+        					<input id="buyerLinkWay" name="taxManager.buyerLinkWay" type="text" class="easyui-textbox" reg="Require" tip="请填写购买方地址、电话"/>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>开户行及帐号：</td>
+        				<td style="width:30%;" class="td">
+        					<input id="buyerRegisterNum" name="taxManager.buyerRegisterNum" type="text" class="easyui-textbox" reg="Require" tip="请填写购买方开户行及帐号"/>
+        				</td>
+        			</tr>
+        		</table>
+        		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+        			<tr>
+                        <td style="width:25%;height:20px;" class="td">货物或应税劳务、服务名称</td>
+        				<td style="width:15%;height:20px;" class="td">规格型号</td>
+        				<td style="width:8%;height:20px;" class="td">单位</td>
+        				<td style="width:12%;height:20px;" class="td">数量</td>
+        				<td style="width:10%;height:20px;" class="td">单价</td>
+        				<td style="width:15%;height:20px;" class="td">金额</td>
+        				<td style="width:5%;height:20px;" class="td">税率</td>
+        				<td style="width:15%;height:20px;" class="td">税额</td>
+        			</tr>
+        			<tr>
+                        <td style="height:100px;" class="td">
+        					<textarea rows="5" cols="15" id="goodsName" name="taxManager.goodsName"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="15" id="specification" name="taxManager.specification"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="10" id="unit" name="taxManager.unit"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="10" id="goodsNumber" name="taxManager.goodsNumber"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="10" id="goodsPrice" name="taxManager.goodsPrice"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="15" id="goodsMoney" name="taxManager.goodsMoney"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="2" id="taxpercent" name="taxManager.taxpercent"></textarea>
+        				</td>
+        				<td rowspan="2" style="height:100px;" class="td">
+        					<textarea rows="5" cols="10" id="taxMoney" name="taxManager.taxMoney"></textarea>
+        				</td>
+        			</tr>
+        			<tr>
+                        <td style="width:25%;height:20px;" align="center" class="td">合&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;计</td>
+        			</tr>
+        			<tr>
+                        <td style="width:25%;height:20px;" align="center" class="td">价税合计（大写）</td>
+        				<td style="width:73%;height:20px;" colspan="7" class="td">
+        					<input id="totalMoney" name="taxManager.totalMoney" type="text" class="easyui-textbox"/>
+        				</td>
+        			</tr>
+        		</table>
+        		<table style="width: 98%;margin-left:8px;" cellspacing="0">
+                    <tr>
+                        <td rowspan="4" style="width:2%;height:100px;" class="td">销售方</td>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>名&nbsp;&nbsp;&nbsp;&nbsp;称：</td>
+                        <td style="width:40%;" class="td">
+        					<input id="sellerName" name="taxManager.sellerName" type="text" class="easyui-textbox" reg="Require" tip="请填写销售方名称"/>
+        				</td>
+        				<td rowspan="4" style="width:2%;height:100px;" class="td">备注</td>
+        				<td rowspan="4" style="width:44%;" class="td">
+        					<textarea rows="3" cols="80" id="detail" name="taxManager.detail"></textarea>
+        				</td>
+        			</tr>
+                    <tr>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>纳税人识别号：</td>
+        				<td style="width:40%;" class="td">
+        					<input id="sellerCheckNum" name="taxManager.sellerCheckNum" type="text" class="easyui-textbox" reg="Require" tip="请填写销售方纳税人识别号"/>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>地址、电话：</td>
+        				<td style="width:40%;" class="td">
+        					<input id="sellerLinkWay" name="taxManager.sellerLinkWay" type="text" class="easyui-textbox" reg="Require" tip="请填写销售方地址、电话"/>
+        				</td>
+        			</tr>
+        			<tr>
+        				<td style="width:12%;" class="td"><span style='color:red'>*</span>开户行及帐号：</td>
+        				<td style="width:40%;" class="td">
+        					<input id="sellerRegisterNum" name="taxManager.sellerRegisterNum" type="text" class="easyui-textbox" reg="Require" tip="请填写销售方开户行及帐号"/>
+        				</td>
+        			</tr>
+        		</table>
+                <table style="width: 98%;margin-left:8px;" cellspacing="0">
+					</br>
+                    <tr>
+                        <td style="width:27%;">收款人：
+							<input id="receiveMan" name="taxManager.receiveMan" type="text"/>
+						</td>
+        				<td style="width:27%;">复核：
+							<input id="checkMan" name="taxManager.checkMan" type="text"/>
+						</td>
+        				<td style="width:27%;"><span style='color:red'>*</span>开票人：
+							<input id="createMan" name="taxManager.createMan" type="text"/>
+						</td>
+        				<td style="width:27%;">销售方：（章）</td>
+        			</tr>
+					<tr>
+                        <td>
+							&nbsp;
+						</td>
+        			</tr>
+        		</table>
+				<div style="text-align:center;margin-left:auto;margin-right:auto;">
+    				<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="saveTaxManager('baseForm');">新增</a>
+    				<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+                </div>
+    	</form>
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+$(function(){
+	initSelectCode('TaxType','taxType');
+	$("#taxType option[value='2']").attr("selected", true);
+});
+
+$('#receiveMan').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/listCheckManJson',
+        valueField:'ID',
+        textField:'USERNAME'
+	});
+$('#checkMan').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/listCheckManJson',
+        valueField:'ID',
+        textField:'USERNAME'
+	});
+$('#createMan').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/listCheckManJson',
+        valueField:'ID',
+        textField:'USERNAME'
+	});
+</script>
+	

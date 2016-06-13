@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form method="" id="baseForm">
+			<input type="hidden" name="zcUserInfo.id" id="zcUserInfo.id"/>
+			<input type="hidden" name="id" id="id"/>
+            <div class="cell">
+        		<table width="100%">
+    				<tr>
+    					<th>
+    						功能模块：
+                        </th>
+    					<td >
+    						<select  id="sexType" name="zcUserInfo.sexType">
+    							<option	value="">--请选择--</option>
+								<option	value="1">男</option>
+								<option	value="2">女</option>
+                            </select>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						<span style="color: red;">*</span>手机：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="mobilephone" name="zcUserInfo.mobilePhone" type="text" class="easyui-textbox" reg="MobileOrPhone" tip="请填写正确格式的手机号码" maxlength="13"/>
+                        </td>
+						<th>
+    						<span style="color: red;">*</span>地址：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="address" name="zcZoning.street" type="text" class="easyui-textbox" reg="Require" tip="请填写地址信息" maxlength="50"/>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						邮箱：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="mail" name="zcUserInfo.email" type="text" class="easyui-textbox" reg="NullOrEmail" tip="请填写正确格式的邮箱" maxlength="50"/>
+                        </td>
+						<th>
+    						邮编：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="postcode" name="zcUserInfo.zipCode" type="text" class="easyui-textbox" reg="NullOrZip" tip="请填写正确格式的邮编" maxlength="10"/>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						性别：
+                        </th>
+    					<td >
+    						<select  id="sexType" name="zcUserInfo.sexType">
+    							<option	value="">--请选择--</option>
+								<option	value="1">男</option>
+								<option	value="2">女</option>
+                            </select>
+                        </td>
+						<th>
+    						<span style="color: red;">*</span>角色：
+                        </th>
+    					<td >
+    						<select  id="role" name="ctpRole.id" reg="Require" tip="请选择用户角色">
+    							<option	value="">--请选择--</option>
+								 #foreach (${element} in ${map.RoleList})<br>
+										<option value='${element.ID}'>${element.NAME}</option><br>
+								 #end<br>
+                            </select>
+                        </td>
+    				</tr>
+                </table>
+    		</div>
+            <div style="height:100%;">
+    			<table width="100%" height="100">
+    				<tr align="center" >
+    					<td align="center" >
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="saveUserInfo('baseForm')">新增</a>
+                        </td>
+    					<td align="center" >
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+                        </td>
+                    </tr>
+                </table>
+    		</div>
+        </form>
+    </div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/system/userInfo.js"></script>
+</html>

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <th width="8%">货号：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/></td>
+					 <th width="8%">商品名：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_name" name="goodsFile.goods_name" type="text" class="easyui-textbox"/></td>
+    	             <th width="8%">商品类别：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_classify" name="goodsFile.goods_class_name" type="text" class="easyui-textbox"/></td>
+					 <th width="8%">商品品牌：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_brand_id" name="goodsFile.goods_brand_name" type="text" class="easyui-textbox"/></td>
+					 <th width="8%">供应商：</th>
+    	             <td width="12%"><input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_supplier_id" name="goodsFile.provider.id" type="text" class="easyui-textbox"/></td>
+    	           </tr>
+    	       	</table>
+    		</div>
+			<ul>
+    			<li class="top_search_libtn">
+    				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+    				<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm(searchForm)">清空</a>
+    			</li>
+    		</ul>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="add('${rc.contextPath}/goodsFile/goodsFile/gotoAddGoodsFile','新增商品信息',800,535)" plain="true">新增商品信息</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="edit('编辑商品信息',800,535)" plain="true">编辑</a>
+		#*<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="detail('查看商品信息',800,535)" plain="true">查看</a>*#
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="destroyInfo()" plain="true">删除</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="openBatch()" plain="true">导入</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<div id="showWinBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch" id="myBatch" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th  style="width:25%;text-align: right;">模版下载</th>
+				<td  colspan="3" style="width:75%;">
+					<a href="#" onclick="downXls();">
+						<span style="color: red;">商品批量导入模板.xls</span>
+					</a>
+				</td>
+			</tr>
+			<tr>
+				<th style="text-align: right;">请选择导入文件</th>
+				<td  colspan="3">
+					<input type="file" name="sourceBrocastBatch" id="sourceBrocastBatch" class="text_input" style="width: 270px;height: 22px"/>
+				</td>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="batchImport()">导入</a>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript">
+	$(function(){
+	$('#showWinBatch').window('close');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/goodsFile/goodsFile/listGoodsFileJson?time="+new Date(), //数据来源
+		queryParams:{
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goods_name').val(),
+			'goodsFile.goods_class.id':$('#goods_classify').combobox('getValue'),
+			'goodsFile.provider.id':$('#goods_supplier_id').combobox('getValue'),
+			'goodsFile.goods_brand.id':$('#goods_brand_id').combobox('getValue')
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'10%',sortable:true,"formatter":function(value,res){
+				return "<a href='#' onclick=opengoodsItem('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'GOODS_NAME',title:'商品名',width:'24%',sortable:true,sortable:true},
+			{field:'GOODS_CLASS_NAME',title:'商品类别',width:'10%',sortable:true,sortable:true},
+			{field:'GOODS_SUPPLIER_NAME',title:'供应商',width:'18%',sortable:true,sortable:true},
+			{field:'GOODS_BRAND_NAME',title:'商品品牌',width:'11%',sortable:true,sortable:true},
+			{field:'GOODS_PRICE',title:'商品价格',width:'7%',align:'right',sortable:true,sortable:true},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'11%',sortable:true,sortable:true,formatter:formatterGuige},
+			{field:'GOODS_STATE',title:'商品状态',width:'6%',sortable:true,sortable:true,formatter:function(value,rec){
+				if(value=='true')
+				{
+					return '上架';
+				}else if(value=='false')
+				{
+					return '下架';
+				}else 
+				{
+					return '未知';
+				}
+			}}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goods_name').val(),
+			'goodsFile.goods_class.id':$('#goods_classify').combobox('getValue'),
+			'goodsFile.provider.id':$('#goods_supplier_id').combobox('getValue'),
+			'goodsFile.goods_brand.id':$('#goods_brand_id').combobox('getValue')
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+function downXls()
+{	
+		//window.location.href="../excelModel/goods_import.xls";	
+}
+//批量导入
+function openBatch(){
+	document.myBatch.reset();
+	$('#showWinBatch').window({  
+		title:'批量导入',
+   	closable: true,
+		modal: false,
+		draggable:false
+});
+	$("#showWinBatch").window('open');
+}
+	$('#goods_supplier_id').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME'
+	});
+	
+	$('#goods_classify').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/commodityClassify/selectListJson?type='+1,
+        valueField:'ID',
+        textField:'CLASSIFY_NAME'
+	});
+	
+	$('#goods_brand_id').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/commodityClassify/selectListJson?type='+2,
+        valueField:'ID',
+        textField:'CLASSIFY_NAME'
+	});
+</script>
+</html>

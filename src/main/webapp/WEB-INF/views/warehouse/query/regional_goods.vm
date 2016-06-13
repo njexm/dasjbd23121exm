@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+						<th style="width:10%">仓库：</th>
+						<td style="width:15%"><input id="branch" name="warehouseQuery.branch.id" type="text"/></td>						
+						<th style="width:10%">品牌：</th>
+						<td style="width:15%"><input id="brand" name="warehouseQuery.brand.id" type="text"/></td>
+						<th style="width:10%">供应商：</th>
+						<td style="width:15%"><input  id="provider" name="warehouseQuery.providerInfo.id" type="text"/></td>
+						<th style="width:10%">类别：</th>
+						<td style="width:15%"><input id="classify" name="warehouseQuery.classify.id" optionValue="$!{CommodityClassify.classify_name}"/></td>
+					</tr>
+					<tr>
+						<th style="width:10%">货号：</th>
+						<td style="width:15%"><input id="serialNumber" name="warehouseQuery.serialNumber" type="text" class="easyui-textbox"/></td>
+						<th style="width:10%">分店区域：</th>
+						<td style="width:15%">
+						<select name="warehouseQuery.startTime" id="county" class="easyui-combobox" style="width:78%">
+								<option value="" >&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--请选择--</option>
+								<option value="栖霞区">鼓楼区</option>
+								<option value="江宁区">江宁区</option>
+								<option value="浦口区">浦口区</option>
+								<option value="玄武区">玄武区</option>
+								<option value="白下区">白下区</option>
+								<option value="建邺区">建邺区</option>
+								<option value="雨花区">雨花区</option>
+								<option value="栖霞区">栖霞区</option>
+								<option value="秦淮区">秦淮区</option>
+						</select>
+						##<input id="branchArea" name="warehouseQuery.branchArea.id" type="text" class="easyui-textbox"/>
+						</td>
+						<th style="width:10%">品名：</th>
+						<td style="width:15%"><input  id="goodsName" name="warehouseQuery.goodsName" type="text" class="easyui-textbox"/></td>
+						<th style="width:10%">分店类型：</th>
+						<td style="width:15%"><input id="leixin" type="text" class="easyui-textbox" disabled/></td>
+					</tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()" plain="true">查询</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm()" plain="true">清空</a>
+    </div>
+    <table id="dg" class="easyui-datagrid" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/warehouseQuery.js"></script>
+<script type="text/javascript">
+$(function(){
+	initParentTree();
+//去除回车键
+document.onkeydown=function(evt){
+	if(evt.keyCode ==13){
+		return;
+	}
+};
+
+var winHeight = $(window).height();
+$('#dg').datagrid({
+	cache: false,
+	title:'$!{title}', //标题
+	method:'post',
+	iconCls:'', //图标
+	singleSelect:true, //多选
+	height:winHeight, //高度
+	fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+	striped: true, //奇偶行颜色不同
+	remoteSort: false,
+	url:"${rc.contextPath}/wareHouseQuery/wareHouseQueryDo/listRegionalGoodsJson?time="+new Date(), //数据来源, //数据来源
+	queryParams:{
+		'warehouseQuery.providerInfo.id':$('#provider').combobox('getValue'),
+		'warehouseQuery.branch.id':$('#branch').combobox('getValue'),
+		'warehouseQuery.brand.id':$('#brand').combobox('getValue'),
+		'warehouseQuery.classify.id':$('#classify').combobox('getValue'),
+		'warehouseQuery.goodsName':$('#goodsName').val(),
+		'warehouseQuery.serialNumber':$('#serialNumber').val(),
+		'warehouseQuery.startTime':$('#county').combobox('getValue'),
+	}, //查询条件
+	pagination:true, //显示分页
+	rownumbers:true, //显示行号
+	pageSize:200,
+	pageList:[200,300,500],
+	columns:[[
+		{field:'AREANAME',title:'区域',width:'6%',align:'left',sortable:true,sortable:true},
+		{field:'CLASSIFY_CODE',title:'类别编号',width:'6%',align:'left',sortable:true,sortable:true},
+		{field:'CLASSIFY_NAME',title:'类别',width:'6%',sortable:true,sortable:true},
+		{field:'SERIALNUMBER',title:'货号',width:'6%',align:'left',sortable:true,sortable:true},
+		{field:'GOODS_NAME',title:'品名',width:'20%',align:'left',sortable:true,sortable:true},
+		{field:'GOODS_SPECIFICATIONS',title:'规格',width:'6%',align:'left',sortable:true,sortable:true,formatter:showGoods},
+		{field:'GOODS_UNIT',title:'单位',width:'5%',align:'left',sortable:true,sortable:true},
+		{field:'STORE',title:'库存数量',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'GOODS_PURCHASE_PRICE',title:'平均成本价',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'CHENGBEN',title:'成本金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'NONTAXCOST',title:'不含税成本金额',width:'8%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'DIFFERENCE',title:'进销差价金额',width:'7%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'GOODS_PRICE',title:'零售价',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'AMOUNTPRICE',title:'库存售价金额',width:'8%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'CHENGBEN',title:'成本金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		{field:'BRANDCODE',title:'品牌编码',width:'8%',align:'left',sortable:true,sortable:true},
+		{field:'BRANDNAME',title:'品牌名称',width:'8%',align:'left',sortable:true,sortable:true},
+		{field:'PROVIDER_NICKNAME',title:'主供应商名称',width:'12%',align:'left',sortable:true,sortable:true},
+	]],
+	toolbar:'#tb',
+	onLoadSuccess:function(){
+		$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+	}
+});
+
+});
+
+$(window).resize(function(){
+$('#dg').datagrid('resize',{
+	width:'100%'
+});
+});
+
+function searchData(){
+var queryParams = {
+		'warehouseQuery.providerInfo.id':$('#provider').combobox('getValue'),
+		'warehouseQuery.branch.id':$('#branch').combobox('getValue'),
+		'warehouseQuery.brand.id':$('#brand').combobox('getValue'),
+		'warehouseQuery.classify.id':$('#classify').combobox('getValue'),
+		'warehouseQuery.goodsName':$('#goodsName').val(),
+		'warehouseQuery.serialNumber':$('#serialNumber').val(),
+		'warehouseQuery.startTime':$('#county').combobox('getValue'),
+};
+$('#dg').datagrid('options').queryParams = queryParams;
+$("#dg").datagrid('load');
+}
+
+$('#provider').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/provider/poviderinfo/listJson',
+    valueField:'ID',
+    textField:'PROVIDER_NICKNAME'
+});
+$('#branch').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+    valueField:'ID',
+    textField:'BRANCH_NAME'
+});
+
+$('#brand').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/commodityClassify/selectListJson?type='+2,
+    valueField:'ID',
+    textField:'CLASSIFY_NAME'
+});
+
+function clearForm(){
+ $("#county").combobox("setValue","");
+ $("#goodsName").textbox("setValue","");
+ $("#provider").combobox("setValue","");
+ $("#classify").textbox("setValue","");
+ $("#serialNumber").textbox("setValue","");
+ $("#branch").combobox("setValue","");
+ $("#brand").combobox("setValue","");
+ searchData();
+}
+</script>
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+</html>

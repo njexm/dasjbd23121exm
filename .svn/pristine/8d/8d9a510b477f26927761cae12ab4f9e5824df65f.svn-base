@@ -1,0 +1,74 @@
+<div id="sidebar" class="sidebar responsive">
+
+	<div class="sidebar-toggle sidebar-collapse" id="sidebar-collapse">
+		<i class="ace-icon fa fa-angle-double-left"
+			data-icon1="ace-icon fa fa-angle-double-left"
+			data-icon2="ace-icon fa fa-angle-double-right"></i>
+	</div>
+
+	<ul class="nav nav-list">
+		#foreach($!{moduleFa} in $!{securitySon.children})
+		<li>
+			<a href="#" class="dropdown-toggle"> 
+				<!--i class="menu-icon fa fa-pencil-square-o" style="background-color: red;"></i--> 
+				<i class="menu-icon fa " style="background:url($!{rc.contextPath}$!{moduleFa.icon}) no-repeat top center;"></i>
+				&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp$!{moduleFa.moduleName}
+				<b class="arrow fa fa-angle-down"></b>
+			</a>
+			#if($velocityCount == 1)
+				<ul class="submenu" style="display:block;">
+					#foreach($!{moduleSon} in $!{moduleFa.children})
+						<li id='$!{moduleSon.id}' class=''> 
+							#if(!${moduleSon.target} || $!{moduleSon.target} == "")
+								<a >$!{moduleSon.moduleName}</a>
+							#else
+								<a href="javascript:void(0);" onclick="jumpIframe('$!{rc.contextPath}$!{moduleSon.target}?faName=$!{securitySon.moduleName}&fasonName=$!{moduleFa.moduleName}&sonName=$!{moduleSon.moduleName}','$!{moduleSon.id}')" >
+									$!{moduleSon.moduleName}</a>
+							#end
+							#if($velocityCount == 1)
+								<input type="hidden" id="fitstMenuId" value="$!{moduleSon.id}"/>
+							#end
+						</li>
+					#end
+				</ul>
+			#else
+				<ul class="submenu">
+					#foreach($!{moduleSon} in $!{moduleFa.children})
+						<li id='$!{moduleSon.id}' class=''> 
+							#if(!${moduleSon.target} || $!{moduleSon.target} == "")
+								<a >$!{moduleSon.moduleName}</a>
+							#else
+								<a href="javascript:void(0);" onclick="jumpIframe('$!{rc.contextPath}$!{moduleSon.target}?faName=$!{securitySon.moduleName}&fasonName=$!{moduleFa.moduleName}&sonName=$!{moduleSon.moduleName}','$!{moduleSon.id}')" >
+									$!{moduleSon.moduleName}</a>
+							#end
+							#if($velocityCount == 1)
+								<input type="hidden" id="fitstMenuId" value="$!{moduleSon.id}"/>
+							#end
+						</li>
+					#end
+				</ul>
+			#end
+        </li>
+		#end
+	</ul>
+<script>
+	var $$ = function(func){  
+            if (document.addEventListener) {  
+                window.addEventListener("load", func, false);  
+            }  
+            else if (document.attachEvent) {  
+                window.attachEvent("onload", func);  
+            }  
+    };
+	$$(function(){
+		var id = $('#fitstMenuId').val();
+		$('.nav-list li').removeClass('active');
+		$('#'+id).addClass('active');
+	});
+	function jumpIframe(url,id){
+		$('#iframe').attr('src',url);
+		$('.nav-list li').removeClass('active');
+		$('#'+id).addClass('active');
+	}
+</script>
+</div>

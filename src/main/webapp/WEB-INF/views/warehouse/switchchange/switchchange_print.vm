@@ -1,0 +1,66 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<script type="text/javascript">
+</script>
+<p><a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="PreviewMytable()" plain="true">打印</a></p>
+<div id="div1">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+<DIV style="LINE-HEIGHT: 30px" class=size16 align=center><STRONG><font color="#0000FF">转仓单</font></STRONG></DIV>     
+  <TBODY>
+  <TR>
+    <TD width="50%"><font color="#0000FF">单据号：<SPAN >$!{zcSwitchhouse.switch_Number}</SPAN></font></TD>
+    <TD><font color="#0000FF">转出仓库：<SPAN >$!{zcSwitchhouse.fromBranch.branch_name}</SPAN></font></TD>
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">转入仓库：<SPAN >$!{zcSwitchhouse.toBranch.branch_name}</SPAN></font></TD>
+    <TD><font color="#0000FF">制单人：<SPAN >$!{zcSwitchhouse.createUser.name}</SPAN></font></TD>
+  </TR>
+  <TR>
+	<TD width="33%"><font color="#0000FF">制单日期：<SPAN >$!{zcSwitchhouse.createTime}</SPAN></font></TD>
+	<TD><font color="#0000FF">审核人：$!{zcSwitchhouse.checkUser.name}</font></TD>
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">审核日期：<SPAN>$!{zcSwitchhouse.checkDate}</SPAN></font></TD>
+    <TD><font color="#0000FF">业务员：<SPAN >$!{zcSwitchhouse.operatorUser.name}</SPAN></font></TD> 
+  </TR>
+  </TBODY>
+</TABLE>
+</div>
+<div id="div2">
+	<TABLE border=1 cellSpacing=0 cellPadding=1 width="100%" style="border-collapse:collapse" bordercolor="#333333">
+<thead>
+  <TR>
+    <TD width="14%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="34%">
+      <DIV align=center><b>商品名</b></DIV></TD>
+    <TD width="11%">
+      <DIV align=center><b>规格</b></DIV></TD>
+    <TD width="11%">
+      <DIV align=center><b>单位</b></DIV></TD>
+    <TD width="11%">
+      <DIV align=center><b>单价</b></DIV></TD>
+	<TD width="12%">
+      <DIV align=center><b>数量</b></DIV></TD>
+	<TD width="14%">
+      <DIV align=center><b>备注</b></DIV></TD></TR>
+</thead>      
+  <TBODY>  
+	#foreach($num in ${switchGoodsItemsList})
+  <TR>
+    <TD align="center" >$!{num.goodsFile.serialNumber}</TD>
+    <TD align="center" >$!{num.goodsFile.goods_name}</TD>
+    <TD align="center" >$!{num.goodsFile.goods_specifications}</TD>
+    <TD align="center" >$!{num.goodsFile.goods_unit}</TD>
+    <TD align="center" >$!{num.goodsFile.goods_price}</TD>
+	<TD align="center" >$!{num.changeNumber}</TD>
+	<TD align="center" >$!{num.remark}</TD>
+  </TR>
+	  #end
+  </TBODY>
+</TABLE>
+</div>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <link rel="stylesheet" type="text/css" href="css/easyui.css">
+	<link rel="stylesheet" type="text/css" href="css/demo.css">
+	<link rel="stylesheet" type="text/css" href="css/icon.css">
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    				<tr>					
+						<th width="10%">盘点差异单号：</th>
+					 	<td width="20%"><input type="text" id="checkNumber" name="zcCheckNumber.check_number" "/></td>
+					 	<td width="20%">
+							<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+                        </td>
+                        <th width="10%"></th>
+                        <th width="30%"></th>
+					</tr>
+    	       	</table>
+    		</div>
+    	</form>	
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="editDifference('编辑盘点差异单',1000,800)" plain="true">编辑</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="reduse()" plain="true">删除</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="checkDifferenceDetail('审核','1000','800')" plain="true">审核</a>
+    </div>
+    <table id="dg" class="easyui-datagrid"></table>	
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/checkDifference.js/"></script>
+<script type="text/javascript">
+	$(function(){
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'icon-search', //图标
+		singleSelect:true, //单选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/checkDifference/listJson?time="+new Date(), //数据来源
+		queryParams:{
+			'zcCheckNumber.check_number':$('#checkNumber').val()
+			}, //查询条件		
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CHECK_NUMBER',title:'盘点号',width:'20%',sortable:true,"formatter":function(value,res){
+				return "<a href='#' onclick=opendetail('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'BRANCH_NAME',title:'盘点仓库',width:'20%',sortable:true},
+			{field:'USERNAME',title:'制单人',width:'20%',sortable:true,sortable:true},			
+			{field:'STATUS',title:'状态',width:'15%',sortable:true,formatter:formatterStatus},			
+			{field:'CREATETIME',title:'创建时间',width:'20%',sortable:true,sortable:true,formatter:formatterCompleteDate},
+			
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+function searchData(value,name){
+	var queryParams = {
+			'zcCheckNumber.check_number':$('#checkNumber').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</html>

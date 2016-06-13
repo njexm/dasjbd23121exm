@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/code/code.js"></script>
+</head>
+<body style="background-color: #fff">
+<form class="registerForm" id="registerForm" method="post">
+
+	<input type="hidden" name="parameterName" id="parameterName" value="${_csrf.parameterName}" />
+	<input type="hidden" name="token" id="token" value="${_csrf.token}" />
+
+	<div style="padding:10px" class="cell">
+		<table width="100%" style="table-layout:fixed;">
+	        <tr>
+	            <th style="width:35%;">所属上级：</th>
+	            <td style="width:50%;">
+	                <select name="parent" id="parent" style="width: 248px; height: 25px; vertical-align: middle;" onchange="changeType(this.value)">
+						<option	value="">--请选择--</option>
+						#foreach($!{dictionarySon} in $!{map.dictionaryList})
+							<option	value="$!{dictionarySon.id}">$!{dictionarySon.codeName}</option>
+						#end
+						#foreach($!{dictionarySon} in $!{map.dictionaryList})
+							<input type="hidden" id="parent$!{dictionarySon.id}"  value="$!{dictionarySon.codeType}"/>
+						#end
+					</select>
+	            </td>
+	        </tr>
+            <tr>
+	            <th style="width:35%;"><span style="color: red;">*</span>数据名称：</th>
+	            <td style="width:50%;">
+	            	<input type="text" id="codeName" name="codeName" style="width:245px" class="form_text" maxlength="50" reg="Require" tip="请填写数据名称"/>
+	            </td>
+	        </tr> 
+	        <tr>
+	            <th style="width:35%;">数据值：</th>
+	            <td style="width:50%;">
+	            	<input type="text" id="codeValue" name="codeValue" class="form_text" style="width:245px" maxlength="25" disabled="disabled"/>
+	            </td>
+	        </tr>  
+	        <tr>
+	            <th style="width:35%;"><span style="color: red;">*</span>数据类型(英文简称)：</th>
+	            <td style="width:50%;">
+	            	<input type="text" id="codeType" name="codeType" class="form_text" style="width:245px"  reg="Require" tip="请填写数据类型(英文简称)" />
+	            </td>
+	        </tr> 
+	        <tr>
+	            <th style="width:35%;">数据描述：</th>
+	            <td style="width:50%;">
+	            	<input type="text" id="codeDescription" name="codeDescription" class="form_text" style="width:245px"/>
+	            </td>
+	        </tr>
+    	</table>
+	</div>
+	
+	<div style="width:100%;height:50px;text-align:center;margin:10px 0">
+		 <a href="javascript:void(0);" onclick="saveOrUpdateDictionary('registerForm')" class="easyui-linkbutton c1" style="width:120px;">提交</a>
+		<a href="javascript:void(0);" onclick="window.parent.loadDataGrid('dictionary');window.parent.closeWinForm()" class="easyui-linkbutton c5" style="width:120px">取消</a>
+	</div>
+</form>
+</body>
+	
+</html>

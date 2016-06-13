@@ -1,0 +1,157 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.proem</groupId>
+	<artifactId>exm</artifactId>
+	<packaging>war</packaging>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>exm</name>
+
+	<!-- 配置部署的远程仓库 -->
+	<distributionManagement>
+		<snapshotRepository>
+			<id>nexus-snapshots</id>
+			<name>nexus distribution snapshot repository</name>
+			<url>http://172.28.1.31:8081/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
+
+	<properties>
+		<com.cisdi.ctp.version>1.6.0-RELEASE</com.cisdi.ctp.version>
+	</properties>
+
+	<dependencies>
+
+
+		<!-- cisdi API -->
+		<!-- start 平台相关依赖包 -->
+		<dependency>
+			<groupId>com.cisdi.ctp</groupId>
+			<artifactId>cisdi-platform-core</artifactId>
+			<version>${com.cisdi.ctp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cisdi.ctp</groupId>
+			<artifactId>cisdi-platform-web</artifactId>
+			<version>${com.cisdi.ctp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.cisdi.ctp</groupId>
+			<artifactId>cisdi-component-utils</artifactId>
+			<version>${com.cisdi.ctp.version}</version>
+		</dependency>
+
+		<!-- end 平台相关依赖包 -->
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-test</artifactId>
+			<version>3.1.2.RELEASE</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.8.2</version>
+			<scope>test</scope>
+		</dependency>
+
+		<!-- ***********************1.spring-start************************* -->
+		<!-- dependency> <groupId>org.springframework</groupId> <artifactId>spring-context</artifactId> 
+			<version>4.0.6.RELEASE</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+			<artifactId>spring-webmvc</artifactId> <version>4.0.6.RELEASE</version> </dependency> 
+			<dependency> <groupId>org.springframework</groupId> <artifactId>spring-orm</artifactId> 
+			<version>4.0.6.RELEASE</version> </dependency> <dependency> <groupId>org.springframework</groupId> 
+			<artifactId>spring-context-support</artifactId> <version>4.0.6.RELEASE</version> 
+			</dependency> <dependency> <groupId>org.springframework</groupId> <artifactId>spring-web</artifactId> 
+			<version>4.0.8.RELEASE</version> </dependency -->
+		<!-- ***********************1.spring-end************************* -->
+
+		<!-- ***********************2.hibernate-start************************* -->
+		<!-- dependency> <groupId>org.hibernate</groupId> <artifactId>hibernate-core</artifactId> 
+			<version>4.3.6.Final</version> </dependency> <dependency> <groupId>org.hibernate</groupId> 
+			<artifactId>hibernate-validator</artifactId> <version>5.1.2.Final</version> 
+			</dependency -->
+		<!-- ***********************2.hibernate-end************************* -->
+
+		<!-- ***********************3.velocity-start************************* -->
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity</artifactId>
+			<version>1.7</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.velocity</groupId>
+			<artifactId>velocity-tools</artifactId>
+			<version>2.0</version>
+		</dependency>
+		<!-- ***********************3.velocity-end************************* -->
+
+
+		<!-- ***********************4.servlet-start************************* -->
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
+			<version>2.5</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet.jsp</groupId>
+			<artifactId>javax.servlet.jsp-api</artifactId>
+			<version>2.3.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>jstl</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<!-- 实时任务 -->
+		<dependency>
+			<groupId>org.quartz-scheduler</groupId>
+			<artifactId>quartz</artifactId>
+			<version>1.8.5</version>
+		</dependency>
+		<!-- ***********************4.servlet-end************************* -->
+
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
+
+		<!--start json -->
+		<dependency>
+			<groupId>net.sf.json-lib</groupId>
+			<artifactId>json-lib</artifactId>
+			<version>2.4</version>
+			<classifier>jdk15</classifier>
+		</dependency>
+		<!--end json -->
+
+		<!--start 发邮件 -->
+		<dependency>
+			<groupId>javax.mail</groupId>
+			<artifactId>javax.mail-api</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.mail</groupId>
+			<artifactId>javax.mail</artifactId>
+			<version>1.5.3</version>
+		</dependency>
+
+		<dependency>
+			<groupId>javax.activation</groupId>
+			<artifactId>activation</artifactId>
+			<version>1.1</version>
+		</dependency>
+		<!--end 发邮件 -->
+	</dependencies>
+
+
+	<build>
+		<finalName>exm</finalName>
+	</build>
+
+	<description>exm</description>
+</project>

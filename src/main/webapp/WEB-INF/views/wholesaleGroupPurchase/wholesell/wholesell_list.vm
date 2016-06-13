@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+						<td style="width:100%" align="left" >
+							销售单号：
+							<input id="wholeSellOdd" name="wholeSell.wholeSellOdd" type="text" class="easyui-textbox"/>
+							审核状态：
+							<select name="state" id="state" style="width:100px;">
+							</select>
+							开始日期：
+							<input id="startDate" name="startDate" type="text" class="easyui-datetimebox"/>
+							结束日期：
+							<input id="endDate" name="endDate" type="text" class="easyui-datetimebox"/>
+							<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+							<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm()">清空</a>
+                        </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		##<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="addPurchase('新增采购订单',1000,535)" plain="true">新增</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="openEdit('编辑团购销售单',1000,535)" plain="true">编辑</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteWholeSell()" plain="true">删除</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="openCheck('审核团购销售单',1000,535)" plain="true">审核</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openAddReturn()" plain="true">退货</a>
+    </div>
+    <table id="dg" class="easyui-datagrid" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/wholesaleGroupPurchase/wholeSell.js"></script>
+<script type="text/javascript">
+	$(function(){
+	initSelectCode('Statue','state');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/wholesaleGroupPurchase/wholeSell/listWholeSellJson?time="+new Date(), //数据来源
+		queryParams:{
+			'state':$("#state").val(),
+			'wholeSell.wholeSellOdd':$("#wholeSellOdd").val(),
+			'startDate':$('#startDate').datetimebox('getValue'),
+			'endDate':$('#endDate').datetimebox('getValue'),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:20,
+		pageList:[20,50,100],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'WHOLESELLODD',title:'销售单号',width:'20%',sortable:true,formatter:function(value,res){
+				return "<a href='#' onclick=openWholeSellDetail('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'TOTALMONEY',title:'单据金额',width:'14%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'BRANCH_CODE',title:'仓库编码',width:'14%',align:'right',sortable:true,sortable:true},
+			{field:'BRANCH_NAME',title:'销售仓库',width:'18%',align:'left',sortable:true,sortable:true},
+			{field:'NAME',title:'客户名称',width:'17%',sortable:true,sortable:true},
+			{field:'STATUE',title:'审核状态',width:'14%',sortable:true,formatter:formatterStatus},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'state':$("#state").val(),
+		'wholeSell.wholeSellOdd':$("#wholeSellOdd").val(),
+		'startDate':$('#startDate').datetimebox('getValue'),
+		'endDate':$('#endDate').datetimebox('getValue'),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+function clearForm(){
+ 	initSelectCode('Statue','state');
+ 	$("#startDate").datetimebox("setValue","");
+ 	$("#endDate").datetimebox("setValue","");
+ 	$("#wholeSellOdd").textbox("setValue","");
+ 	searchData();
+}
+</script>
+</html>

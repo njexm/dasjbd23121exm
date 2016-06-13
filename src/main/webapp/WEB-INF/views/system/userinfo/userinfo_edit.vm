@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	
+<script type="text/javascript">
+$(function(){ 
+	initArea('province');
+	initSelectCode('gender','sexType');
+	selectArea('$!{zcUserInfo.zcZoning.province}','city','county');
+	selectArea('$!{zcUserInfo.zcZoning.city}','county','county');
+	$("#province option[value='$!{zcUserInfo.zcZoning.province}']").attr("selected", true);
+	$("#city option[value='$!{zcUserInfo.zcZoning.city}']").attr("selected", true);
+	$("#county option[value='$!{zcUserInfo.zcZoning.county}']").attr("selected", true);
+	$("#sexType option[value='$!{zcUserInfo.sexType}']").attr("selected", true);
+	$("#branch_name option[value='$!{zc_branch_total.branch_name}']").attr("selected", true);
+});
+</script>
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form method="" id="baseForm">
+			<input type="hidden" name="zcUserInfo.id" id="id" value="$!{zcUserInfo.id}"/>
+			<input type="hidden" name="zcUserInfo.createtime" id="createtime" value="$!{zcUserInfo.createtime}"/>
+			<input type="hidden" name="zcUserInfo.zcZoning.id" id="id" value="$!{zcUserInfo.zcZoning.id}"/>
+			<input type="hidden" name="zcUserInfo.ctpUser.id" id="id" value="$!{zcUserInfo.ctpUser.id}"/>
+            <div class="cell">
+        		<table width="100%">
+    				<tr>
+    					<th>
+    						用户名：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="userName" name="zcUserInfo.ctpUser.name" type="text" class="easyui-textbox" reg="Require" tip="请填写用户名" value="$!{zcUserInfo.ctpUser.name}" maxlength="50" readonly />
+                        </td>
+						<th>
+    						真实姓名：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="trueName" name="zcUserInfo.userName" type="text" class="easyui-textbox" reg="Require" tip="请填写真实姓名" value="$!{zcUserInfo.userName}" maxlength="50"/>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						手机：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="mobilephone" name="zcUserInfo.mobilePhone" type="text" class="easyui-textbox" reg="MobileOrPhone" tip="请填写正确格式的手机号码" value="$!{zcUserInfo.mobilePhone}" maxlength="13"/>
+                        </td>
+						<th>
+    						性别：
+                        </th>
+    					<td >
+    						
+    						<select  id="sexType" name="zcUserInfo.sexType">
+                            </select>
+                           
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						邮箱：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="mail" name="zcUserInfo.email" type="text" class="easyui-textbox" reg="NullOrEmail" tip="请填写正确格式的邮箱" value="$!{zcUserInfo.email}" maxlength="50"/>
+                        </td>
+						<th>
+    						邮编：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="zipCode" name="zcUserInfo.zipCode" type="text" class="easyui-textbox" reg="NullOrZip" tip="请填写正确格式的邮编" value="$!{zcUserInfo.zipCode}" maxlength="10"/>
+                        </td>
+    				</tr>
+					<tr>					
+						<th>
+    						地址：
+                        </th>
+    					<td style="width:85%;" colspan="4">
+    						<select name="zcUserInfo.zcZoning.province" id="province" onchange="selectArea(this.value,'city','county')" style="width: 21%; height: 25px; vertical-align: middle;">
+								<option	value="">--请选择--</option>
+							</select> 
+							<select name="zcUserInfo.zcZoning.city" id="city" onchange="selectArea(this.value,'county','county')" style="width: 21%; height: 25px; vertical-align: middle;">
+								<option value="">--请选择--</option>
+							</select> 
+							<select name="zcUserInfo.zcZoning.county" id="county" style="width: 21%; height: 25px; vertical-align: middle;">
+								<option value="">--请选择--</option>
+							</select> 
+							<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="street" name="zcUserInfo.zcZoning.street" type="text" class="easyui-textbox" value="$!{zcUserInfo.zcZoning.street}"/>
+                        </td>
+    				</tr>
+    				<tr>
+    					<th>
+    						显示分店：
+                        </th>
+                        <td>
+    						<input id="checkbox" name="checkbox" type="checkbox" value="checkbox" onclick="branch()" />
+                        </td>
+    					<th>
+                            <div class="chooseBranch_1">所属分店：</div>
+                        </th>
+                        <td>
+    						<div class="chooseBranch_2">
+								<input id="branch_name" class="branch_name" name="zcUserInfo.branch_name.id" type="text" value="$!{zcUserInfo.branch_name.id}" />
+							</div>
+                        </td>
+    				</tr>
+                </table>
+				<input id="checkboxchoose" class="checkboxchoose"  type="hidden" value="$!{zcUserInfo.branch_name.id}" />
+    		</div>
+            <div style="height:100%;">
+    			<table width="100%" height="100">				
+    				<tr align="center" >
+    					<td align="center" >
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="editUserInfo('baseForm')">修改</a>
+                        </td>
+    					<td align="center" >
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+                        </td>
+                    </tr>
+                </table>
+    		</div>
+        </form>
+    </div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/system/userInfo.js"></script>
+<script type="text/javascript">
+
+
+$(".chooseBranch_1").hide();
+$(".chooseBranch_2").hide();
+
+
+
+if($(".checkboxchoose").val()==""){}else{
+	$("#checkbox").attr("checked",'true');
+}
+branch();
+function branch(){
+	if(document.getElementById("checkbox").checked){
+		$(".chooseBranch_1").show(); 
+		$(".chooseBranch_2").show();
+		$('#branch_name').combobox({
+			method:'POST',
+        	url:'${rc.contextPath}/userInfo/selectBranchListJson?type='+2,
+        	valueField:'ID',
+        	textField:'BRANCH_NAME'
+		});
+		$(".chooseBranch_2 .combo").show();
+
+	}else{
+		$(".chooseBranch_1").hide();
+		$(".chooseBranch_2 .combo").hide();
+	}
+}
+
+
+</script>
+</html>

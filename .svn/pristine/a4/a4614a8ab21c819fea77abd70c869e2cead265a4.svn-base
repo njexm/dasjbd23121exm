@@ -1,0 +1,11 @@
+
+// 清空查询条件
+function openDispatchingItem(id){
+	var rows = $('#dg').datagrid('getSelections');
+	var id=rows[0].ID;	
+	
+	var url = Utils.getRootPath() + '/dispatching/dispatchings/openDispatchingItem?id=' + id;
+	
+	add(url, '要货单详情', 1000, 550);
+	
+}

@@ -1,0 +1,19 @@
+<div>
+
+	<input type="button" value="保存" onclick="saveCustomer()"/>
+
+</div>
+<script type="text/javascript">
+	function saveCustomer(){
+		 jQuery.ajax({
+            url:'${rc.contextPath}/order/customer/save',
+            data:{},
+            type:'post',
+            dataType:'json',
+            success:function(result){
+                 console.log(result);
+            }
+             
+        })
+	}
+</script>

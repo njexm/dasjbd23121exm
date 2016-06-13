@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/associator/associator.js"></script>
+<script type="text/javascript">
+$(function(){ 
+	initArea('province');
+	$("#associator_Certificate option[value='$!{Associator.associator_Certificate}']").attr("selected", true);
+	$("#associator_Sex option[value='$!{Associator.associator_Sex}']").attr("selected", true);
+	$("#associator_MaritalStatus option[value='$!{Associator.associator_MaritalStatus}']").attr("selected", true);
+	$("#associator_State option[value='$!{Associator.associator_State}']").attr("selected", true);
+});
+</script>
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form method="" id="baseForm">
+			<input type="hidden" name="associator.id" id="id" value="$!{Associator.id}"/>
+            <div class="cell">
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr style="font-size:150%"><strong>会员基本信息</strong></tr>
+    					<tr>
+							<th style="width: 8%;"><span style="color: red;">*</span>证件选择：</th>
+    						<td style="width: 12%;">
+    							<select  id="associator_Certificate" name="associator.associator_Certificate" value="$!{Associator.associator_Certificate}" reg="Require" tip="请选择证件">
+    							<option	value="">--请选择--</option>
+								<option	value="1">身份证</option>
+								<option	value="2">军官证</option>
+								<option	value="3">驾照</option>
+								<option	value="4">护照</option>
+								<option	value="5">学生证</option>
+								<option	value="6">其他</option>
+								</select>
+    						</td>
+							<th style="width: 8%;"><span style="color: red;">*</span>证件号码：</th>
+    						<td style="width: 12%;">
+    							<input name="associator_CertificateNumber" value="$!{Associator.associator_CertificateNumber}" id="associator_CertificateNumber"  class="easyui-textbox"  style="width:100px;" reg="Require" tip="请填写证件号码"/>
+    						</td>
+							<th style="width: 8%;"><span style="color: red;">*</span>性别：</th>
+    						<td style="width: 12%;">
+    							<select  id="associator_Sex" name="associator.associator_Sex" value="$!{Associator.associator_Sex}" reg="Require" tip="请选择性别">
+    							<option	value="">--请选择--</option>
+								<option	value="1">男</option>
+								<option	value="2">女</option>
+                            	</select>
+    						</td>
+							<th style="width: 8%;">婚姻状况：</th>
+    						<td style="width: 12%;">
+    							<select  id="associator_MaritalStatus" name="associator.associator_MaritalStatus" value="$!{Associator.associator_MaritalStatus}"  reg="">
+    							<option	value="">--请选择--</option>
+								<option	value="1">未婚</option>
+								<option	value="2">已婚</option>
+                            	</select>
+    						</td>
+						</tr>
+    					<tr>
+							<th style="width: 8%;">生日：</th>
+    						<td style="width: 12%;">
+    							<input onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="$!{Associator.associator_Birthday}" id="associator_Birthday" name="associator_Birthday" style="width:100px;" reg="" tip="请填写生日"/>
+    						</td>
+							<th style="width: 8%;">年龄：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Age}" name="associator_Age" id="associator_Age"  class="easyui-textbox"  style="width:100px;" reg="" tip="请填写年龄"/>
+    						</td>
+							<th style="width: 8%;">民族：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Ethnic}" id="associator_Ethnic" name="associator_Ethnic" style="width:100px;" reg="" tip="请填写民族"/>
+    						</td>
+							<th style="width: 8%;">电话：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Telephone}" name="associator_Telephone" id="associator_Telephone"  class="easyui-textbox"  style="width:100px;"  reg="NullOrMobileOrPhone" tip="请填写电话"/>
+    						</td>
+						</tr>
+    					<tr>
+							<th style="width: 8%;"><span style="color: red;">*</span>手机：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Mobilephone}" id="associator_Mobilephone" name="associator_Mobilephone" style="width:100px;" reg="MobileOrPhone" tip="请填写手机"/>
+    						</td>
+							<th style="width: 8%;"><span style="color: red;">*</span>邮箱：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Email}" name="associator_Email" id="associator_Email"  class="easyui-textbox" style="width:100px;" reg="Email" tip="请填写邮箱"/>
+    						</td>
+							<th style="width: 8%;">文化程度：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_DegreeOfEducation}" id="associator_DegreeOfEducation" name="associator_DegreeOfEducation" style="width:100px;" reg="" tip="请填写文化程度"/>
+    						</td>
+							<th style="width: 8%;"><span style="color: red;">*</span>邮编：</th>
+    						<td style="width: 12%;" colspan="4">
+    							<input value="$!{Associator.associator_Zipcode}" id="associator_Zipcode" name="associator_Zipcode" style="width:100px;" reg="Zip" tip="请填写邮编"/>
+    						</td>
+                        </tr>
+				   </table>
+                   <table>
+						<tr>
+							<th style="width: 8%;">地址：</th>
+    						<td style="width: 52%;">
+    							<input value="$!{Associator.associator_Address}" name="associator_Address" id="associator_BackupAddress"  class="easyui-textbox"  style="width:55%;" tip="请填写地址" readonly/>
+    						</td>
+    						<th style="width: 8%;"></th>
+    						<td style="width: 12%;"></td>
+    					</tr>
+					</table>
+    				<table border="0" cellpadding="0" cellspacing="0">
+						<tr style="font-size:150%"><strong>会员卡基本信息</strong></tr>
+    					<tr>
+    						<th style="width: 8%;">会员卡号：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_CardNumber}" id="associator_CardNumber" name="associator_CardNumber" class="easyui-textbox"  style="width:100px;" reg="" tip="请填写会员卡号"/>
+    						</td>
+							<th style="width: 8%;">会员姓名：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Name}" name="associator_Name" id="associator_Name"  class="easyui-textbox"  style="width:100px;" reg="" tip="请填写会员姓名"/>
+    						</td>
+							<th style="width: 8%;">会员类别：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Category}" id="associator_Category" name="associator_Category" style="width:100px;" reg="" tip="请填写会员类别"/>
+    						</td>
+							<th style="width: 8%;">登记门店：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_RegisterStore}" name="associator_RegisterStore" id="associator_RegisterStore"  class="easyui-textbox" reg=""  style="width:100px;"tip="请填写登记门店"/>
+    						</td>
+						</tr>
+    					<tr>
+							<th style="width: 8%;">业务员：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Salesman}" id="associator_Salesman" name="associator_Salesman" style="width:100px;" reg="" tip="请填写业务员"/>
+    						</td>
+							<th style="width: 8%;">发卡人：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Issuers}" name="associator_Issuers" id="associator_Issuers"  class="easyui-textbox"  style="width:100px;" reg="" tip="请填写发卡人"/>
+    						</td>
+							<th style="width: 8%;">发卡日期：</th>
+    						<td style="width: 12%;">
+    							<input onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="$!{Associator.associator_IssuingDate}" id="associator_IssuingDate" name="associator_IssuingDate" style="width:100px;" reg="" tip="请填写发卡日期"/>
+    						</td>
+							<th style="width: 8%;">累计积分：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_AccumulatedCredit}" name="associator_AccumulatedCredit" id="associator_AccumulatedCredit"  class="easyui-textbox"  style="width:100px;" reg="" tip="请填写累计积分"/>
+    						</td>
+                        </tr>
+						<tr>
+							<th style="width: 8%;">已用积分：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_UsedCredit}" id="associator_UsedCredit" name="associator_UsedCredit" style="width:100px;" reg="" tip="请填写已用积分"/>
+    						</td>
+							<th style="width: 8%;">剩余积分：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Credit}" name="associator_Credit" id="associator_Credit"  class="easyui-textbox"  style="width:100px;" reg="" tip="请填写剩余积分"/>
+    						</td>
+							<th style="width: 8%;">充值总额：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_DepositAmount}" id="associator_DepositAmount" name="associator_DepositAmount" style="width:100px;" reg="" tip="请填写充值总额"/>
+    						</td>
+							<th style="width: 8%;">余额：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Amount}" name="associator_Amount" id="associator_Amount"  class="easyui-textbox"  style="width:100px; reg=""" tip="请填写余额"/>
+    						</td>
+                        </tr>
+						<tr>
+							<th style="width: 8%;">消费金额：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_ConsumeAmount}" id="associator_ConsumeAmount" name="associator_ConsumeAmount" style="width:100px;" reg="" tip="请填写消费金额"/>
+    						</td>
+							<th style="width: 8%;">消费次数：</th>
+    						<td style="width: 12%;">
+    							<input value="$!{Associator.associator_Consumefrequency}" name="associator_Consumefrequency" id="associator_Consumefrequency"  class="easyui-textbox"  style="width:100px;" reg="" tip="请填写消费次数"/>
+    						</td>
+							<th style="width: 8%;">卡状态：</th>
+    						<td style="width: 12%;">
+    							<select  value="$!{Associator.associator_State}" id="associator_State" name="associator.associator_State" reg="">
+    							<option	value="">--请选择--</option>
+								<option	value="1">正常</option>
+								<option	value="2">异常</option>
+                            	</select>
+    						</td>
+                        </tr>
+						<tr>
+							<th style="width: 8%;">积分有效期：</th>
+    						<td style="width: 8%;">
+    							<input  onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="$!{Associator.associator_CreditStartDate}" name="associator_CreditStartDate" id="associator_CreditStartDate"  style="width:100px;" reg="" tip="请填写积分有效期"/>
+    						</td>
+							<th style="width: 1%;">至：</th>
+    						<td style="width: 8%;">
+    							<input onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="$!{Associator.associator_CreditValidityDate}" name="associator_CreditValidityDate" id="associator_CreditValidityDate"   style="width:100px;" reg="" tip="请填写积分有效期"/>
+    						</td>
+							<th style="width: 8%;">余额有效期：</th>
+    						<td style="width: 8%;">
+    							<input onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="$!{Associator.associator_AmountStartDate}" id="associator_AmountStartDate" name="associator_AmountStartDate" style="width:100px;" reg="" tip="请填写余额有效期"/>
+    						</td>
+							<th style="width: 1%;">至：</th>
+    						<td style="width: 8%;">
+    							<input onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})" value="$!{Associator.associator_AmountValidityDate}" id="associator_AmountValidityDate" name="associator_AmountValidityDate" style="width:100px;" reg="" tip="请填写余额有效期"/>
+    						</td>
+    					</tr>
+					</table>
+    		</div>
+			<div class="box_03">
+           		<div class="box_inner_03">
+           			<div class="btn_area_setl btn_area_bg">
+						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="editBaseInfo('baseForm')">保存</a>
+						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+           			</div>
+           		</div>
+       		</div>
+        </form>
+    </div>
+</body>
+</html>

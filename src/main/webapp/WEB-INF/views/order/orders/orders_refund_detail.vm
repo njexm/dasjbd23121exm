@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<input type="hidden" name="zcOrderRefund.id" id="id" value="$!{zcOrderRefund.id}"/>
+    		<input type="hidden" name="orderId" id="orderId" value="$!{orderId}"/>
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    				<tr>
+    					<th>订单编号：</th>
+    					<td style="text-decoration:underline">$!{zcOrder.id}</td>
+    					<th>订单时间：</th>
+    					<td style="text-decoration:underline">$!{zcOrder.orderDate}</td>  
+    					<th>订单状态：</th>
+    					<td id="orderStatus" style="text-decoration:underline">
+    					</td> 				
+    				</tr>
+    				<tr>
+    					<th>订单来源：</th>
+    					<td id="orderCome" style="text-decoration:underline">$!{zcOrder.orderCome}</td>
+    					<th>订单金额：</th>
+    					<td style="text-decoration:underline" id="money"></td>  
+    					<th id="orderAmount">退款金额：</th>
+    					<td style="text-decoration:underline" id="refundMoney"></td> 				
+    				</tr>
+    				<tr>
+    					<th>会员卡号：</th>
+    					<td style="text-decoration:underline">$!{zcOrder.memberCardNumber}</td>
+    					<th>收货人：</th>
+    					<td style="text-decoration:underline">$!{zcOrder.consignee}</td>  
+    					<th>收货电话：</th>
+    					<td style="text-decoration:underline">$!{zcOrder.cansignPhone}</td> 				
+    				</tr>
+    				<tr>
+    					<th>收货地址：</th>
+    					<td style="text-decoration:underline">$!{zcOrder.zcZoning.street}</td>
+    				</tr>    				     				   	          
+    	       	</table>
+    		</div>
+        </form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/provider/providerinfo.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/orders/orders.js"></script>
+<script type="text/javascript">	
+	$(function(){
+		var status='$!{zcOrderRefund.order_refund_status}';
+		if (status == '1') {
+			$('#orderStatus').text('退款中');
+		} else if (status == '2') {
+			$('#orderStatus').text('已通过');
+		} else if (status == '3') {
+			$('#orderStatus').text('未通过');
+		} else {
+			$('#orderStatus').text('未知');
+		}
+		
+		var orderCome='$!{zcOrder.orderCome}';
+		if(orderCome==0)
+					{
+						$('#orderCome').text('未知');
+					}else if(orderCome==1)
+					{
+						$('#orderCome').text('宜鲜美平台订单');
+					}else if(orderCome==2)
+					{
+						$('#orderCome').text('个人负责订单');
+					}else if(orderCome==3)
+					{
+						$('#orderCome').text('天猫平台订单');
+					}else if(orderCome==4)
+					{
+						$('#orderCome').text('京东平台订单');
+					}else if(orderCome==5)
+					{
+						$('#orderCome').text('微信');
+					}else if(orderCome==6)
+					{
+						$('#orderCome').text('APP自有平台');
+					}else 
+					{
+						$('#orderCome').text('其他');
+					}	
+	
+		var price = '$!{zcOrderRefund.order_amount}';//订单金额
+		var nums='$!{zcOrderRefund.actual_amount}';//退款金额
+		var roundDigit = accuracy();
+		var num =new Number(roundDigit);
+		var money = new Number(price);
+		var newnum=new Number(nums);
+		$('#money').text(money.toFixed(num));
+		$('#refundMoney').text(newnum.toFixed(num));
+		
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		showFooter: true,
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/order/orders/listRefundItemJson?time="+new Date(), //数据来源
+		queryParams:{
+			'zcOrderRefund.id':$('#id').val(),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框*/
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'11%',sortable:true,sortable:true,align:'left'},
+			{field:'GOODS_NAME',title:'商品名',width:'33%',sortable:true,sortable:true,align:'left'},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'7%',sortable:true,sortable:true,formatter:formatterGuige},
+			{field:'GOODS_UNIT',title:'单位',width:'5%',sortable:true,sortable:true,align:'left'},
+			{field:'REFUND_NUMS',title:'退货数量',width:'7%',sortable:true,sortable:true,align:'right',formatter:formatterNumber},
+			{field:'PRICE',title:'单价',width:'10%',sortable:true,sortable:true,align:'right',formatter:formatterNumber},
+			{field:'REFUND_AMOUNT',title:'金额',width:'10%',sortable:true,sortable:true,align:'right',formatter:formatterNumber},
+			{field:'REFUND_REASON',title:'退货原因',width:'15%',sortable:true,sortable:true,align:'left'}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+</script>
+</html>

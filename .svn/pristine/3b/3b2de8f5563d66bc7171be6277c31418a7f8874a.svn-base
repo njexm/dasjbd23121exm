@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/settlement/taxManager.js"></script>
+<script type="text/javascript">
+$(function(){ 
+	initArea('province');
+});
+</script>
+</head>
+<body>
+	<div style="width: 99%;" id="baseinfo">
+	<form id="baseForm" method="post">
+        <table>
+			
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+		<div  class="tt" id="editMsg">
+			<span style="font-weight: top;float: left;">发票代码：&nbsp;</span>
+			<span style="font-weight: top;float: right;">开票日期：&nbsp;</span>
+		</div>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 15%;height: 50px;" class="td">
+					承运人及<br/>纳税人识别号
+				</td>
+				<td style="width: 35%;height: 50px;" class="td" id="cyr">
+					惠龙易通国际物流股份有限公司</br>321100661790118
+				</td>
+				<td style="width: 3%;height: 50px;" class="td" rowspan="2">
+					密码区
+				</td>
+				<td style="width: 47%;height: 50px;" class="td" rowspan="2">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 15%;height: 50px;" class="td">
+					实际受票方及<br/>纳税人识别号
+				</td>
+				<td style="width: 35%;height: 50px;color: blue;" class="td" id="spf">
+					</br>
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 15%;height: 50px;" class="td">
+					收货人及<br/>纳税人识别号
+				</td>
+				<td style="width: 35%;height: 50px;color: blue;" class="td" id="shr">
+					</br>
+				</td>
+				<td style="width: 15%;height: 50px;" class="td">
+					发货人及<br/>纳税人识别号
+				</td>
+				<td style="width: 35%;height: 50px;color: blue;" class="td" id="fhr">
+				</br>
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 20%;height: 20px;" class="td">
+					起运地、经由、到达地
+				</td>
+				<td style="width: 80%;height: 20px;color: blue;" class="td" id="qydd">
+					 - 
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 3%;height: 100px;line-height: 13px;" class="td">
+					费用项目及金额
+				</td>
+				<td style="width: 67%;height: 100px;" class="td">
+					<table width="50%">
+						<tr>
+							<td width="50%">费用项目</td>
+							<td width="50%">金额</td>
+						</tr>
+						<tr>
+							<td width="50%" style="color: blue;" id="fyxm">
+								
+							</td>
+							<td width="50%" style="color: blue;" id="je1">
+								
+							</td>
+						</tr>
+						<tr>
+							<td width="50%" style="color: blue;" id="zjyf">
+								
+							</td>
+							<td width="50%" style="color: blue;" id="je2">
+								
+							</td>
+						</tr>
+						<tr>
+							<td width="50%" style="color: blue;" id="bsyf">
+								
+							</td>
+							<td width="50%" style="color: blue;" id="je3">
+								
+							</td>
+						</tr>
+					</table>
+				</td>
+				<td style="width: 3%;height: 100px;line-height: 13px;" class="td">
+					运输货物信息
+				</td>
+				<td style="width: 27%;height: 100px;" class="td">
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 10%;height: 20px;" class="td">
+					合计金额
+				</td>
+				<td style="width: 25%;height: 20px;" class="td" id="hjje">
+					￥
+				</td>
+				<td style="width: 5%;height: 20px;" class="td">
+					税率
+				</td>
+				<td style="width: 5%;height: 20px;" class="td" id="sl">
+					%
+				</td>
+				<td style="width: 5%;height: 20px;" class="td">
+					税额
+				</td>
+				<td style="width: 22%;height: 20px;" class="td" id="se">
+					￥
+				</td>
+				<td style="width: 10%;height: 20px;" class="td">
+					机器编号
+				</td>
+				<td style="width: 18%;height: 20px;" class="td" id="jqbh">
+					&nbsp;
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 15%;height: 20px;" class="td">
+					价税合计（大写）	
+				</td>
+				<td style="width: 85%;height: 20px;" class="td">
+					<span id="jshjb" style="width: 30%;left: 0px;"></span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+					<span style="width: 30%;">（小写）</span>
+					&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;￥
+					<span id="jshjs" style="width: 30%;"></span>
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 10%;height: 20px;" class="td">
+					车种车号
+				</td>
+				<td style="width: 20%;height: 20px;color: blue;" colspan="2" class="td" id="czch">
+					
+				</td>
+				<td style="width: 10%;height: 20px;" class="td">
+					车船吨位
+				</td>
+				<td style="width: 5%;height: 20px;color: blue;" class="td" id="ccdw">
+					
+				</td>
+				<td style="width: 3%;height: 20px;" rowspan="2" class="td">
+					备注
+				</td>
+				<td style="width: 47%;height: 20px;color: blue;" rowspan="2" class="td" id="bz">
+					&nbsp;
+				</td>
+			</tr>
+			<tr>
+				<td style="width: 15%;height: 40px;" colspan="2" class="td">
+					主管税务机关<br/>及代码
+				</td>
+				<td style="width: 35%;height: 40px;" colspan="3" class="td" id="swjg">
+				镇江市国税局国际税务管理处</br>132110700
+				</td>
+			</tr>
+		</table>
+		<table style="width: 98%;margin-left: 8px;" cellspacing="0">
+			<tr>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+					收款人：
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+					
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+					复核人：
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+					
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+					开票人：
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;" id="kpr">
+					
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+					承运人:（章）
+				</td>
+				<td style="width: 12%;height: 20px;text-align: center;font-weight: bolder;">
+				</td>
+			</tr>
+		</table>
+	</form>
+	</div>
+</body>
+	

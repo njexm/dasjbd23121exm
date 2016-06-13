@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <title>众彩物流订单管理系统</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	
+    <!-- BOOT STRAP  -->
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/font-awesome.min.css" />
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/ace-fonts.css" />
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/ace.min.css" />
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/ace-rtl.min.css" />
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/ace.onpage-help.css" />
+    <link rel="stylesheet" href="${rc.contextPath}/resources/assets/css/ace-skins.min.css" />
+	<link rel="stylesheet" href="${rc.contextPath}/resources/css/signin.css" />
+    <!--link rel="stylesheet" href="${rc.contextPath}/resources/docs/assets/js/themes/sunburst.css" /-->
+    
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/ace-extra.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/jquery-ui.custom.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/jquery.ui.touch-punch.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/jquery.easypiechart.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/jquery.sparkline.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/flot/jquery.flot.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/flot/jquery.flot.pie.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/flot/jquery.flot.resize.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/ace-elements.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/ace.min.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/ace/elements.onpage-help.js"></script>
+    <script type="text/javascript" src="${rc.contextPath}/resources/assets/js/ace/ace.onpage-help.js"></script>
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/system/login.js"></script>
+    </script>
+  </head>
+
+  <body>
+    <div class="top">
+		<img src="${rc.contextPath}/resources/image/logo.png" width="250px" height="68px"/>
+		<p style="position:absolute;top:10%;left:37%;font-size: 35px;color:#007cc2;">众彩物流订单管理系统</p>
+	</div>
+
+    <div class="container">
+	  <div class="login-form" id="logindiv">
+          <form class="form-signin" method="post" id="loginForm" name="loginForm">
+            <label for="inputUsername" class="sr-only">用户名</label>
+            <input type="text" id="inputUsername" class="form-control" placeholder="请输入用户名" required autofocus  name="name">
+            <label for="inputPassword" class="sr-only">密码</label>
+            <input type="password" id="inputPassword" class="form-control" placeholder="请输入密码" required  name="password">
+            <div class="checkbox">
+              <label>
+                <input type="checkbox" value="remember-me" name="checked" id="checked" checked > 记住我
+              </label>
+            </div>
+            <button class="btn btn-lg btn-primary btn-block" type="button" id="loginBtn"  onclick="exm.login('${rc.contextPath}');" style="width:60%;margin: 0 auto;">登录</button>
+          </form>
+	  </div>
+
+    </div> 
+	
+	<div class="foot">
+			<div class="footLog" align="center">
+				©2015 南京宜鲜美配送有限公司     技术支持：江苏鸿信系统集成有限公司
+				<a href="javascript:void(0)" style="margin-left:10px;" onclick="add('${rc.contextPath}/login/updateLog','更新日志',800,800)">更新日志</a>
+			</div>
+		</div>
+  </body>
+    #parse(${init_path})
+  <script type="text/javascript">
+  	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			exm.login('${rc.contextPath}');
+		}
+	};
+	
+//添加
+	function add(url,title,x,y)
+{
+  window.parent.initAdd(url,title,x,y);
+}
+
+  </script>
+</html>

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="purchaseId" id="purchaseId" value="$!{purchaseOrder.id}"/>
+    			<table width="100%" style="table-layout: fixed;">
+					<tr>
+						<th style="width:11%">采购单号：</th>
+						<td style="width:22%">
+							<input type="hidden" name="purchaseOrder.odd" id="odd" value="$!{purchaseOrder.odd}"/>
+							$!{purchaseOrder.odd}
+                        </td>
+						<th style="width:11%">创建日期：</th>
+						<td style="width:22%">
+							<input type="hidden" name="purchaseOrder.createTime" id="createTime" value="$!{purchaseOrder.createTime}"/>
+							$!{purchaseOrder.createTime}
+                        </td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							<input type="hidden" name="purchaseOrder.purchaseMan" id="purchaseMan" value="$!{purchaseOrder.purchaseMan}"/>
+							$!{purchaseOrder.purchaseMan}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">订单金额：</th>
+						<td style="width:22%" id="money1">
+							<input type="hidden" name="purchaseOrder.money" id="money" value="$!{purchaseOrder.money}"/>
+                        </td>
+						<th style="width:11%">订单状态：</th>
+						<td style="width:22%" id="auditStatus">
+							<input type="hidden" name="purchaseOrder.state" id="state" value="$!{purchaseOrder.state}"/>
+                        </td>
+						<th style="width:11%">审核人：</th>
+						<td style="width:22%">
+							<input type="hidden" name="purchaseOrder.checkMan" id="checkMan" value="$!{purchaseOrder.checkMan}"/>
+							$!{purchaseOrder.checkMan}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">供应商：</th>
+						<td style="width:22%">
+							<input  id="provider" name="purchaseOrder.providerInfo.id" value="$!{purchaseOrder.providerInfo.id}"type="text"/>
+							##$!{purchaseOrder.providerInfo.nickname}
+                        </td>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							<input type="hidden" name="purchaseOrder.checkDate" id="checkDate" value="$!{purchaseOrder.checkDate}"/>
+							$!{purchaseOrder.checkDate}
+                        </td>
+						<th style="width:11%">备注：</th>
+						<td colspan="2">
+							<input type="text" name="purchaseOrder.remark" id="remark" value="$!{purchaseOrder.remark}" class="easyui-textbox"/>
+							##$!{purchaseOrder.remark}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">采购仓库：</th>
+						<td style="width:22%">
+							<input id="branch" name="purchaseOrder.branch.id" value="$!{purchaseOrder.branch.id}" type="text"/>
+							##$!{purchaseOrder.branch.branch_name}
+                        </td>
+						<th style="width:11%">原因：</th>
+						<td style="width:22%">
+							<input type="text" name="purchaseOrder.reason" id="reason" value="$!{purchaseOrder.reason}" class="easyui-textbox" readonly />
+                        </td>
+					</tr>
+				</table>
+				##<table border="0" cellpadding="0" cellspacing="0">
+    	           ##<tr>
+    	           	## <td width="20%" align="left" >
+						##货号：
+						##<input id="serialNumber" name="purchaseOrderGoodsItems.serialNumber" type="text" class="easyui-textbox"/>
+						##<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()" plain="true">查询</a>
+					## </td>
+				  ## </tr>
+    	       	##</table>
+			   <tr>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="saveAndCommit('searchForm')" plain="true">保存</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="submitCheck('searchForm')" plain="true">提交</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChooseGoods()" plain="true">选择商品</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="removeGoods()" plain="true">移除</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="openBatch()" plain="true">导入</a>
+					##<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="exportExcel('$!{purchaseOrder.odd}','$!{purchaseOrder.providerInfo.nickname}','$!{purchaseOrder.branch.branch_name}','$!{purchaseOrder.id}')" plain="true">导出</a>
+					##<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="exportExcel('$!{purchaseOrder.odd}','$!{purchaseOrder.id}')" plain="true">导出</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="exportBatch()" plain="true">导出</a>
+			   </tr>
+    		</div>
+        </form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:900px;height:400px;">
+</div>
+<div id="showWinBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch" id="myBatch" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th style="text-align: right;">请选择导入文件</th>
+				<td  colspan="3">
+					<input type="file" name="sourceBrocastBatch" id="sourceBrocastBatch" class="text_input" style="width: 270px;height: 22px"/>
+				</td>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="batchImport('$!{purchaseOrder.id}')">导入</a>
+			</div>
+		</form>
+	</div>
+</div>
+<div id="showexportBatch" class="easyui-window" style="width: 450px;height: 150px">
+	<div>
+		<form action="" name="myBatch1" id="myBatch1" method="post" enctype="multipart/form-data">
+			<table  id="" >
+			<tr id="fzdId">
+				<th style="text-align: right;">点击导出按钮(导出文件为EXCEL文件)</th>
+			</tr>
+			</table>
+			<div style="padding-top: 10px;text-align: center;">
+				<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" id="importBtn" onclick="exportExcel('$!{purchaseOrder.odd}','$!{purchaseOrder.id}')">导出</a>
+			</div>
+		</form>
+	</div>
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseOrder/purchaseOrder.js"></script>
+<script type="text/javascript">
+$(function(){ 	
+	$('#showWinBatch').window('close');
+	$('#showexportBatch').window('close');
+	$('#selectOptions').window('close');
+
+	var status='$!{purchaseOrder.state}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#auditStatus').text(newstatus);
+	
+	var price = '$!{purchaseOrder.money}';
+	var roundDigit = accuracy();
+	var num =new Number(roundDigit);
+	var money = new Number(price);
+	$('#money1').text(money.toFixed(num));
+});
+	$(function(){
+	//去除回车键
+		document.onkeydown=function(evt){
+			if(evt.keyCode ==13){
+				searchData();
+			}
+	};
+	
+	var winHeight = $(window).height();
+	var lastIndex;
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchase/purchaseOrder/listPurchaseOrderGoodsItemsJson?time="+new Date(), //数据来源
+		queryParams:{
+			//'purchaseOrderGoodsItems.serialNumber':$('#serialNumber').val(),
+			'purchaseOrderGoodsItems.purchaseId':$('#purchaseId').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'13%',align:'left'},
+			{field:'GOODSNAME',title:'商品名',width:'38%',align:'left'},
+			{field:'STOCK',title:'系统库存',width:'7%',align:'right',formatter:function(value,res){
+				if(value=='' || value=='undefined' || value==null){
+					return '0.00';
+				}else{
+					return value;
+				}
+			}},
+			{field:'ACTUALNEED',title:'实际采购数量',width:'9%',align:'right',editor:{type:'numberbox',options:{precision:2}},formatter:formatterNumber},
+			{field:'GOODSPRICE',title:'单价',width:'7%',align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			
+			{field:'MINIMONEY',title:'小计金额',width:'8%',align:'right',formatter:function(value,res){
+				return formatterNumber(res.GOODSPRICE*res.ACTUALNEED);
+			}},
+			{field:'UNIT',title:'单位',width:'7%',align:'left'},
+			{field:'SPECIFICATIONS',title:'规格',width:'7%',formatter:showGoods,align:'left'},
+			{field:'ORDERNUM',title:'份数',width:'5%',hidden:true,formatter:formatterNumber},
+			{field:'ACTUALNUMS',title:'数量',width:'5%',align:'right',hidden:true,formatter:actualNum1},
+			{field:'PRODUCEDATE',title:'生产日期',width:'12%',sortable:true,hidden:true,sortable:true,editor:{type:'datebox'}},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+    		for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);
+    		}
+		}
+	});
+	
+});
+
+//批量导入
+function openBatch(){
+	document.myBatch.reset();
+	$('#showWinBatch').window({  
+		title:'批量导入',
+   		closable: true,
+		modal: false,
+		draggable:false
+	});
+	$("#showWinBatch").window('open');
+}
+//批量导出
+function exportBatch(){
+	document.myBatch1.reset();
+	$('#showexportBatch').window({  
+		title:'批量导出',
+   		closable: true,
+		modal: false,
+		draggable:false
+	});
+	$("#showexportBatch").window('open');
+}
+
+function searchData(){
+	var queryParams = {
+		//'purchaseOrderGoodsItems.serialNumber':$('#serialNumber').val(),
+		'purchaseOrderGoodsItems.purchaseId':$('#purchaseId').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+$('#provider').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/provider/poviderinfo/listJson',
+    valueField:'ID',
+    textField:'PROVIDER_NICKNAME'
+});
+$('#branch').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+    valueField:'ID',
+    textField:'BRANCH_NAME'
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+</script>
+</html>

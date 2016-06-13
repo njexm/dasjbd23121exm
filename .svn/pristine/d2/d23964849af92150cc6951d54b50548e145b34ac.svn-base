@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <link rel="stylesheet" type="text/css" href="css/easyui.css">
+	<link rel="stylesheet" type="text/css" href="css/demo.css">
+	<link rel="stylesheet" type="text/css" href="css/icon.css">
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript">
+	$(function(){
+		$('#selectOptions').window('close');
+		initSelectCode('pandianArea','checkType');
+	});
+		$('#branchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/branch/branchDo/selectListJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	
+	function changeType(obj)
+	{
+		if(obj.value=='0' || obj.value=='1' || obj.value=='')
+		{
+			//全场盘点或者单品盘点
+			$("#check_btn").attr('disabled','true');
+			$("#goods_classify").removeAttr("reg");
+			$("#goods_classify").removeAttr("tip");
+			
+		}
+		else if(obj.value=='2' || obj.value=='3')
+		{
+			$("#check_btn").removeAttr('disabled');
+				$("#goods_classify").attr("reg","Require");
+				if(obj.value=='2'){
+				$("#goods_classify").attr("tip","请选择商品类别");
+				}
+				if(obj.value=='3'){
+				$("#goods_classify").attr("tip","请选择商品品牌");
+				}
+			
+		}
+	}
+    </script>
+</head>
+<body>
+
+  <div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="registerform" id="baseForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <input type="hidden" name="zcCheckNumber.id" value="$!{checkNumber.id}" ></input>
+    				<tr>					
+						<th style="width: 15%;">盘点批号：</th>
+					 	<td style="width: 35%;"><input type="text" id="check_number" name="zcCheckNumber.check_number"  readonly class="easyui-textbox" style="width:100%;" value="$!{checkNumber.check_number}"/></td>						
+					</tr>
+					<tr >
+						<th width="15%"><span style="color: red;">*</span>盘点范围：</th>						
+						<td width="35%"><select  id="checkType" name="zcCheckNumber.checkType" onchange="changeType(this)" reg="Require" tip="请选择盘点范围" style="width:100%;">
+                        </select></td>
+						<th width="15%"><span style="color: red;">*</span>盘点仓库：</th>						
+						<td width="35%"><input type="text" id="branchId" name="zcCheckNumber.branch.id"  value="$!{checkNumber.branch.id}"  style="width:98%;"/></td>                   
+					</tr>
+					<tr >
+						<th width="15%">类别品牌：</th>						
+						<td width="35%" colspan="3"><input type="text" id="goods_classify" name="" readonly="true" style="width:90%;" value="$!{classifyName}"/>
+							<input type="hidden"  id="goods_classifyId" name="zcCheckNumber.goods_classify" readonly="true" style="width:90%;" value="$!{checkNumber.goods_classify}"/>
+							<input type="button"  id="check_btn" value="..." disabled="true"  onclick="openClassify()" style="width:8%;height:70%"/>
+						</td>
+                    </tr>
+					<tr >
+						<th width="15%">备注：</th>						
+						<td width="35%" colspan="3">
+							<textarea name="zcCheckNumber.remark" maxLength="250" rows="5" cols="20" style="width: 96%;"  placeholder="请填写备注" >$!{zcCheckNumber.remark}</textarea></td>
+                    </tr>					
+    	       	</table>
+    		</div>
+    	</form>
+    </div>
+	</table>
+	<div class="box_03">
+         <div class="box_inner_03">
+           	<div class="btn_area_setl btn_area_bg">
+           		<a href="#" onclick="" class="easyui-linkbutton" style="width:80px;">新增</a>
+       			<a href="#" onclick="window.parent.closeWinForm();" class="easyui-linkbutton" style="width:80px;">取消</a>
+           	</div>
+         </div>
+    </div>
+  </div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:700px;height:500px;">
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/warehouse.js/"></script>
+</html>

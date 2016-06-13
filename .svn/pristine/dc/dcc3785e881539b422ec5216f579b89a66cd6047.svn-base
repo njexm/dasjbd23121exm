@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+					<td style="width:100%" align="left">
+						货号：<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/>
+						商品名：<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_name" name="goodsFile.goods_name" type="text" class="easyui-textbox"/>
+						商品类别：<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="goods_classify" name="goodsFile.goods_class.id" optionValue="$!{CommodityClassify.classify_name}"/>
+						供应商：<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="providerId" name="goodsFile.provider.id" type="text" class="easyui-textbox"/>
+						开始日期：<input id="startTime" name="startTime" type="text" class="easyui-datetimebox"/>
+						结束日期：<input id="endTime" name="endTime" type="text" class="easyui-datetimebox"/>
+					 </td>
+                   </tr>
+				   <tr>
+					 <td align="center">
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+						<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm1()">清空</a>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+        </form>
+    </div>
+	<div>
+		<table id="dg" width="100%"></table>
+    </div>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/orders/orders.js"></script>
+<script >
+	$(function(){
+		
+		initParentTree();
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/order/orders/listTodayTotalJson?time="+new Date(), //数据来源
+		queryParams:{
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goods_name').val(),
+			'goodsFile.goods_class.id':$('#goods_classify').combobox('getValue'),
+			'goodsFile.provider.id':$('#providerId').combobox('getValue'),
+			'startTime':$('#startTime').datetimebox('getValue'),
+			'endTime':$('#endTime').datetimebox('getValue'),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框*/
+			{field:'GOODSFILE_ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'14%',align:'left',formatter:function(value,res){
+				return "<a href='#' onclick=openOrdersDetail('"+res.GOODSFILE_ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'NAME',title:'商品名',width:'43%',align:'left'},
+			{field:'GOODS_UNIT',title:'单位',width:'5%',align:'left'},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'7%',formatter:showGoods,align:'left'},
+			{field:'CLASSIFY_NAME',title:'类型',width:'9%',align:'left'},
+			{field:'G_PRICE',title:'单价',width:'6%',align:'right',formatter:formatterNumber},
+			{field:'NUMS',title:'份数',width:'4%',align:'right'},
+			{field:'ACTUALNUMS',title:'数量',width:'4%',formatter:actualNum,align:'right'},
+			{field:'TOTALPRICE',title:'总价',width:'6%',align:'right',formatter:formatterNumber},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		},
+	});
+});
+function searchData(){
+	var queryParams = {
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goods_name').val(),
+			'goodsFile.goods_class.id':$('#goods_classify').combobox('getValue'),
+			'goodsFile.provider.id':$('#providerId').combobox('getValue'),
+			'startTime':$('#startTime').datetimebox('getValue'),
+			'endTime':$('#endTime').datetimebox('getValue'),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+	$('#providerId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME'
+	});
+	
+	function clearForm1(){
+	   $("#goods_classify").textbox("setValue","");
+	   $("#serialNumber").textbox("setValue","");
+	   $("#goods_name").textbox("setValue","");
+	   $("#providerId").combobox("setValue","");
+	   $("#startTime").datetimebox("setValue","");
+	   $("#endTime").datetimebox("setValue","");
+	   searchData();
+	}
+</script>
+</html>

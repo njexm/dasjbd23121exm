@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/commodityClassify/commodityClassify.js"></script>
+	
+	<script type="text/javascript">
+$(function(){ 	
+	initSelectCode('StartTime','startTime');
+	viewSelectCode('StartTime','$!{goodsType.startTime}');
+	$("#startTime option[value='$!{goodsType.startTime}']").attr("selected", true);
+	initSelectCode('TimeLength','timeLength');
+	viewSelectCode('TimeLength','$!{goodsType.timeLength}');
+	$("#timeLength option[value='$!{goodsType.timeLength}']").attr("selected", true);
+});
+
+function searchData(){
+	var queryParams = {
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form method="" id="baseForm">
+			<input type="hidden" name="goodsType.id" id="typeId" value="$!{goodsType.id}"/>
+            <div class="cell">
+        		<table width="100%">
+    				<tr>
+						<th style="width:15%;">
+    						<span style='color:red'>*</span>起始时间：
+                        </th>
+    					<td style="width:35%;">
+							<select name="goodsType.startTime" id="startTime" style="width:130px" reg="Require" tip="请选择起始时间">
+							</select>
+                        </td>
+						<th style="width:15%;">
+    						<span style='color:red'>*</span>时间跨度：
+                        </th>
+    					<td style="width:35%;" colspan="2">
+							<select name="goodsType.timeLength" id="timeLength" style="width:130px" reg="Require" tip="请选择时间跨度">
+							</select>
+                        </td>
+    				</tr>
+					<tr>
+						<th style="width:15%;">
+    						<span style='color:red'>*</span>类型名称：
+                        </th>
+    					<td style="width:35%;">
+							<input name="goodsType.typeName" id="typeName" value="$!{goodsType.typeName}" style="width:130px" reg="Require" tip="请填写截单类型名称"/>
+                        </td>
+    				</tr>
+					</br>
+                </table>
+    		</div>
+			<div style="text-align:center;margin-left:auto;margin-right:auto;">
+    			<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="updateGoodsType('baseForm');">保存</a>
+    			<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

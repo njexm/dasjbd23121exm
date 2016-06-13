@@ -1,0 +1,413 @@
+package com.proem.exm.controller.wholesaleGroupPurchase.customer;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JSONObject;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.cisdi.ctp.utils.common.StringUtils;
+import com.cisdi.ctp.utils.common.UuidUtils;
+import com.proem.exm.controller.BaseController;
+import com.proem.exm.entity.basic.goodsFile.GoodsFile;
+import com.proem.exm.entity.wholesaleGroupPurchase.customer.CustomerInfo;
+import com.proem.exm.service.system.ZcZoningService;
+import com.proem.exm.service.wholesaleGroupPurchase.customer.CustomerInfoService;
+import com.proem.exm.utils.AjaxResult;
+import com.proem.exm.utils.DataGrid;
+import com.proem.exm.utils.Page;
+import com.proem.exm.utils.StringUtil;
+
+/**
+ * 客户档案
+ * 
+ * @author ZuoYM
+ * @com proem
+ */
+@Controller
+@RequestMapping("customer/customerinfo")
+public class CustomerInfoController extends BaseController {
+
+	private static final String OBLIQUE_LINE = "/";
+	private static final String WEBPOSITION = "webapps";
+	private static final String WTPPWEBAPPS = "wtpwebapps";
+
+	public static final String SBPATH = "customerInfoExcel/";
+	
+	@Autowired
+	CustomerInfoService customerInfoService;
+	@Autowired
+	ZcZoningService zcZoningService;
+
+	@InitBinder("customerInfo")
+	public void initCust(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("customerInfo.");
+	}
+
+	@InitBinder("zcZoning")
+	public void initZoning(WebDataBinder binder) {
+		binder.setFieldDefaultPrefix("zcZoning.");
+	}
+
+	/**
+	 * 打开初始化跳转页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 */
+	@RequestMapping("init")
+	public ModelAndView init(HttpServletRequest request,
+			HttpServletResponse response, Model model)
+			throws UnsupportedEncodingException {
+		String faName = request.getParameter("faName");
+		if (StringUtils.isBlank(faName)) {
+			faName = "批发团购";
+		} else {
+			faName = new String(faName.getBytes("iso8859-1"), "utf-8");
+		}
+		String fasonName = request.getParameter("fasonName");
+		if (StringUtils.isBlank(fasonName)) {
+			fasonName = "团购客户管理";
+		} else {
+			fasonName = new String(fasonName.getBytes("iso8859-1"), "utf-8");
+		}
+		String sonName = request.getParameter("sonName");
+		if (StringUtils.isBlank(sonName)) {
+			sonName = "客户管理";
+		} else {
+			sonName = new String(sonName.getBytes("iso8859-1"), "utf-8");
+		}
+		String title = "  " + faName + " > " + fasonName + " > " + sonName + "";
+		model.addAttribute("title", title);
+		ModelAndView view = createIframeView("wholesaleGroupPurchase/customer/customerinfo_list");
+		return view;
+	}
+
+	/**
+	 * 打开新增客户基本信息页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "add")
+	public ModelAndView addBranch(HttpServletRequest request,
+			HttpServletResponse response) {
+		ModelAndView view = createIframeView("wholesaleGroupPurchase/customer/customerinfo_add");
+		return view;
+	}
+
+	/**
+	 * 打开编辑客户基本信息页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("gotoEdit")
+	public ModelAndView gotoEdit(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		CustomerInfo customerInfo = (CustomerInfo) customerInfoService
+				.getObjById(id, "CustomerInfo");
+		model.addAttribute("customerInfo", customerInfo);
+		ModelAndView view = createIframeView("wholesaleGroupPurchase/customer/customerinfo_edit");
+		return view;
+	}
+
+	/**
+	 * 打开客户基本信息明细页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("gotoDetail")
+	public ModelAndView gotoDetail(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		CustomerInfo customerInfo = (CustomerInfo) customerInfoService
+				.getObjById(id, "CustomerInfo");
+		model.addAttribute("customerInfo", customerInfo);
+		ModelAndView view = createIframeView("wholesaleGroupPurchase/customer/customerinfo_detail");
+		return view;
+	}
+
+	/**
+	 * 新增客户基本信息
+	 * 
+	 * @param customerInfo
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "save", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public AjaxResult save(@ModelAttribute CustomerInfo customerInfo,
+			HttpServletRequest request, HttpServletResponse response) {
+		AjaxResult ajaxResult = null;
+		try {
+			String id = UuidUtils.getUUID();
+			customerInfo.setId(id);
+			customerInfo.getZcZoning().setId(UuidUtils.getUUID());
+			zcZoningService.saveObj(customerInfo.getZcZoning());
+			customerInfo.setDelFlag("0");
+			customerInfoService.saveObj(customerInfo);
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+					AjaxResult.INFO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+					AjaxResult.INFO);
+		}
+		return ajaxResult;
+	}
+
+	/**
+	 * 分页查询
+	 * 
+	 * @param customerInfo
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "listCustomerJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listCustomerJson(@ModelAttribute CustomerInfo customerInfo,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			dataGrid = customerInfoService.getPagedDataGridObj(page,
+					customerInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+
+	/**
+	 * 删除客户基本信息
+	 * 
+	 * @param customerInfo
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "deleteCustomerInfo", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public AjaxResult deleteCustomerInfo(
+			@ModelAttribute CustomerInfo customerInfo,
+			HttpServletRequest request, HttpServletResponse response) {
+		AjaxResult ajaxResult = null;
+		try {
+			String id = request.getParameter("id");
+			if (StringUtil.validate(id)) {
+				customerInfoService.deleteObjById(id,
+						CustomerInfo.class.getName());
+				logManageService.insertLog(request, "删除了选中的供应商", "供应商档案");
+			}
+			ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.SUCCESS,
+					AjaxResult.INFO);
+		} catch (Exception e) {
+			ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.FAIL,
+					AjaxResult.INFO);
+			return ajaxResult;
+		}
+		return ajaxResult;
+	}
+
+	@RequestMapping(value = "listCustomer", produces = "application/json")
+	@ResponseBody
+	public List<CustomerInfo> listJson(HttpServletRequest request,
+			HttpServletResponse response) {
+		List<CustomerInfo> list = null;
+		try {
+			list = customerInfoService.getAllObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return list;
+	}
+
+	/**
+	 * 修改客户基本信息
+	 * 
+	 * @param customerInfo
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "update", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public AjaxResult update(@ModelAttribute CustomerInfo customerInfo,
+			HttpServletRequest request, HttpServletResponse response) {
+		AjaxResult ajaxResult = null;
+		try {
+			String zcZoningId = customerInfo.getZcZoning().getId();
+			if (zcZoningId == null || StringUtils.isBlank(zcZoningId)) {
+				customerInfo.getZcZoning().setId(UuidUtils.getUUID());
+				zcZoningService.saveObj(customerInfo.getZcZoning());
+			} else {
+				zcZoningService.updateObj(customerInfo.getZcZoning());
+			}
+			customerInfo.setDelFlag("0");
+			customerInfoService.updateObj(customerInfo);
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+					AjaxResult.INFO);
+		} catch (Exception e) {
+			e.printStackTrace();
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+					AjaxResult.INFO);
+		}
+		return ajaxResult;
+	}
+
+	@RequestMapping(value = "listJson", produces = "application/json")
+	@ResponseBody
+	public List listJson(@ModelAttribute CustomerInfo customerInfo,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		List dataGrid = null;
+		try {
+			dataGrid = customerInfoService.getlistJson(customerInfo);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+
+	
+	///批量导入
+	@RequestMapping(value = "/saveBatchImport", method = RequestMethod.POST, produces = "text/html;charset=UTF-8")
+	@ResponseBody
+	public String saveBatchImport(@RequestParam("sourceBrocastBatch") MultipartFile myfile, HttpServletRequest request) {
+		Map result = new HashMap<Object, Object>();
+		// 获取文件路径
+		String path = saveExcelFile(request, myfile);
+		Map<String, Object> listResult = customerInfoService.getAllByExcel(path);
+		if (listResult != null) {
+			// 判断excel数据没有错误
+			if ("".equals(listResult.get("returnAnwer"))) {
+				List<CustomerInfo> listSupply = (List<CustomerInfo>) listResult
+						.get("listSupply");
+				try {
+					for (int i = 0; i < listSupply.size(); i++) {
+						CustomerInfo obj = new CustomerInfo();
+						obj = listSupply.get(i);
+						customerInfoService.saveObj(obj);
+					}
+				} catch (Exception e) {
+					result.put("msg", "fail");
+					JSONObject jsonObject = JSONObject.fromObject(result);
+					return jsonObject.toString();
+				}
+				result.put("msg", "success");
+				JSONObject jsonObject = JSONObject.fromObject(result);
+				return jsonObject.toString();
+			} else {
+				result.put("resultAnwser", listResult.get("returnAnwer"));
+				JSONObject jsonObject = JSONObject.fromObject(result);
+				return jsonObject.toString();
+			}
+		} else {
+			result.put("msg", "fail");
+			JSONObject jsonObject = JSONObject.fromObject(result);
+			return jsonObject.toString();
+		}
+
+	}
+	
+	/**
+	 * 保存文件至服务器
+	 */
+	private String saveExcelFile(HttpServletRequest request,
+			MultipartFile myfile) {
+		String path = "";
+		// 文件保存路径
+		try {
+			String tomcatPath = request.getSession().getServletContext()
+					.getRealPath("/");
+			tomcatPath = tomcatPath.replace("\\", "/");
+			StringBuffer destFName = new StringBuffer();
+			destFName.append(getRealDir(tomcatPath).replace("exm/", "/"))
+					.append(SBPATH);
+			System.out.println("得到的地址是：" + destFName);
+			String filePath = destFName.toString().replace("\\", "/");
+			// 转存文件
+			String fileName = myfile.getOriginalFilename();
+			String fileType = fileName.substring(fileName.lastIndexOf("."));
+			fileName = "" + System.currentTimeMillis();
+			if (fileType.equals(".xls")) {
+				fileName = fileName + ".xls";
+				File targetFile = new File(filePath, fileName);
+				if (!targetFile.exists()) {
+					targetFile.mkdirs(); // 上传图片到服务器
+					myfile.transferTo(targetFile);
+					path = targetFile.getPath();
+				}
+			} else {
+				path = "fail";
+			}
+
+		} catch (IllegalStateException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return path;
+	}
+	
+	/**
+	 * 验证excel的目录
+	 * 
+	 * @param newFileNameRoot
+	 * @return
+	 * @throws Exception
+	 */
+	private String getRealDir(String newFileNameRoot) throws Exception {
+		if (newFileNameRoot == null)
+			throw new Exception("get real dir failed !");
+		int dp = newFileNameRoot.lastIndexOf(OBLIQUE_LINE);
+		if (dp == -1)
+			throw new Exception("invalid path !");
+		int dpbefore = newFileNameRoot.lastIndexOf(OBLIQUE_LINE, dp - 1);
+		if (dpbefore == -1)
+			throw new Exception("invalid path !");
+		String needSubStr = newFileNameRoot.substring(dpbefore + 1, dp);
+		String nextStr = newFileNameRoot.substring(0, dpbefore + 1);
+		if (!needSubStr.trim().equals(WEBPOSITION)
+				&& !needSubStr.trim().equals(WTPPWEBAPPS)) {
+			return getRealDir(nextStr);
+		} else
+			return newFileNameRoot;
+	}
+}

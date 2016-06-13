@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<script type="text/javascript">
+</script>
+<p><a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="PreviewMytable()" plain="true">打印</a></p>
+<div id="div1">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+<DIV style="LINE-HEIGHT: 30px" class=size16 align=center><STRONG><font color="#0000FF">加工单</font></STRONG></DIV>     
+  <TBODY>
+  <TR>
+    <TD width="50%"><font color="#0000FF">加工单号：<SPAN >$!{processGoods.odd}</SPAN></font></TD>
+	<TD width="50%"><font color="#0000FF">创建日期：<SPAN >$!{processGoods.createTime}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD><font color="#0000FF">制单人：<SPAN >$!{processGoods.createMan.name}</SPAN></font></TD>
+	<TD><font color="#0000FF">加工单状态：<SPAN>完成</SPAN></font><font color="#0000FF"></font></TD>
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">审核人：$!{processGoods.checkMan}</font></TD>
+    <TD><font color="#0000FF">审核日期：<SPAN>$!{processGoods.checkDate}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD><font color="#0000FF">加工仓库：<SPAN >宜鲜美加工配送库</SPAN></font></TD>
+	<TD><font color="#0000FF">原材料使用总数：<SPAN >$!{processGoods.useTotalNum}</SPAN></font></TD> 
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">成品总数：<SPAN >$!{processGoods.goodsTotalNum}</SPAN></font></TD> 
+    <TD><font color="#0000FF">备注：$!{processGoods.remark}</font></TD>
+  </TR>
+  </TBODY>
+</TABLE>
+</div>
+<div id="div2">
+	<TABLE border=1 cellSpacing=0 cellPadding=1 width="100%" style="border-collapse:collapse" bordercolor="#333333">
+<thead>
+  <TR>
+    <TD width="15%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="35%">
+      <DIV align=center><b>商品名</b></DIV></TD>
+    <TD width="15%">
+      <DIV align=center><b>单位</b></DIV></TD>
+    <TD width="15%">
+      <DIV align=center><b>规格</b></DIV></TD>
+	<TD width="20%">
+      <DIV align=center><b>用量</b></DIV></TD></TR>
+</thead>      
+  <TBODY>  
+	#foreach($num1 in ${processUseGoodsList})
+  <TR>
+    <TD align="center" >${num1.serialNumber}</TD>
+    <TD align="center" >${num1.goodsName}</TD>
+    <TD align="center" >${num1.unit}</TD>
+    <TD align="center" >${num1.specifications}</TD>
+	<TD align="center" >${num1.useNum}</TD>
+  </TR>
+	#end
+	<tr>
+        <td colspan="5"></td>
+    </tr>
+	<TR>
+    <TD width="15%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="35%">
+      <DIV align=center><b>商品名</b></DIV></TD>
+    <TD width="15%">
+      <DIV align=center><b>单位</b></DIV></TD>
+    <TD width="15%">
+      <DIV align=center><b>规格</b></DIV></TD>
+	<TD width="20%">
+      <DIV align=center><b>成品数量</b></DIV></TD></TR>
+#foreach($num2 in ${processProductGoodsList})
+  <TR>
+    <TD align="center" >${num2.serialNumber}</TD>
+    <TD align="center" >${num2.goodsName}</TD>
+    <TD align="center" >${num2.unit}</TD>
+    <TD align="center" >${num2.specifications}</TD>
+	<TD align="center" >${num2.goodsNum}</TD>
+  </TR>
+	#end
+  </TBODY>
+  <thead>
+</thead>      
+</TABLE>
+</div>

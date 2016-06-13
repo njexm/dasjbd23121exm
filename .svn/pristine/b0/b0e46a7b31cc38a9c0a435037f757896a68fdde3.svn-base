@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="baseform" id="baseForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    			   <input type="hidden" name="supplierSettletOrder.id" id="supplierSettletOrderId" value="$!{supplierSettletOrder.id}"></input>
+    	           <tr>
+						<th style="width:11%">单据号：</th>
+						<td style="width:22%">
+							<input id="documentCode" name="supplierSettletOrder.documentCode" type="text" value="$!{supplierSettletOrder.documentCode}" style="width:80%"readonly/>
+                        </td>
+						<th style="width:11%">付款方式：</th>
+                        <td style="width:22%">
+							<input id="paymentMode" name="supplierSettletOrder.paymentMode" type="text" value="$!{supplierSettletOrder.paymentMode}"style="width:80%" readonly/>
+						</td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							<input id="makeMen" name="supplierSettletOrder.makeMen.id" type="hidden" value="$!{supplierSettletOrder.makeMen.id}" />
+							<input id="make" name="supplierSettletOrder.makeMen.name" type="text" value="$!{supplierSettletOrder.makeMen.name}" class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">制单日期：</th>
+						<td style="width:22%">
+							<input id="makeTime" name="supplierSettletOrder.makeTime" type="text" value="$!{supplierSettletOrder.makeTime}" style="width:80%" readonly/>
+                        </td>
+						<th style="width:11%">审核人：</th>
+                        <td style="width:22%">
+							<input id="auditMen" name="supplierSettletOrder.auditMen.id" type="text" value="$!{supplierSettletOrder.auditMen.name}" class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+						<th style="width:11%">审核状态：</th>
+						<td style="width:22%">
+							<input id="auditStatus" type="text" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%"><span style="color:red">*</span>批发团购客户：</th>
+                        <td style="width:22%">
+							<input id="customer" name="supplierSettletOrder.customer.id" type="text" value="$!{supplierSettletOrder.customer.id}" style="width:80%" readonly/>
+						</td>
+						<th style="width:11%">金额：</th>
+						<td id="money1">
+							<input type="text" id="documentsMoney" name="supplierSettletOrder.documentsMoney" value="$!{supplierSettletOrder.documentsMoney}" class="easyui-textbox" style="width:80%;" readonly/>
+                        </td>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							<input id="auditTime" name="supplierSettletOrder.auditTime" type="text" value="$!{supplierSettletOrder.auditTime}" class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">备注信息：</th>
+                        <td width="72" colspan="3">
+    						<input id="remarks" name="supplierSettletOrder.remarks" type="text" value="$!{supplierSettletOrder.remarks}" class="easyui-textbox" style="width:92%" readonly/>
+                        </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/settlement/supplier_settleorder.js"></script>
+<script type="text/javascript">
+
+$(function(){ 	
+	var status='$!{supplierSettletOrder.auditStatus}';
+	var newstatus=formatterStatusNoColour(status);
+	$('#auditStatus').val(newstatus);
+	
+	var price = '$!{supplierSettletOrder.documentsMoney}';
+	var roundDigit = accuracy();
+	var num =new Number(roundDigit);
+	var money = new Number(price);
+	$('#money1').text(money.toFixed(num));
+});
+
+	$(function(){
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	var customerId = "";
+	$('#customer').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/customer/customerinfo/listJson',
+        valueField:'ID',
+        textField:'NAME'
+	});
+	
+	$('#paymentMode').combobox({
+        url:'${rc.contextPath}/code/initCodeList?codeType=paymentType',
+        valueField:'CODEVALUE',
+        textField:'CODENAME'
+	});
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'批发团购付款单', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/supplierSettletOrder/supplierSettletOrderDo/listDetailJson?time="+new Date(), //数据来源
+		queryParams:{
+			'supplierSettletOrder.customer.id':$('#customer').val(),
+			'id':'$!{supplierSettletOrder.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:28px;";
+			}}, //显示复选框 */
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CODE',title:'单号',width:'17%',align:'center',sortable:true,sortable:true},
+			{field:'ACTUAL_MONEY',title:'实付金额',width:'6%',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'UNPAID_MONEY',title:'未付金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'PAID_MONEY',title:'已付金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'PAYABLE_MONEY',title:'应付金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			
+			
+			
+			{field:'FAVORABLE_MONEY',title:'优惠金额',width:'6%',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'DISCOUNT_MONEY',title:'已优惠金额',width:'7%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'NEW_TIME',title:'约定付款日期',width:'8%',sortable:true,sortable:true},
+			{field:'TAX',title:'单据税额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'CUSTOMERNAME',title:'批发团购客户',width:'14%',align:'center',sortable:true,sortable:true},
+			{field:'REMARKS',title:'备注',width:'15%',sortable:true,sortable:true}
+		]],
+		toolbar:'#tb'
+	});
+	
+});		
+</script>
+</html>

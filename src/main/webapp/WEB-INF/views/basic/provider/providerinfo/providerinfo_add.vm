@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/provider/providerinfo.js"></script>
+<script type="text/javascript">
+$(function(){ 
+	initArea('province');
+});
+</script>
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form method="" id="baseForm">
+			<input type="hidden" name="id" id="id"/>
+            <div class="cell">
+        		<table width="100%">
+					<tr>
+    					<th>
+    						<span style='color:red'>*</span>名称：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="nickname" name="nickname" type="text" class="easyui-textbox" reg="Require" tip="请填写供应商名称"/>
+                        </td>
+						<th>
+    						<span style='color:red'>*</span>业务员：
+                        </th>
+						##默认当前登录用户#
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="saleman" name="saleman" type="text" class="easyui-textbox" value="admin" readonly />
+                        </td>
+    				</tr>
+    				<tr>
+    					<th>
+    						<span style='color:red'>*</span>联系人：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="linkman" name="linkman" type="text" class="easyui-textbox" reg="Chinese" tip="请填写联系人中文姓名"/>
+                        </td>
+						<th>
+    						<span style='color:red'>*</span>电话：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="telephone" name="telephone" type="text" class="easyui-textbox" reg="Phone" tip="电话号码正确格式：区号-电话号码"/>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						<span style='color:red'>*</span>手机：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="mobilephone" name="mobilephone" type="text" class="easyui-textbox" reg="MobileOrPhone" tip="请填写正确格式的手机号码"/>
+                        </td>
+						<th>
+    						传真：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="fax" name="fax" type="text" class="easyui-textbox"/>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						<span style='color:red'>*</span>邮箱：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="mail" name="mail" type="text" class="easyui-textbox" reg="Email" tip="请填写正确格式的邮箱"/>
+                        </td>
+						<th>
+    						邮编：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="postcode" name="postcode" type="text" class="easyui-textbox" reg="NullOrZip" tip="请填写正确格式的邮编"/>
+                        </td>
+    				</tr>
+					<tr>
+						<th>
+    						<span style='color:red'>*</span>区域：
+                        </th>
+    					<td>
+    						<select class="easyui-combobox" id="area" name="area" style="width:131px">
+    							<option value="本地" selected >本地</option>
+								<option value="外地">外地</option>
+                            </select>
+                        </td>
+						<th>
+    						月结日期：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="settlementdate" name="settlementdate" type="text" class="easyui-datebox"/>
+						</td>
+    				</tr>
+					<tr>
+    					<th>
+    						开户行：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="bank" name="bank" type="text" class="easyui-textbox"/>
+                        </td>
+						<th>
+    						<span style='color:red'>*</span>企业类型：
+                        </th>
+    					<td >
+    						##<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="enterprisetype" name="enterprisetype" type="text" class="easyui-textbox" reg="Require" tip="请填写企业类型"/>
+							<select class="easyui-combobox" id="enterprisetype" name="enterprisetype" style="width:131px">
+    							<option value="国有" selected >国有</option>
+								<option value="民营">民营</option>
+								<option value="合资">合资</option>
+								<option value="外资">外资</option>
+								<option value="个体">个体</option>
+                            </select>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						帐号：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="account" name="account" type="text" class="easyui-textbox"/>
+                        </td>
+						<th>
+    						税务登记：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="taxregistration" name="taxregistration" type="text" class="easyui-textbox"/>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						营业执照：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="license" name="license" type="text" class="easyui-textbox"/>
+                        </td>
+						<th>
+    						<span style='color:red'>*</span>冻结业务：
+                        </th>
+    					<td >
+							<select class="easyui-combobox" id="frozen" name="frozen" style="width:131px">
+    							<option value="正常" selected >正常</option>
+								<option value="冻结">冻结</option>
+                            </select>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						<span style='color:red'>*</span>送货周期：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="deliverycycle" name="deliverycycle" type="text" class="easyui-textbox" reg="Require" tip="请填写送货周期"/>
+                        </td>
+						<th>
+    						<span style='color:red'>*</span>经营方式：
+                        </th>
+    					<td >
+    						##<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="practice" name="practice" type="text" class="easyui-textbox" reg="Require" tip="请填写经营方式"/>
+							<select class="easyui-combobox" id="practice" name="practice" style="width:131px">
+    							<option value="购销" selected >购销</option>
+								<option value="联营">联营</option>
+                            </select>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						<span style='color:red'>*</span>结算机构：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="settlement" name="settlement" type="text" class="easyui-textbox" value="总部" readonly />
+                        </td>
+						<th>
+    						<span style='color:red'>*</span>结算方式：
+                        </th>
+    					<td >
+    						##<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="settlementway" name="settlementway" type="text" class="easyui-textbox" reg="Require" tip="请填写结算方式"/>
+							<select class="easyui-combobox" id="settlementway" name="settlementway" style="width:131px">
+    							<option value="临时指定" selected >临时指定</option>
+								<option value="指定账期">指定账期</option>
+								<option value="指定日期">指定日期</option>
+								<option value="货到付款">货到付款</option>
+                            </select>
+                        </td>
+    				</tr>
+					<tr>
+    					<th>
+    						<span style='color:red'>*</span>结账周期：
+                        </th>
+    					<td >
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="settlementcycle" name="settlementcycle" type="text" class="easyui-textbox" reg="Require" tip="请填写结账周期" value="30"/>
+                        </td>
+						<th>
+                        </th>
+						<td>
+							&nbsp;
+                        </td>
+    				</tr>
+					<tr>
+						<th style="width:15%;">
+    						<span style='color:red'>*</span>供应商地址：
+                        </th>
+    					<td style="width:85%;" colspan="4">
+    						<select name="providerInfo.zcZoning.province" id="province" onchange="selectArea(this.value,'city','country')" style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option	value="">--请选择--</option>
+							</select> 
+							<select name="providerInfo.zcZoning.city" id="city" onchange="selectArea(this.value,'country','country')" style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option value="">--请选择--</option>
+							</select> 
+							<select name="providerInfo.zcZoning.county" id="country" style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option value="">--请选择--</option>
+							</select> 
+							<input type="text" value="" name="providerInfo.zcZoning.street"	id="street" class="easyui-textbox"  placeholder="请填写详细住址" style="width:23%;" reg="Require" tip="请填写正确的地址信息"/>
+                        </td>
+                    </tr>
+					<tr>
+    					<th>
+    						备注信息：
+                        </th>
+    					<td colspan="4">
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="remark" name="remark" type="text"  class="easyui-textbox" style="width:80%"/>
+                        </td>
+    				</tr>
+					<tr>
+						<td colspan="4">
+							&nbsp;
+                        </td>
+                    </tr>
+					<tr>
+    					<td colspan="4" align="center">
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="saveProviderInfo('baseForm');">新增</a>
+							<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+                        </td>
+                    </tr>
+					<tr>
+						<td colspan="4" rowspan="4">
+							&nbsp;
+                        </td>
+                    </tr>
+                </table>
+    		</div>
+        </form>
+    </div>
+</body>
+</html>
+	

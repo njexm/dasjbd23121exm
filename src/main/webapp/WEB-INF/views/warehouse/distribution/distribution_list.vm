@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <link rel="stylesheet" type="text/css" href="css/easyui.css">
+	<link rel="stylesheet" type="text/css" href="css/demo.css">
+	<link rel="stylesheet" type="text/css" href="css/icon.css">
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+</script>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    				<tr>
+						<th width="11%">
+							<select name="select_order" id="select_order" onchange=selectoption() style="width:60%;" >
+    							<option value="1">订单号</option>
+								<option value="2">会员卡号</option>
+								<option value="3">收货人</option>
+								<option value="4">收货电话</option>
+							</select></th>
+					 	<td id="td_order" width="20%">
+							<input  onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" style="width:100%;" id="orderNum" name="orderNum" type="text" class="easyui-textbox"/>
+						</td>
+						<th width="16%">订单来源：</th>
+					 	<td width="10%">
+    	             		<select name="orderCome" id="orderCome" style="width:100%;" class="ea" >
+    							<option value="">--请选择--</option>
+    							##<option value="2">个人负责订单</option>
+    							<option value="1">宜鲜美平台订单</option>
+								<option value="3">天猫平台订单</option>
+								<option value="4">京东平台订单</option>
+								<option value="5">微信</option>
+								<option value="6">APP自有平台</option>
+								<option value="7">其他</option>
+    					</select>
+                     </td>
+                     	<th width="10%">订单日期：</th>
+    	             		<td width="22%">
+								<input type="text" id="orderDate" name="orderDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+						-
+								<input type="text" id="updateTime" name="updateTime" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+					 		</td>
+					 <th width=""></th>
+					</tr>
+				</table>
+				<table border="0" cellpadding="0" cellspacing="0">
+				    <tr>
+                     <th width="11%">收货地址：</th>
+						<td style="width:49%;" colspan="4">
+    						<select name="branchTotal.zcZoning.province" id="province"  style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option	value="江苏省">--江苏省--</option>
+							</select> 
+							<select name="branchTotal.zcZoning.city" id="city"  style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option value="南京市">--南京市--</option>
+							</select> 
+							<select name="branchTotal.zcZoning.county" id="country" onchange="selectNjArea(this.value,'street','street')" style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option value="">--请选择--</option>
+							</select>
+							<select name="branchTotal.zcZoning.street" id="street" style="width: 23%; height: 25px; vertical-align: middle;" >
+								<option value="">--请选择--</option>
+							</select> 
+                        </td>
+                        <td width="50%"></td>
+    	           </tr>
+    	       	</table>
+    		</div>
+			<ul>
+    			<li class="top_search_libtn">
+    				<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+    				<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm(searchForm)">清空</a>
+    			</li>
+    		</ul>
+    	</form>
+    </div>
+    <table id="dg" class="easyui-datagrid"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/distribution.js"></script>
+<script type="text/javascript">
+	$(function(){
+		
+	initNjArea('country');
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'icon-search', //图标
+		singleSelect:true, //单选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/distribution/distributionDo/listOrdersJson?time="+new Date(), //数据来源
+		queryParams:{
+			'zcOrder.orderNum':$('#orderNum').val(),
+			'zcOrder.associator.associator_CardNumber':$('#associator_CardNumber').val(),
+			'zcOrder.consignee':$('#consignee').val(),
+			'zcOrder.cansignPhone':$('#cansignPhone').val(),
+			'zcOrder.orderCome':$('#orderCome').val(),
+			'zcOrder.orderStatus':$('#orderStatus').val(),
+			'zcOrder.orderDate':$('#orderDate').val(),
+			'zcOrder.updateTime':$('#updateTime').val(),
+			'zcOrder.zcZoning.county':$('#country').val(),
+			'zcOrder.zcZoning.street':$('#street').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:20,
+		pageList:[20,40,60],
+		columns:[[
+/*			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:40px;";
+			}}, //显示复选框 */
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'ORDERNUM',title:'订单号',width:'10%',align:'left',sortable:true,"formatter":function(value,res){
+				return "<a href='#' onclick=openOrderItem('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'CARDNUMBER',title:'会员卡号',width:'12%',align:'left',sortable:true,sortable:true},
+			{field:'ORDERSTATUS',title:'订单状态',width:'6%',align:'left',sortable:true,formatter:formatterOrderStatus},
+			{field:'ORDERCOME',title:'订单来源',width:'9%',align:'left',sortable:true,formatter:function(value,rec){
+				if(value==0)
+				{
+					return '未知';
+				}else if(value==1)
+				{
+					return '宜鲜美平台订单';
+				}else if(value==2)
+				{
+					return '个人负责订单';
+				}else if(value==3)
+				{
+					return '天猫平台订单';
+				}else if(value==4)
+				{
+					return '京东平台订单';
+				}else if(value==5)
+				{
+					return '微信';
+				}else if(value==6)
+				{
+					return 'APP自有平台';
+				}else 
+				{
+					return '其他';
+				}
+			}},
+			{field:'ORDERDATE',title:'订单日期',width:'12%',align:'left',sortable:true,sortable:true,formatter:formatterCompleteDate},
+			{field:'CONSIGNEE',title:'收货人',width:'6%',align:'left',sortable:true},
+			{field:'STREET',title:'收货地址',width:'22%',align:'left',sortable:true,sortable:true,formatter:function(value,rec){
+				return rec.STREET;
+			}},
+			{field:'CANSIGNPHONE',title:'收货电话',width:'8%',align:'left',sortable:true,sortable:true},
+			{field:'GOODSNUM',title:'订单商品数量',width:'7%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'ORDERAMOUNT',title:'订单金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+function searchData(value,name){
+	
+	var queryParams = {
+			'zcOrder.orderNum':$('#orderNum').val(),
+			'zcOrder.associator.associator_CardNumber':$('#associator_CardNumber').val(),
+			'zcOrder.consignee':$('#consignee').val(),
+			'zcOrder.cansignPhone':$('#cansignPhone').val(),
+			'zcOrder.orderCome':$('#orderCome').val(),
+			'zcOrder.orderStatus':$('#orderStatus').val(),
+			'zcOrder.orderDate':$('#orderDate').val(),
+			'zcOrder.updateTime':$('#updateTime').val(),
+			'zcOrder.zcZoning.county':$('#country').val(),
+			'zcOrder.zcZoning.street':$('#street').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+</script>
+<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
+<script type="text/javascript" src="jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body style="background-color: #fff">
+    
+    <div class="wrap_form_middle_right">
+    <div class="adjust_box">
+    	<div class="box_inner">
+    		<form class="registerform" id="baseForm" method="post">
+    			<input type="hidden" name="id" id="id"/>
+    			<div class="cell">
+    				<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width: 15%;"><span style="color: red;">*</span>订单号：</th>
+    						<td style="width: 35%;">
+    							<input type="text" id="orderNum" name="ordersView.orderNum" class="form_text" reg="Require" tip="请填写订单号" maxlength="25"/>
+    						</td>
+    	
+    						<th style="width: 15%;"><span style="color: red;">*</span>订单SKU：</th>
+    						<td style="width: 35%;">
+    							<input type="text" id="sku" name="ordersView.sku" class="form_text" reg="Require" tip="请填写订单SKU" maxlength="25"/>
+    						</td>
+    					</tr>
+    					
+    					<tr>
+    						<th>地址：</th>
+    						<td>
+    							<input type="text" id="orderAddress" name="ordersView.orderAddress" class="form_text" reg="Require" tip="请填写地址" maxlength="100"/>
+    						</td>
+    					
+    						<th>修改日期：</th>
+    						<td>
+    							<input type="text" id="updateTime" name="ordersView.updateTime" readonly="true" class="Wdate" style="width:229px;" onClick="WdatePicker()"/>
+    						</td>
+    					</tr>
+    					
+    				</table>
+    			</div>
+    			<div class="box_03">
+           			<div class="box_inner_03">
+           				<div class="btn_area_setl btn_area_bg">
+           					<a href="#" onclick="saveBaseInfo('baseForm')" class="btn_01">提交<b></b></a>
+       						<a href="#" onclick="window.parent.closeWinForm();" class="btn_01">取消<b></b></a>
+           				</div>
+           			</div>
+       			</div>
+        	</form>
+    	</div>
+    </div>
+    </div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/orders/orders.js"></script>
+<script type="text/javascript">
+	
+</script>
+</html>

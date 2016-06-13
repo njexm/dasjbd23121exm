@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+#parse(${init_path})
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <tr>
+						开始日期：
+						<input id="startTime" name="purchaseSearch.startTime" type="text" class="easyui-datetimebox"/>
+						结束日期：
+						<input id="endTime" name="purchaseSearch.endTime" type="text" class="easyui-datetimebox"/>
+						分店仓库：
+						<input  id="branch" name="purchaseSearch.branch.id" type="easyui-textbox"/>
+						供应商：
+						<input  id="providerInfo" name="purchaseSearch.providerInfo.id" type="easyui-combobox"/>
+						类别：
+						<input  id="leiBie" name="purchaseSearch.leiBie.id" type="easyui-combobox"/>
+						<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+					</tr>
+    	       	</table>
+    		</div>
+    	</form>
+    </div>
+    <table id="dg" class="easyui-datagrid" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseQuery/purchaseQuery.js"></script>
+<script type="text/javascript">
+	$(function(){
+	initParentTree();
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchaseQuery/purchaseQuery/listBigClassQueryJson?time="+new Date(), //数据来源, //数据来源
+		queryParams:{
+			'purchaseSearch.startTime':$('#startTime').datetimebox('getValue'),
+			'purchaseSearch.endTime':$('#endTime').datetimebox('getValue'),
+			'purchaseSearch.branch.id':$('#branch').combobox('getValue'),
+			'purchaseSearch.providerInfo.id':$('#providerInfo').combobox('getValue'),
+			'purchaseSearch.leiBie.id':$('#leiBie').combotree('getValue'),
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'CLASSIFY_CODE',title:'类别编码',width:'9%',align:'left',sortable:true,sortable:true},
+			{field:'CLASSIFY_NAME',title:'大类名称',width:'10%',align:'left',sortable:true,sortable:true},
+			{field:'ACTNUM',title:'进货数量',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'GOODSMONEY',title:'进货金额',width:'9%',sortable:true,sortable:true,align:'right',formatter:formatterNumber},
+			{field:'RETURNNUM',title:'退货数量',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'TOTALMONEY',title:'退货金额',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'ACTPURCHASE',title:'实采数量',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'ACTMONEY',title:'实采金额',width:'9%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'SELLMONEY',title:'销价金额',width:'8%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'SELLDIFFERENCE',title:'进销差价',width:'8%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'TAXMONEY',title:'税额',width:'8%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData(){
+	var queryParams = {
+		'purchaseSearch.startTime':$('#startTime').datetimebox('getValue'),
+		'purchaseSearch.endTime':$('#endTime').datetimebox('getValue'),
+		'purchaseSearch.branch.id':$('#branch').combobox('getValue'),
+		'purchaseSearch.providerInfo.id':$('#providerInfo').combobox('getValue'),
+		'purchaseSearch.leiBie.id':$('#leiBie').combotree('getValue'),
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	//$('#dg').datagrid('options').url = url;
+	$("#dg").datagrid('load');
+}
+
+$('#providerInfo').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	
+$('#branch').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME',
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+	
+		// 初始化父级菜单下拉框
+function initParentTree() {
+	$('#leiBie').combotree({
+		url : Utils.getRootPath() + "/commodityClassify/getTreeData",
+		onLoadSuccess : function(node, data) {
+			var optionValue = $('#leiBie').attr("optionValue");
+			if (optionValue != undefined && optionValue != "") {
+				$('#leiBie').combotree('setValue', optionValue);
+			}
+		},
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+}
+	
+</script>
+</html>

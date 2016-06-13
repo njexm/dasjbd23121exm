@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<div id="showWin" class="easyui-window" ></div>
+<div id="showWin2" class="easyui-window" ></div>
+<div id="showWin3" class="easyui-window" ></div>
+<script>
+$(function(){
+	closeWinForm();
+	closeWinForm2();
+	closeWinForm3();
+});
+
+//初始化window窗口
+function initShowWin(x, y, title){
+	$('#showWin').window({  
+			title: title,
+  			width: x,  
+   			height: y,  
+   			top:($(window).height() - y) * 0.5,   
+           	left:($(window).width() - x) * 0.5,
+           	closable:	true,
+   			collapsible: false,
+      		minimizable: false,
+       		maximizable: false,	
+       		resizable: true,
+       		modal: true,
+   			draggable:false,
+   			onMaximize:function(){  //面板最大化事件
+				$('.tab_cl').attr('style','overflow-x:hidden;width: 100%');
+			},
+			onRestore:function(){  //面板恢复原始大小事件
+				$('.tab_cl').attr('style','overflow-x:hidden;width: 100%');
+			}
+	});
+}
+
+function initAdd(url,title,x,y)
+{
+	var s='<iframe scrolling="no" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+	//限制最大最小x,y
+	var clientHeight = $(window).height();
+	var clientWidth = $(window).width();
+	if(y>clientHeight) y=clientHeight-10;
+	if(x>clientWidth) x=clientWidth-10;
+	//alert(clientHeight); 
+	initShowWin(x,y,title);
+	$('#showWin').html(s);
+	$('#showWin').window('open');
+}
+
+//关闭弹出窗口
+function closeWinForm()
+{
+	$('#showWin').html('');
+	$('#showWin').window('close',true);
+	
+}
+
+function resetForm(formId)
+{
+	var elements = formId.elements;
+	for (var i = 0; i < elements.length; i++) {
+		var element = elements[i];
+		if (element.type == "text") {
+			element.value = "";
+		} else if (element.type == "radio" || element.type == "checkbox") {
+			element.checked = false;
+		} else if (element.options != null) {
+			element.options[0].selected = true;
+		}
+	}
+}
+function initShowWin2(x, y, title){
+	$('#showWin2').window({  
+			title: title,
+  			width: x,  
+   			height: y,  
+   			top:($(window).height() - y) * 0.5,   
+           	left:($(window).width() - x) * 0.5,
+           	closable:	true,
+   			collapsible: false,
+      		minimizable: false,
+       		maximizable: false,	
+       		resizable: true,
+       		modal: true,
+   			draggable:false,
+   			onMaximize:function(){  //面板最大化事件
+				$('.tab_cl').attr('style','overflow-x:hidden;width: 100%');
+			},
+			onRestore:function(){  //面板恢复原始大小事件
+				$('.tab_cl').attr('style','overflow-x:hidden;width: 100%');
+			}
+	});
+}
+
+function initAdd2(url,title,x,y)
+{
+	var s='<iframe scrolling="no" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+	//限制最大最小x,y
+	var clientHeight = $(window).height();
+	var clientWidth = $(window).width();
+	if(y>clientHeight) y=clientHeight-10;
+	if(x>clientWidth) x=clientWidth-10;
+	//alert(clientHeight); 
+	initShowWin2(x,y,title);
+	$('#showWin2').html(s);
+	$('#showWin2').window('open');
+}
+
+//关闭弹出窗口
+function closeWinForm2()
+{
+	$('#showWin2').html('');
+	$('#showWin2').window('close',true);
+	
+}
+
+
+function initShowWin3(x, y, title){
+	$('#showWin3').window({  
+			title: title,
+  			width: x,  
+   			height: y,  
+   			top:($(window).height() - y) * 0.5,   
+           	left:($(window).width() - x) * 0.5,
+           	closable:	true,
+   			collapsible: false,
+      		minimizable: false,
+       		maximizable: false,	
+       		resizable: true,
+       		modal: true,
+   			draggable:false,
+   			onMaximize:function(){  //面板最大化事件
+				$('.tab_cl').attr('style','overflow-x:hidden;width: 100%');
+			},
+			onRestore:function(){  //面板恢复原始大小事件
+				$('.tab_cl').attr('style','overflow-x:hidden;width: 100%');
+			}
+	});
+}
+
+function initAdd3(url,title,x,y)
+{
+	var s='<iframe scrolling="no" frameborder="0"  src="'+url+'" style="width:100%;height:100%;"></iframe>';
+	//限制最大最小x,y
+	var clientHeight = $(window).height();
+	var clientWidth = $(window).width();
+	if(y>clientHeight) y=clientHeight-10;
+	if(x>clientWidth) x=clientWidth-10;
+	//alert(clientHeight); 
+	initShowWin3(x,y,title);
+	$('#showWin3').html(s);
+	$('#showWin3').window('open');
+}
+
+//关闭弹出窗口
+function closeWinForm3()
+{
+	$('#showWin3').html('');
+	$('#showWin3').window('close',true);
+	
+}
+//刷新iframe中DataGrid
+function loadDataGrid(type)
+{
+	if(type=='branch')
+	{
+    	//刷新分店
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='userInfo'){
+		//刷新用户信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchUserInfo();
+	}else if(type=='purchaseReceiveDetail'){
+		//刷新收货单明细信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='purchaseOrdersEdit'){
+		//刷新采购订单编辑信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='purchaseReturn'){
+		//刷新采购退货单列表信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='goodfile')
+	{
+		//刷新商品档案
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='taxManager')
+	{
+		//刷新发票管理信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='provider')
+	{
+		//刷新供应商档案
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='associator')
+	{
+		//刷新会员信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchAassociator();
+	}else if(type=='adjustment')
+	{
+		//刷新调价单信息
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchAdjustment();
+	}else if(type=='purchaseShoppingCart')
+	{
+		//刷新采购购物车
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='purchaseOrders')
+	{
+		//刷新采购订单
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='purchaseReceive')
+	{
+		//刷新采购收货单
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='roleInfo')
+	{
+		//刷新供应商档案
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchRoleInfo();
+	}else if(type=='commodityClassify')
+	{
+		//刷新商品品牌分类
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='orders')
+	{
+		//刷新商品品牌分类
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='module')
+	{
+		//刷新商品品牌分类
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='zcCheckNumber')
+	{
+		//刷新盘点号列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='areaNanJing')
+	{
+		//刷新区域列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='checkDifference')
+	{
+		//刷新区域列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='zcStoreChange')
+	{
+		//刷新区域列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='zcSwitchChange')
+	{
+		//刷新区域列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='goodsType')
+	{
+		//刷新截单时间
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='advancePayment')
+	{
+		//刷新供应商结算预付款列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='notice')
+	{
+		//刷新公告页面
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type=='wholesaleGroupPurchaseOrder')
+	{
+		//刷新批发团购订单列表
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}
+}
+
+</script>

@@ -1,0 +1,118 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/purchase/purchaseReceive/purchase_receive.js"></script>
+<script type="text/javascript">
+	$(function(){
+	initParentTree();
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData1();
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#goodsDg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:'400', //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/purchase/purchaseOrder/listGoodsMasterJson?time="+new Date(), //数据来源
+		queryParams:{
+			'goodsFile.serialNumber':$('#serialNumber1').val(),
+			'goodsFile.goods_name':$('#goods_name').val(),
+			'goodsFile.goods_class.id':$('#classify').combobox('getValue'),
+			'providerId':'$!{providerInfo.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'商品编号',width:'20%',sortable:true},
+			{field:'GOODS_NAME',title:'商品名',width:'41%',sortable:true,sortable:true},
+			{field:'GOODS_PURCHASE_PRICE',title:'单价',width:'17%',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'17%',sortable:true,sortable:true,formatter:showGoods}
+		]],
+		toolbar:'#tb1',
+		onLoadSuccess:function(){
+			$('#goodsDg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		},
+		onBeforeLoad:function(param){
+			$('#dg').datagrid({
+				selectOnCheck:false
+			});
+		},
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#goodsDg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function searchData1(){
+	var queryParams = {
+			'goodsFile.serialNumber':$('#serialNumber1').val(),
+			'goodsFile.goods_name':$('#goods_name').val(),
+			'goodsFile.goods_class.id':$('#classify').combobox('getValue'),
+			'providerId':'$!{providerInfo.id}'
+	};
+	$('#goodsDg').datagrid('options').queryParams = queryParams;
+	$("#goodsDg").datagrid('load');
+}
+function initParentTree() {
+	$('#classify').combotree({
+		url : Utils.getRootPath() + "/commodityClassify/getTreeData",
+		onLoadSuccess : function(node, data) {
+			var optionValue = $('#classify').attr("optionValue");
+			if (optionValue != undefined && optionValue != "") {
+				$('#classify').combotree('setValue', optionValue);
+			}
+		},
+		onSelect:function(rec){
+			searchData();
+		}
+	});
+}
+</script>
+<div style="overflow: auto">
+    <div id="tb1" class="">
+    	<form class="" id="" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+					<input type="hidden" name="providerId" id="providerId" value="$!{providerInfo.id}"/>
+					<input type="hidden" name="purchaseReceiveId" id="purchaseReceiveId" value="$!{purchaseReceiveId}"/>
+    	           <tr>
+    	             <td width="10%" align="left">
+						货号：
+						<input id="serialNumber1" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/>
+						品名 ：
+						<input id="goods_name" name="goodsFile.goods_name" type="text" class="easyui-textbox"/>
+						类别：
+						<input id="classify" name="goodsFile.goods_class.id" type="text" class="easyui-textbox"/>
+						<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData1();" plain="true">查询</a>
+                     </td>
+				   </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="chooseGoodsToReceive();searchData1()" plain="true">保存勾选</a>
+		##<a href="#" class="easyui-linkbutton" iconCls="icon-cancel" style="float:right;" onclick="closeWindow();" plain="true">关闭</a>
+    </div>
+    <table id="goodsDg" width="100%"></table>
+</div>
+

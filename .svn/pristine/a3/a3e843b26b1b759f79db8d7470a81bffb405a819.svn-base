@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+		<form class="baseform" id="baseform" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+                    <input type="hidden" name="zcStoreChange.createUser.id" id="userId" value="$!{storeChange.createUser.id}"></input>
+					 <input type="hidden" name="zcStoreChange.id" id="storeChangeId" value="$!{storeChange.id}"></input>
+    	           <tr>
+    	           	 <th width="10%">单据号:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcStoreChange.storeChange_Number" id="storeChange_Number" value="$!{storeChange.storeChange_Number}" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>方式:</th>
+    	             <td width="23%">
+						<select name="zcStoreChange.changeType" id="changeType" style="width:80%;" reg="Require" tip="请选择调整方式" >
+                        </select>
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>盘点仓库:</th>
+    	             <td width="23%">
+						<input name="zcStoreChange.branch.id" id="branchId" value="$!{storeChange.branch.id}" style="width:80%;"  >
+                        </input>
+					 </td>
+				   </tr>
+				    <tr>
+    	           	 <th width="10%">制单人:</th>
+    	             <td width="23%">
+						<input  type="text"  id="userName" value="$!{storeChange.createUser.name}" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					  <th width="10%">制单日期:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcStoreChange.createTime" id="createTime" style="width:80%;" value="$!{storeChange.createTime}"  readonly >
+                       </input>
+					 </td>
+					  <th width="10%">审核人:</th>
+    	             <td width="23%">
+						<input  type="text" name="" id="" style="width:80%;" readonly value="$!{storeChange.checkUser.name}" >
+                        </input>
+					 </td>
+				   </tr>
+				      <tr>
+    	           	 <th width="10%">原因:</th>
+    	             <td width="23%">
+						<select name="zcStoreChange.changeReason" id="changeReason" style="width:80%;"  >
+                        </select>
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>经手人:</th>
+    	             <td width="23%">
+						<input name="zcStoreChange.operatorUser.id" id="operatorUserId" style="width:80%;"  value="$!{storeChange.operatorUser.id}">
+                        </input>
+					 </td>
+					  <th width="10%">审核日期:</th>
+    	             <td width="23%">
+						<input  type="text" name="" id="" style="width:80%;" readonly value="$!{storeChange.checkDate}" >
+                        </input>
+					 </td>
+				   </tr>
+				   <tr>
+					<th width="10%">调整总额:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcStoreChange.changeAmount" id="changeAmount" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					 <th width="10%">备注:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcStoreChange.remark" id="" style="width:80%;" value="$!{storeChange.remark}">
+                        </input>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="editBaseInfo('baseform')" plain="true">修改并提交</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseGoods()" plain="true">选择商品</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="removeChose()" plain="true">移除</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:900px;height:500px;">
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/storechange.js/"></script>
+<script type="text/javascript">
+	$(function(){
+	$('#selectOptions').window('close');
+	initSelectCode('storeChangeType','changeType');
+	$("#changeType option[value='$!{storeChange.changeType}']").attr("selected", true);
+	initSelectCodeByDefaultValue('changeReason','changeReason');
+	$("#changeReason option[value='$!{storeChange.changeReason}']").attr("selected", true);
+	$('#branchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/branch/branchDo/selectListJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	$('#operatorUserId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/selectListJson',
+        valueField:'USERID',
+        textField:'USERNAME'
+	});
+	var changeMoneys = '$!{storeChange.changeAmount}';
+	var roundDigit = accuracy();
+	var num =new Number(roundDigit);
+	var money = new Number(changeMoneys);
+	document.getElementById("changeAmount").value=money.toFixed(num);
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	var lastIndex;
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		width:'100%',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/storeChange/listGoodsItemsNullOrderJson?time="+new Date(), //数据来源
+		queryParams:{
+			'id':'$!{storeChange.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CHANGETYPE',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'12%',sortable:true},
+			{field:'GOODS_CODE',title:'编号',width:'10%',sortable:true},
+			{field:'GOODS_NAME',title:'商品名',width:'22%',sortable:true,sortable:true},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'6%',sortable:true,sortable:true,formatter:showGoods},
+			{field:'GOODS_UNIT',title:'单位',width:'6%',sortable:true,sortable:true},
+			{field:'GOODS_PRICE',title:'单价',width:'6%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'CHANGEMONEY',title:'调整金额',width:'6%',align:'right',sortable:true,sortable:true,formatter:function(value,res){
+				if(res.CHANGETYPE=='1'){
+					return "<span style='color:red'>+"+formatterNumber(value)+"</span>";
+				}else if(res.CHANGETYPE=='2'){
+					return "<span style='color:green'>-"+formatterNumber(value)+"</span>";
+				}
+			}},
+			{field:'STORE',title:'系统库存',width:'6%',align:'right',formatter:function(value,res){
+				if(value=='' || value=='undefined' || value==null){
+					return '0.00';
+				}else{
+					return value;
+				}
+			}},
+			{field:'CHANGENUMBER',title:'调整数量',align:'right',width:'11%',formatter:formatterNumber,editor:{type:'numberbox',options:{precision:2}}},
+			{field:'REMARK',title:'备注',width:'14%',editor:{type:'text'}}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);
+    		}
+		}
+	});
+	
+});
+
+
+function searchData(){
+	var queryParams = {
+			'id':'$!{storeChange.id}'
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</html>

@@ -1,0 +1,25 @@
+/*--------*/
+.top-menu {
+	text-align: center;
+}
+
+.top-menu ul li {
+	display: inline-block;
+	margin: -2px;
+}
+
+.top-menu ul li a {
+	padding: 8px 15px;
+	color: #fff;
+	display: block;
+	background: #146EB4;
+	text-decoration: none;
+}
+
+.top-menu ul li.active a {
+	background: #FF9900;
+}
+
+.top-menu ul li a:hover {
+	background: #FF9900;
+}

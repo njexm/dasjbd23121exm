@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<div class="easyui-panel" style="height:100%;width:100%">
+    		<form class="registerform" id="baseForm" method="post">
+    			<input type="hidden" name="goodsFile.id" id="id" value="$!{goodsFile.id}"/>
+    			<input type="hidden" name="goodsFile.createtime" id="createtime" value="$!{goodsFile.createtime}"/>
+    			<div class="cell">
+    				<table border="0" cellpadding="0" cellspacing="0">
+						<tr style="font-size:150%"><strong>基本属性</strong></tr>
+    					<tr>
+    						<th style="width: 11%;"><span style="color: red;">*</span>货     号：</th>
+    						<td style="width: 11%;">
+    							<input type="text" id="serialNumber" name="goodsFile.serialNumber" class="easyui-textbox" style="width:100px;" value="$!{goodsFile.serialNumber}" reg="Require" tip="请填写货号" readonly/>
+    						</td>
+    						<th width="11%;"><span style="color: red;">*</span>类      别：</th>
+							<td width="11%;">
+								<input id="goods_classify" name="goodsFile.goods_class.classify_name" value="$!{goodsFile.goods_class.classify_name}" style="width:100px;" readonly/>
+							</td>
+							<th style="width: 11%;"><span style="color: red;">*</span>规    格：</th>
+    						<td style="width: 11%;">
+    							<input type="text" name="goodsFile.goods_specifications" id="goods_specifications"  class="easyui-textbox"  value="$!{goodsFile.goods_specifications}" style="width:100px;" reg="Require" tip="请填写规格"readonly/>
+    						</td>
+							<th style="width: 11%;"><span style="color: red;">*</span>品     牌：</th>
+    						<td style="width: 11%;">
+								<input id="goods_brand_id" name="goodsFile.goods_brand.classify_code" style="width:100px;" value="$!{goodsFile.goods_brand.classify_name}"readonly/>
+    						</td>
+    					</tr>
+					</table>
+    				<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width:11%;"><span style="color: red;">*</span>品名：</th>
+    						<td style="width:38%;">
+    							<input type="text" id="goods_name" name="goodsFile.goods_name" class="easyui-textbox" style="width:287px" value="$!{goodsFile.goods_name}" reg="Require" tip="请填写品名"readonly/>
+    						</td>
+							<th style="width: 11%;"><span style="color: red;">*</span>单   位：</th>
+    						<td style="width: 11%;">
+    							<input type="text" id="goods_unit" name="goodsFile.goods_unit" class="easyui-textbox" style="width:100px;" value="$!{goodsFile.goods_unit}" reg="Require" tip="请填写单位"readonly/>
+    						</td>
+    						<th style="width: 11%;">经营方式：</th>
+    						<td style="width: 11%;">
+    							<input id="provider_practice" name="goodsFile.providerInfo.provider_practice" class="easyui-textbox" style="width:100px;" value="$!{goodsFile.provider.practice}" readonly />
+    						</td>
+    					</tr>
+    				</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width:12%;"><span style="color: red;">*</span>供应商：</th>
+    						<td style="width:11%;">
+								<input id="goods_supplier_id" name="goodsFile.provider.nickname" value="$!{goodsFile.provider.nickname}" readonly/>
+    						</td>
+							<th style="width:12%;"><span style="color: red;">*</span>工位属性：</th>
+    						<td style="width:11%;">
+								<input id="zcUserInfo" name="goodsFile.zcUserInfo" value="$!{goodsFile.zcUserInfo}" type="text" readonly/>
+							</td>
+							<th style="width:11%;"><span style="color: red;">*</span>产 地：</th>
+    						<td style="width:11%;">
+    							<input type="text" id="goods_origin" name="goodsFile.goods_origin" class="easyui-textbox" style="width:100px;" value="$!{goodsFile.goods_origin}" readonly/>
+    						</td>
+							<th style="width: 11%;"><span style="color: red;">*</span>商品状态：</th>
+    						<td style="width: 11%;">
+								<select class="easyui-combobox" id="goods_state" name="goodsFile.goods_state" style="width:100px" readonly >
+									<option value="false">下架</option>
+									<option value="true">上架</option>
+								</select>
+							</td>
+    					</tr>
+    				</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width:12%;"><span style="color: red;">*</span>商品属性：</th>
+    						<td style="width:11%;">
+								<select name="goodsFile.goodsAttribute" id="goodsAttribute" style="width:130px">
+								</select>
+							</td>
+							<th style="width:12%;"><span style="color: red;">*</span>截单类型：</th>
+    						<td style="width:11%;">
+								<input id="goodsType" name="goodsFile.goodsType.id" value="$!{goodsFile.goodsType.id}" type="text"/>
+							</td>
+							<th style="width:12%;"><span style="color: red;">*</span>损耗率：</th>
+    						<td style="width:11%;">
+    							<input type="text" id="wasteRate" name="goodsFile.wasteRate" value="$!{goodsFile.wasteRate}" class="easyui-textbox" style="width:50px"/>%
+    						</td>
+							<th style="width:12%;"></th>
+    						<td style="width: 11%;">
+							</td>
+    					</tr>
+    				</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr style="font-size:150%"><strong>价格属性</strong></tr>
+    					<tr>
+    						<th style="width: 10%;"></span>进 价：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="goods_purchase_price" precision="2" name="goodsFile.goods_purchase_price" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.goods_purchase_price}" readonly/>
+    						</td>
+    						<th style="width: 10%;"></span>零售价：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="goods_price" precision="2" name="goodsFile.goods_price" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.goods_price}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>最低售价：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="lowest_price" precision="2" name="goodsFile.lowest_price" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.lowest_price}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>批发价：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price" precision="2" name="goodsFile.wholesale_price" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>配送价：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="distribution_price" precision="2" name="goodsFile.distribution_price" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.distribution_price}" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width: 10%;"></span>会员价1：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="member_price" precision="2" name="goodsFile.member_price" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.member_price}" readonly/>
+    						</td>
+    						<th style="width: 10%;"></span>会员价2：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="member_price2" name="goodsFile.member_price2" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.member_price2}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>会员价3：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="member_price3" precision="2" name="goodsFile.member_price3" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.member_price3}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>会员价4：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="member_price4" precision="2" name="goodsFile.member_price4" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.member_price4}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>会员价5：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="member_price5" precision="2" name="goodsFile.member_price5" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.member_price5}" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width: 10%;"></span>批发价2：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price2" precision="2" name="goodsFile.wholesale_price2" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price2}" readonly/>
+    						</td>
+    						<th style="width: 10%;"></span>批发价3：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price3" precision="2" name="goodsFile.wholesale_price3" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price3}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>批发价4：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price4" precision="2" name="goodsFile.wholesale_price4" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price4}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>批发价5：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price5" precision="2" name="goodsFile.wholesale_price5" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price5}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>批发价6：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price6" precision="2" name="goodsFile.wholesale_price6" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price6}" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width: 10%;"></span>批发价7：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price7" precision="2" name="goodsFile.wholesale_price7" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price7}" readonly/>
+    						</td>
+    						<th style="width: 10%;"></span>批发价8：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="wholesale_price8" precision="2" name="goodsFile.wholesale_price8" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.wholesale_price8}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>积分否：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="point_or_not" name="goodsFile.point_or_not" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.point_or_not}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>积分值：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="points_value" name="goodsFile.points_value" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.points_value}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>联营扣率：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="joint_rate" precision="2" name="goodsFile.joint_rate" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.joint_rate}" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width:10%;"></span>进项税：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="input_tax" name="goodsFile.input_tax" precision="2" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.input_tax}" readonly/>
+    						</td>
+    						<th style="width: 10%;"></span>销项税：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="out_tax" name="goodsFile.out_tax" precision="2" class="easyui-textbox" style="width:70px;" value="$!{goodsFile.out_tax}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span>毛利率：</th>
+    						<td style="width: 10%;">
+    							<input type="text" id="gross_margin" name="goodsFile.gross_margin" precision="2" class="underline" style="width:70px;" value="$!{goodsFile.gross_margin}" readonly/>
+    						</td>
+							<th style="width: 10%;"></span style="width:60px;"></th>
+    						<td style="width: 10%;">
+    							<input type="hidden" id="" name="" class="hide" style="width:70px;" readonly/>
+    						</td>
+							<th style="width: 10%;"></span style="width:60px;"></th>
+    						<td style="width: 10%;">
+    							<input type="hidden" id="" name="" class="hide" style="width:70px;" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+						<tr style="font-size:150%"><strong>其他属性</strong></tr>
+    					<tr>
+    						<th style="width:13%;"></span>进价规格：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="purchase_specifications" name="goodsFile.purchase_specifications" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.purchase_specifications}" readonly/>
+    						</td>
+    						<th style="width:13%;"></span>商品类型：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="goods_type" name="goodsFile.goods_type" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.goods_type}" readonly/>
+    						</td>
+							<th style="width:13%;"></span>库存管理：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="management_inventory" name="goodsFile.management_inventory" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.management_inventory}" readonly/>
+    						</td>
+							<th style="width:13%;"></span>采购状态：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="procurement_status" name="goodsFile.procurement_status" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.procurement_status}" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+							
+							<th style="width: 13%;"></span>商品属性：</th>
+    						<td style="width: 12%;">
+    							<input type="text" id="goods_property" name="goodsFile.goods_property" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.goods_property}" readonly/>
+    						</td>
+    						<th style="width:13%;"></span align="left">有效期：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="validity_period" name="goodsFile.validity_period" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.validity_period}" readonly/>
+    						</td>
+							<th style="width:13%;"></span align="left">一级预警天数：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="early_warning_days" name="goodsFile.early_warning_days" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.early_warning_days}" readonly/>
+    						</td>
+							<th style="width:13%;"></span align="left">二级预警天数：</th>
+    						<td style="width:12%;">
+    							<input type="text" id="early_warning_days2" name="goodsFile.early_warning_days2" class="easyui-textbox" style="width:80px;" value="$!{goodsFile.early_warning_days2}" readonly/>
+    						</td>
+    					</tr>
+					</table>
+					<table border="0" cellpadding="0" cellspacing="0">
+    					<tr>
+    						<th style="width:13%;"></span>商品备注：</th>
+    						<td style="width:62%;">
+    							<input type="text" id="remark" name="goodsFile.remark" class="easyui-textbox" style="width:455px" value="$!{goodsFile.remark}" readonly/>
+    						</td>
+							<th style="width: 13%;"></span>计价方式：</th>
+    						<td style="width: 12%;">
+    							<input type="text" id="valuation_method" name="goodsFile.valuation_method" class="easyui-textbox"style="width:80px;" value="$!{goodsFile.valuation_method}" readonly/>
+    						</td>
+							#*<th style="width: 13%;"></span style="width:60px;"></th>
+    						<td style="width: 12%;">
+    							<input type="hidden" id="valuation_method" name="goodsFile.valuation_method" class="hide"style="width:80px;" readonly/>
+    						</td>*#
+    					</tr>
+    				</table>
+    			</div>
+				<div class="box_03">
+           			<div class="box_inner_03">
+           				<div class="btn_area_setl btn_area_bg">
+           					#*<a href="#" onclick="editBaseInfo('baseForm')" class="easyui-linkbutton" style="width:80px;">修改</a>*#
+       						#*<a href="#" onclick="window.parent.closeWinForm();" class="easyui-linkbutton" style="width:80px;">取消</a>*#
+           				</div>
+           			</div>
+       			</div>
+        	</form>
+    	</div>
+    </div>
+    </div>
+</body>
+
+<script type="text/javascript">
+	$(function(){
+		initSelectCode('GoodsAttribute','goodsAttribute');
+		viewSelectCode('GoodsAttribute','$!{goodsFile.goodsAttribute}');
+		$("#goodsAttribute option[value='$!{goodsFile.goodsAttribute}']").attr("selected", true);
+	});
+	
+	$('#goods_brand_id').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/commodityClassify/selectListJson?type='+2,
+        valueField:'ID',
+        textField:'CLASSIFY_NAME'
+	});
+	$(function(){ 	
+		var goods_state='$!{goodsFile.goods_state}';
+		$('#goods_state').combobox("setValue",goods_state);
+	});
+	
+	$('#zcUserInfo').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/listWorkStation',
+        valueField:'ID',
+        textField:'WORKNAME'
+	});
+	
+	$('#goodsType').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/goodsFile/goodsType/listJson',
+        valueField:'ID',
+        textField:'TYPENAME'
+	});
+</script>
+</html>

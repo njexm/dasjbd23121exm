@@ -1,0 +1,108 @@
+<div id="navbar" class="navbar navbar-default">
+	<div class="navbar-container" id="navbar-container">
+		<div class="navbar-header pull-left" >
+    		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+			<!--img style="margin-top:4px" src="../resources/images/logo.png" alt="Jason's Photo" /-->
+			<a class="navbar-brand" href="#">订单管理系统</a>
+		</div>
+		<div class="nav-collapse">
+             <ul class="nav navbar-nav">
+				 #foreach($!{module} in $!{security})
+					
+					#if($!{module.moduleName} == "首页")
+					<li  id="h_index"> 
+					#else
+					<li id=$!{module.id}> 
+					#end
+						
+					#if(!${module.target} || $!{module.target} == "")
+						<a>$!{module.moduleName}</a>
+						#else
+						<a href="${rc.contextPath}/index_menu?parentId=$!{module.id}">$!{module.moduleName}</a>
+					#end
+					</li>
+				 #end
+             </ul>
+			 	<script>
+                	var $$ = function(func){  
+                            if (document.addEventListener) {  
+                                window.addEventListener("load", func, false);  
+                            }  
+                            else if (document.attachEvent) {  
+                                window.attachEvent("onload", func);  
+                            }  
+                    };
+                	$$(function(){
+                		$('.navbar-nav li').removeClass('active');
+                		var h_id = $('#type').val();
+                		if(h_id == null || h_id=='undefined'){
+                			$('#h_index').addClass('active');
+                		}else{
+                    		$('#'+h_id).addClass('active');
+                		}
+                	});
+                </script>
+		</div>
+		<div class="navbar-buttons navbar-header pull-right" role="navigation">
+			<ul class="nav ace-nav">
+				<li class="light-blue"><a data-toggle="dropdown" href="#"
+					class="dropdown-toggle"> <span class="user-info"> <small><span style="color: white;">欢迎您，
+                    </span></small>
+							<span style="color: white;">$!{userInfo.userName}</span>
+					</span> <i class="ace-icon fa fa-caret-down"></i>
+				</a>
+					<ul
+						class="user-menu dropdown-menu-right dropdown-menu dropdown-yellow dropdown-caret dropdown-close">
+						<li><a href="#" onclick="editUserDetail('用户详情','600','300')" > <i
+								class="ace-icon fa fa-user"></i>基本信息
+						</a></li>
+						<li><a href="#" onclick="viewPassword()"> <i class="ace-icon fa fa-cog"></i>修改密码
+						</a></li>
+						<li class="divider"></li>
+						<li><a href="#" onclick="logout()"> <i class="ace-icon fa fa-power-off"></i>退出系统</a></li>
+					</ul></li>
+			</ul>
+		</div>
+		</div>
+		<div id="upPasswordTitle" title="密码修改" class="easyui-window" style="width:350px;height:220px;">
+		<form action="" name="HZGXR" id="HZGXR" method="post">
+			<table style="wdth:100%;text-align:center;">
+			<tr>
+				<th style="width:25%"><span style="color: red;">*</span>请输入原始密码：</th>
+				<td style="width:40%">
+					<input type="password" id="oldPassword" name="oldPassword" value=""  reg="Require" tip="请填写原始密码" maxlength="16" />
+				</td>
+			</tr>
+			<tr>
+				<th><span style="color: red;">*</span>请输入新密码：</th>
+				<td>
+					<input type="password" id="newPassword1" name="newPassword1" value=""  reg="Require" tip="请填写新密码" maxlength="50" />
+				</td>
+			</tr>
+			<tr>
+				<th><span style="color: red;">*</span>请确认新密码：</th>
+				<td>
+					<input type="password" id="newPassword2" name="newPassword2" value=""  reg="Require" tip="请确认新密码" maxlength="50" />
+				</td>
+			</tr>
+			<tr height="10px">
+            </tr>
+			<tr>
+				<td colspan="2">
+        			<div >
+						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="validatePassword()">更改</a>
+    					<a href="#" class="easyui-linkbutton" onclick="$('#upPasswordTitle').window('close');" style="width:80px;" >取消<b></b></a>
+        			</div>
+					
+				</td>
+			</tr>
+			</table>
+		</form>
+	</div>
+	</div>
+</div>

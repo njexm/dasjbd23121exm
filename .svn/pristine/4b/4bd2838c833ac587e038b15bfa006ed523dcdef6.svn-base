@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table>
+    	           <tr>
+    	           	 <th width="8%">分拣单号：</th>
+    	             <td width="12%"><input id="code" name="sorte.code" type="text" class="easyui-textbox"/></td>
+					 <th width="8%">操作时间：</th>
+					 <td width="28%">
+						<input type="text" id="createTime" name="sorte.createTime" readonly class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+						-
+						<input type="text" id="updateTime" name="sorte.updateTime" readonly class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+					 </td>
+    	             <th width="8%">审核状态：</th>
+					 <td width="12%" align="left">
+						<select name="sorte.auditStatus" id="auditStatus" style="width:100px;"  class="easyui-combobox">
+    						<option value="">--请选择--</option>
+							<option value="1">待提交</option>
+    						<option value="2">待审核</option>
+    						<option value="3">已审核</option>
+							<option value="4">待处理</option>
+    					</select>
+					 </td>
+					 <td width="24%">
+					 	<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData();">查询</a>
+    					<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm1()">清空</a>
+					 </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+			<ul>
+				<li>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openAdd()" plain="true">新增</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="edit('编辑',1200,650)" plain="true">编辑</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="removeData()" plain="true">删除</a>
+					##<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="closeSort()" plain="true">结束分拣</a>
+					##<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="sorting('分拣',1200,650)" plain="true">分拣</a>
+					##<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="openCheck('审核分拣单',1200,560)" plain="true">审核</a>
+				</li>
+    		</ul>
+    	</form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/sorte.js"></script>
+<script type="text/javascript">
+	$(function(){
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //单选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/sorte/sorteDo/listSorteMasterJson?time="+new Date(), //数据来源
+		queryParams:{
+			'sorte.code':$('#code').val(),
+			'sorte.auditStatus':$("#auditStatus").combobox('getValue'),
+			'sorte.createTime':$('#createTime').val(),
+			'sorte.updateTime':$('#updateTime').val()
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'CODE',title:'分拣单号',width:'15%',sortable:true,sortable:true,formatter:function(value,res){
+				return "<a href='#' onclick=openDetail('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+			}},
+			{field:'NAME',title:'制作人',width:'15%',sortable:true,sortable:true},
+			{field:'CREATETIME',title:'操作日期',width:'15%',sortable:true,sortable:true,formatter:formatterCompleteDate},
+			{field:'AUDITS_TATUS',title:'审核状态',width:'15%',sortable:true,formatter:formatterStatus},
+			{field:'REMRKS',title:'备注',width:'37%',sortable:true,sortable:true}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function clearForm1(){
+	 $("#code").textbox("setValue","");
+	 $("#auditStatus").combobox("setValue","");
+	 $('#updateTime').val("");
+	 $('#createTime').val("");
+	 searchData();
+}
+
+function searchData(){
+	var queryParams = {
+			'sorte.code':$('#code').val(),
+			'sorte.auditStatus':$("#auditStatus").combobox('getValue'),
+			'sorte.createTime':$('#createTime').val(),
+			'sorte.updateTime':$('#updateTime').val()
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+function formatterStatus(value) {
+	if (value == '0') {
+		return '<span style="color:green">待提交</span>';
+	} else if (value == '1') {
+		return '<span style="color:blue">待审核</span>';
+	} else if (value == '2') {
+		return '<span style="color:black">已审核</span>';
+	} else if (value == '3') {
+		return '<span style="color:red">待处理</span>';
+	} else if (value == '4') {
+		return '<span style="color:yellow">完成</span>';
+	} else if (value == '5') {
+		return '<span style="color:pink">作废</span>';
+	} else {
+		return '未知';
+	}
+};
+</script>
+</html>

@@ -1,0 +1,25 @@
+jdbc.xaDataSourceClassName=oracle.jdbc.xa.client.OracleXADataSource
+#jdbc.url=jdbc:oracle:thin:@121.41.35.38:1521:orcl
+#jdbc.url=jdbc:oracle:thin:@192.168.1.99:1521:exm
+jdbc.url=jdbc:oracle:thin:@192.168.6.23:1521:orcl
+#jdbc.url=jdbc:oracle:thin:@localhost:1521:exm
+#jdbc.url=jdbc:oracle:thin:@localhost:1521:orcl
+#jdbc.url=jdbc:oracle:thin:@localhost:1521:njexm
+#jdbc.url=jdbc\:oracle\:thin\:localhost\:1521\:orcl
+##jdbc.url=jdbc:oracle:thin:@172.28.1.31:1521:exm
+db.username=exm
+db.password=exmPWD
+hibernate.show_sql=true
+hibernate.format_sql=true
+hibernate.default_schema=exm
+hibernate.hbm2ddl.auto=update
+hibernate.dialect=org.hibernate.dialect.OracleDialect
+hibernate.query.substitutions=true=1,false=false
+hibernate.jdbc.fetch_size=500
+hibernate.jdbc.batch_size=300
+hibernate.testquery=select 1 from dual
+hibernate.extraPackagesToScan=com.proem.exm.entity
+bpm.databaseSchemaUpdate=false 
+bpm.jobExecutorActivate=true 
+i18n_resources=classpath:i18n/message
+deadLine=fvDhvd78Y85amlQr3LE9O4lQK/0OZ6kSsH2UaqTjvrUIA/It3irmh69hkDkDEwOF63u6C/02UuORv2Hs++fjVPdzP+2Dzl+1htyU+5cpFU30WNo7eHJY3DYSHH5MxGha7E1q0KpOITV0cKlobRR3NrhASyvHvlALQmra/k9aDgo=

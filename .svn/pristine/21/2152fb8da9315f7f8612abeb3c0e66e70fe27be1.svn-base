@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+		<form class="baseform" id="baseform" method="post">
+    		<div class="cell" id="basediv" ">
+    			<table border="0" cellpadding="0" cellspacing="0" >
+                    <input type="hidden" name="zcSwitchhouse.createUser.id" id="userId" value="$!{zcSwitchhouse.createUser.id}"></input>
+				    <input type="hidden" name="zcSwitchhouse.id" id="switchChangeId" value="$!{zcSwitchhouse.id}"></input>
+    	           <tr>
+    	           	 <th width="10%">单据号:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcSwitchhouse.switch_Number" id="switch_Number" value="$!{zcSwitchhouse.switch_Number}" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					 <th width="10%"><span style="color:red">*
+                     </span>转出仓库:</th>
+    	             <td width="23%">
+						<input name="zcSwitchhouse.fromBranch.id" id="fromBranchId" style="width:80%;"  value="$!{zcSwitchhouse.fromBranch.id}" readonly> 
+                        </input> 
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>转入仓库:</th>
+    	             <td width="23%">
+						<input name="zcSwitchhouse.toBranch.id" id="toBranchId" style="width:80%;"  value="$!{zcSwitchhouse.toBranch.id}" readonly>
+                        </input>
+					 </td>
+				   </tr>
+				    <tr>
+    	           	 <th width="10%">制单人:</th>
+    	             <td width="23%">
+						<input  type="text"  id="userName" value="$!{zcSwitchhouse.createUser.name}" style="width:80%;" readonly >
+                        </input>
+					 </td>
+					  <th width="10%">制单日期:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcSwitchhouse.createTime" id="createTime" style="width:80%;"  readonly value="$!{zcSwitchhouse.createTime}">
+                       </input>
+					 </td>
+					  <th width="10%">审核人:</th>
+    	             <td width="23%">
+						<input  type="text" name="" id="" style="width:80%;" readonly  value="$!{zcSwitchhouse.checkUser.name}">
+                        </input>
+					 </td>
+				   </tr>
+				      <tr >
+    	           	  <th width="10%">审核日期:</th>
+    	             <td width="23%">
+						<input  type="text" name="zcSwitchhouse.checkDate" id="" style="width:80%;" readonly  value="$!{zcSwitchhouse.checkDate}">
+                        </input>
+					 </td>
+					 </td>
+					  <th width="10%"><span style="color:red">*
+                     </span>业务员:</th>
+    	             <td width="23%">
+						<input name="zcSwitchhouse.operatorUser.id" id="operatorUserId" style="width:80%;" readonly  value="$!{zcSwitchhouse.operatorUser.id}">
+                        </input>
+					 </td>
+				   </tr>
+				   <tr>
+					 <th width="10%">备注:</th>
+    	             <td colspan="8">
+						<input  type="text" name="zcSwitchhouse.remark" id="" style="width:80%;" value="$!{zcSwitchhouse.remark}" readonly>
+                        </input>
+					 </td>
+				   </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="previewPrint()" plain="true">打印预览</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="prints" class="easyui-window" style="width:800px;height:450px;">
+</div>
+<div id="flt"  name="flt" style="right:1px; POSITION:absolute; top:80px; z-index:99;"></div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/switchchange.js/"></script>
+<script type="text/javascript">
+	$(function(){
+	$('#prints').window('close');
+	var status='$!{zcSwitchhouse.status}';
+	if(status=='2'){
+		$('#flt').append('<img src="${rc.contextPath}/resources/image/pass.png" >');
+	}
+	$('#fromBranchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/branch/branchDo/selectListJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	$('#toBranchId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/branch/branchDo/selectListJson',
+        valueField:'ID',
+        textField:'BRANCH_NAME'
+	});
+	$('#operatorUserId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/userInfo/selectListJson',
+        valueField:'USERID',
+        textField:'USERNAME'
+	});
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	var lastIndex;
+	$('#dg').datagrid({
+		cache: false,
+		title:'商品列表', //标题
+		method:'post',
+		width:'100%',
+		iconCls:'', //图标
+		singleSelect:true, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/switchChange/listGoodsItemsNullOrderJson?time="+new Date(), //数据来源
+		queryParams:{
+			'id':'$!{zcSwitchhouse.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:200,
+		pageList:[200,300,500],
+		columns:[[
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'12%',sortable:true},
+			{field:'GOODS_NAME',title:'商品名',width:'34%',sortable:true,sortable:true},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'9%',sortable:true,sortable:true,formatter:showGoods},
+			{field:'GOODS_UNIT',title:'单位',width:'9%',sortable:true,sortable:true},
+			{field:'GOODS_PRICE',title:'单价',formatter:formatterNumber,width:'9%',align:'right',sortable:true,sortable:true},
+			{field:'STORE',title:'库存',width:'8%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			{field:'CHANGENUMBER',title:'数量',formatter:formatterNumber,width:'12%',align:'right',editor:{type:'numberbox',options:{precision:2}}},
+			{field:'REMARK',title:'备注',width:'14%'}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+		}
+	});
+	
+});
+
+
+function searchData(){
+	var queryParams = {
+			'id':'$!{zcSwitchhouse.id}'
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+</script>
+</html>

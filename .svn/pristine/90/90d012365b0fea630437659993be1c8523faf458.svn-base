@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="edge" />
+		#parse("common/resource.vm")
+		<link rel="stylesheet" type="text/css" href="${rc.contextPath}/resources/css/reset.css"/>
+		<script type="text/javascript" src="${rc.contextPath}/resources/js/userManage/userManage.js"></script>
+	</head>
+	<body margin="0">
+		<div id="tb" class="">
+        	<form class="" id="" method="post">
+        		<div class="cell">
+        			<table border="0" cellpadding="0" cellspacing="0">
+        	           <tr>
+        	           	 <th width="10%">用户名：</th>
+        	             <td width="15%">
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="branch_code" name="branch_code" type="text" class="easyui-textbox"/>
+    					 </td>
+        	             <td width="">
+        					<a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-new-search'" style="width:80px">搜索</a>
+        	             </td>
+        	           </tr>
+        	       	</table>
+        		</div>
+        	</form>
+    		<a href="#" class="easyui-linkbutton" onclick="addUser();" data-options="iconCls:'icon-new-add',plain:true">添加用户</a>
+    		<a href="#" class="easyui-linkbutton" onclick="updateUser();" data-options="iconCls:'icon-new-edit',plain:true">修改用户</a>
+    		<a href="#" class="easyui-linkbutton" onclick="deleteUsers();" data-options="iconCls:'icon-new-delete',plain:true">删除用户</a>
+    		<a href="#" class="easyui-linkbutton" onclick="distributeRole();" data-options="iconCls:'icon-new-check',plain:true">分配角色</a>
+		</div>
+		
+		<div id="userDataGrid"></div>
+		<div id="dlg"></div>
+		<div id="distributeRoleDlg"></div>
+	</body>
+</html>

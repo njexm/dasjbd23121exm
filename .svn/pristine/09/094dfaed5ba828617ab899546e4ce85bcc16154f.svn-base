@@ -1,0 +1,61 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<script type="text/javascript">
+</script>
+<p><a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="PreviewMytable()" plain="true">打印</a></p>
+<div id="div1">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+<DIV style="LINE-HEIGHT: 30px" class=size16 align=center><STRONG><font color="#0000FF">待采购商品汇总</font></STRONG></DIV>     
+</TABLE>
+</div>
+<div id="div2">
+	<TABLE border=1 cellSpacing=0 cellPadding=1 width="100%" style="border-collapse:collapse" bordercolor="#333333">
+<thead>
+  <TR>
+    <TD width="7%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="25%">
+      <DIV align=center><b>商品名</b></DIV></TD>
+    <TD width="7%">
+      <DIV align=center><b>订单数量</b></DIV></TD>
+    <TD width="5%">
+      <DIV align=center><b>单价</b></DIV></TD>
+    <TD width="8%">
+      <DIV align=center><b>库存数量</b></DIV></TD>
+    <TD width="6%">
+      <DIV align=center><b>缺少份数</b></DIV></TD>
+	<TD width="8%">
+      <DIV align=center><b>规格</b></DIV></TD>
+	<TD width="6%">
+      <DIV align=center><b>材料损耗率</b></DIV></TD>
+	<TD width="8%">
+      <DIV align=center><b>所需材料数量</b></DIV></TD>
+	<TD width="8%">
+      <DIV align=center><b>库存材料数量</b></DIV></TD>
+	<TD width="8%">
+      <DIV align=center><b>待采材料数量</b></DIV></TD>
+  </TR>
+</thead>      
+  <TBODY>  
+	#foreach($num in ${list})
+  <TR>
+    <TD align="center" >$!{num.SERIALNUMBER}</TD>
+    <TD align="center" >$!{num.NAME}</TD>
+    <TD align="center" >$!{num.NUMS}</TD>
+    <TD align="center" >$!{num.GOODS_PRICE}</TD>
+    <TD align="center" >$!{num.store}</TD>
+    <TD align="center" >$!{num.lossStore}</TD>
+	<TD align="center" >$!{num.shangpinguige}</TD>
+	<TD align="center" >$!{num.WASTERATE}%</TD>
+	<TD align="center" >$!{num.needNums}</TD>
+	<TD align="center" >$!{num.storeNums}</TD>
+	<TD align="center" >$!{num.storeneedNums}</TD>
+  </TR>
+	  #end
+  </TBODY>
+</TABLE>
+</div>

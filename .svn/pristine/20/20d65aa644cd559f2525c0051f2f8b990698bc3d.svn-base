@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="baseform" id="baseForm" method="post">
+    		<div class="cell">
+    			<table border="0" cellpadding="0" cellspacing="0">
+    			  <input type="hidden" name="supplierCost.makeMen.id" id="userId" value="$!{user.ctpUser.id}"></input>
+    			   <input type="hidden" name="supplierCost.id" id="supplierCostId" value="$!{supplierCost.id}"></input>
+    	           <tr>
+						<th style="width:11%">单据号：</th>
+						<td style="width:22%">
+							<input id="receiptNumber" name="supplierCost.receiptNumber" type="text"  style="width:80%"readonly/>
+                        </td>
+						<th style="width:11%">收支方式：</th>
+                        <td style="width:22%">
+							<select id="paymentMode" name="supplierCost.paymentMode" type="text" style="width:80%"  readonly>
+								<option value="应收款">应收款</option>
+								<option value="应付款">应付款</option>
+							</select>
+						</td>
+						<th style="width:11%">制单人：</th>
+						<td style="width:22%">
+							<input id="makeMen" name="supplierCost.makeMen.id" type="text"  class="easyui-textbox" style="width:80%" value="$!{user.userName}" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">制单日期：</th>
+						<td style="width:22%">
+							<input id="makeTime" name="supplierCost.makeTime" type="text"  style="width:80%" readonly/>
+                        </td>
+						<th style="width:11%">审核人：</th>
+                        <td style="width:22%">
+							<input id="auditMen" name="supplierCost.auditMen.id" type="text"  class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+						<th style="width:11%">审核状态：</th>
+						<td style="width:22%">
+							<input id="auditStatus" name="supplierCost.auditStatus" type="text"  class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%"><span style="color:red">*</span>供应商：</th>
+                        <td style="width:22%">
+							<input id="provider" name="supplierCost.provider.id" type="text" class="easyui-textbox" style="width:80%"/>
+						</td>
+						<th style="width:11%">付款日期：</th>
+						<td >
+							<input type="text" id="paymentTime" name="supplierCost.paymentTime" readonly="true" class="Wdate" style="width:79%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+                        </td>
+						<th style="width:11%">审核日期：</th>
+						<td style="width:22%">
+							<input id="auditTime" name="supplierCost.auditTime" type="text"  class="easyui-textbox" style="width:80%" readonly/>
+						</td>
+    	           </tr>
+				   <tr>
+						<th style="width:11%">备注信息：</th>
+                        <td width="72" colspan="3">
+    						<input id="remarks" name="supplierCost.remarks" type="text"  class="easyui-textbox" style="width:92%"/>
+                        </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+    	</form>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="save('baseForm')" plain="true">保存</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="addRecord()" plain="true">添加</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="destroyInfo()" plain="true">删除</a>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/settlement/supplier_cost.js"></script>
+<script type="text/javascript">
+	$(function(){
+	var timesencond=formatterCompleteDateMillsecond();
+	$('#receiptNumber').val('FYD'+timesencond);
+	$('#makeTime').val(formatterDate(new Date()));
+	var urlCode="${rc.contextPath}/code/initCodeList?codeType=providerCostType";
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'供应商费用单新增', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/supplierCost/supplierCostDo/listAddJosn?time="+new Date(), //数据来源
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:28px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'COST_NAME',title:'费用类型',width:'20%',align:'center',sortable:true,sortable:true,editor:{type:'combobox',options:{url:urlCode,valueField:"CODEVALUE",textField:"CODENAME" }}},
+			{field:'MONEY',title:'金额',width:'20%',align:'right',sortable:true,sortable:true,editor:{type:'numberbox',options:{precision:2}}},
+			{field:'REMARKS',title:'备注',width:'56%',sortable:true,sortable:true,editor:{type:'text'}}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+			for(var i = 0;i < data.rows.length;i++){
+    			$('#dg').datagrid('beginEdit',i);
+    		}
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+	
+	$('#provider').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/provider/poviderinfo/listJson',
+        valueField:'ID',
+        textField:'PROVIDER_NICKNAME'
+	});
+</script>
+</html>

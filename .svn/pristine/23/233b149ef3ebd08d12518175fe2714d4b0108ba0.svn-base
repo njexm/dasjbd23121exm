@@ -1,0 +1,119 @@
+package com.proem.exm.service.dispatching.impl;
+
+import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.proem.exm.dao.dispatching.DispatchingDao;
+import com.proem.exm.entity.dispatching.Dispatching;
+import com.proem.exm.entity.order.ZcOrder;
+import com.proem.exm.entity.order.ZcOrderItem;
+import com.proem.exm.service.dispatching.DispatchingService;
+import com.proem.exm.service.impl.BaseServiceImpl;
+import com.proem.exm.utils.Constant;
+import com.proem.exm.utils.DataGrid;
+import com.proem.exm.utils.Page;
+import com.proem.exm.utils.StringUtil;
+
+
+@Service("dispatchingService")
+public class DispatchingServiceImpl extends BaseServiceImpl implements DispatchingService {
+	SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	@Autowired
+	private DispatchingDao dispatchingDao;
+	
+	@Override
+	public DataGrid getOrderDispatchingDataGridObj(Page page, Object obj) throws Exception{
+		String sql = "select a.*,c.serialnumber,c.goods_unit,c.goods_specifications,c.remark from zc_order_process_item a left join zc_order_process b on b.id= a.order_id left join zc_goods_master c on c.id=a.goodsFile_id where 1=1 ";
+		sql += joinCondition(obj);
+		page.setSql(sql);
+		List<Map<String, Object>> rows = dispatchingDao.getObjPagedList(page);
+		Long total = dispatchingDao.getObjListCount(page);
+		return new DataGrid(total, rows);
+	}
+	/**
+	 * 查询条件拼接
+	 * @param obj
+	 * @return
+	 */
+	private String joinCondition(Object obj){
+		Dispatching dispatching = (Dispatching) obj;
+		String conditions = "";
+		if (StringUtil.validate(dispatching.getDispatchingId())) {
+			conditions += " and A.ID like '%" + dispatching.getDispatchingId() + "%'";
+		}
+		if(StringUtil.validate(dispatching.getBranchFromName())){			
+		    conditions += " and B.BRANCH_NAME like '%" + dispatching.getBranchFromName() + "%'";			
+		}
+		if(StringUtil.validate(dispatching.getBranchToName())){			
+		    conditions += " and C.BRANCH_NAME like '%" + dispatching.getBranchToName() + "%'";			
+		}
+		if(StringUtil.validate(dispatching.getStatues())){			
+		    conditions += " and A.STATUES like '%" + dispatching.getStatues() + "%'";			
+		}
+/*		if(StringUtil.validate(dispatching.getWareName())){			
+		    conditions += " and A.WARE_NAME like '%" + dispatching.getWareName() + "%'";			
+		}*/
+		if (StringUtil.validate(dispatching.getStartTime())) {
+			conditions += " and a.CREATETIME >= to_date('"
+					+ dispatching.getStartTime()
+					+ "','yyyy-mm-dd HH24:mi:ss') ";
+		}
+		if (StringUtil.validate(dispatching.getEndTime())) {
+			conditions += " and a.CREATETIME <= to_date('"
+					+ dispatching.getEndTime()
+					+ "','yyyy-mm-dd HH24:mi:ss')";
+		}
+		if (StringUtil.validate(dispatching.getMinAmount())) {
+			conditions += " and E.STORE_AMOUNT >= '"+dispatching.getMinAmount()+"'";
+		}
+		if (StringUtil.validate(dispatching.getMaxAmount())) {
+			conditions += " and E.STORE_AMOUNT <= '"+dispatching.getMaxAmount()+"'";
+		}
+		return conditions;
+	}
+	@Override
+	public DataGrid getPagedDataGridObjDispatching(Page page, Object obj)
+			throws Exception {
+		// TODO Auto-generated method stub
+		Dispatching dispatching = Constant.ZC_DISPATCHINGITEM;
+		String sql = "select a.ID,A.CREATETIME,A.STATUES,B.BRANCH_NAME AS BRANCH_FROM_NAME,C.BRANCH_NAME AS BRANCH_TO_NAME,d.username as PROPOSER_NAME,E.STORE_AMOUNT AS STORE_AMOUNT from ZC_DISPATCHINGITEM a "
+				+ " left join ZC_BRANCH_TOTAL b on B.id= a.BRANCH_FROM_ID "
+				+ " left join ZC_BRANCH_TOTAL C on C.id= a.BRANCH_TO_ID  "
+				+ " left join ZC_USER_INFO D on d.id=a.proposer_id "
+				+ " LEFT JOIN (SELECT DISPATCHING_ID AS DISPATCHING_ID,SUM(STORE_AMOUNT) AS STORE_AMOUNT FROM ZC_DISPATCHING_STORE  GROUP BY DISPATCHING_ID) E ON E.DISPATCHING_ID=A.ID"			
+				+ " where 1=1 ";
+		sql += joinCondition(obj);
+		page.setSql(sql);
+		List<Map<String, Object>> rows = dispatchingDao.getObjPagedList(page);
+		Long total = dispatchingDao.getObjListCount(page);
+		return new DataGrid(total, rows);
+	}
+	@Override
+	public DataGrid getStoresDataGridObjDispatching(Page page, Object obj)
+			throws Exception {
+		// TODO Auto-generated method stub
+		Dispatching dispatching = Constant.ZC_DISPATCHINGITEM;
+		String sql = "select a.* from ZC_DISPATCHING_STORE a "
+/*				+ " left join CTP_USER b on b.id= a.PROPOSER_id "
+				+ " left join CTP_USER c on c.id=a.USER_id  "*/				
+				+ " where 1=1 ";
+		sql += joinCondition1(obj);
+		page.setSql(sql);
+		List<Map<String, Object>> rows = dispatchingDao.getObjPagedList(page);
+		Long total = dispatchingDao.getObjListCount(page);
+		return new DataGrid(total, rows);
+		
+	}
+	private String joinCondition1(Object obj){
+		Dispatching dispatching = (Dispatching) obj;
+		String conditions = "";
+		if (StringUtil.validate(dispatching.getDispatchingId())) {
+			conditions += " and A.DISPATCHING_ID="+dispatching.getId();
+		}		
+		return conditions;
+	}	
+}

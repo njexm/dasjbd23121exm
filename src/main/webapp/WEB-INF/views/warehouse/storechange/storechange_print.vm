@@ -1,0 +1,70 @@
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/metro-gray/easyui.css"></link>
+<link rel="stylesheet" href="${rc.contextPath}/resources/jquery-easyui-1.4.2/themes/icon.css"></link>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/jquery.easyui.min.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/jquery-easyui-1.4.2/locale/easyui-lang-zh_CN.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/LodopFuncs.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/units/print.js"></script>
+<p><a href="#" class="easyui-linkbutton" iconCls="icon-new-print" onclick="PreviewMytable()" plain="true">打印</a></p>
+<div id="div1">
+<TABLE border=0 cellSpacing=0 cellPadding=0 width="100%">
+<DIV style="LINE-HEIGHT: 30px" class=size16 align=center><STRONG><font color="#0000FF">库存调整</font></STRONG></DIV>
+<TBODY>
+  <TR>
+    <TD width="50%"><font color="#0000FF">调整单号：<SPAN >$!{storeChange.storeChange_Number}</SPAN></font></TD>
+	<TD width="50%"><font color="#0000FF">调整仓库：<SPAN >$!{storeChange.branch.branch_name}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD width="33%"><font color="#0000FF">调整方式：<SPAN >$!{storeChange.changeType}</SPAN></font></TD>
+	<TD><font color="#0000FF">经手人:<SPAN>$!{storeChange.operatorUser.name}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD><font color="#0000FF">制单人：<SPAN >$!{storeChange.createUser.name}</SPAN></font></TD> 
+    <TD><font color="#0000FF">制单日期:<SPAN>$!{storeChange.createTime}</SPAN></font><font color="#0000FF"></font></TD>
+  </TR>
+  <TR>
+	<TD><font color="#0000FF">审核人:$!{storeChange.checkUser.name}</font></TD>
+    <TD><font color="#0000FF">审核日期：<SPAN>$!{storeChange.checkDate}</SPAN></font></TD>
+  </TR>
+  <TR>
+    <TD><font color="#0000FF">备注:<SPAN >$!{storeChange.remark}</SPAN></font></TD> 
+  </TR>
+  </TBODY>
+</TABLE>
+</div>
+<div id="div2">
+	<TABLE border=1 cellSpacing=0 cellPadding=1 width="100%" style="border-collapse:collapse" bordercolor="#333333">
+<thead>
+  <TR>
+    <TD width="10%">
+      <DIV align=center><b>货号</b></DIV></TD>
+    <TD width="25%">
+      <DIV align=center><b>商品名</b></DIV></TD>
+    <TD width="12%">
+      <DIV align=center><b>规格</b></DIV></TD>
+    <TD width="8%">
+      <DIV align=center><b>单位</b></DIV></TD>
+    <TD width="8%">
+      <DIV align=center><b>单价</b></DIV></TD>
+	<TD width="8%">
+      <DIV align=center><b>系统库存</b></DIV></TD>
+	<TD width="8%">
+      <DIV align=center><b>调整数量</b></DIV></TD>
+    <TD width="8%">
+     <DIV align=center><b>备注</b></DIV></TD></TR>
+</thead>
+<TBODY>  
+	#foreach($num in ${list})
+  <TR>
+    <TD align="center" >$!{num.SERIALNUMBER}</TD>
+    <TD align="center" >$!{num.GOODS_NAME}</TD>
+    <TD align="center" >$!{num.GOODS_SPECIFICATIONS}</TD>
+    <TD align="center" >$!{num.GOODS_UNIT}</TD>
+    <TD align="center" >$!{num.GOODS_PRICE}</TD>
+    <TD align="center" >$!{num.STORE}</TD>
+	<TD align="center" >$!{num.CHANGENUMBER}</TD>
+	<TD align="center" >$!{num.REMARK}</TD>
+  </TR>
+	  #end
+  </TBODY>
+</TABLE>
+</div>

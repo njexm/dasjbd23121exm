@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+				<input type="hidden" name="checkNumberId" id="checkNumberId" value="$!{checkNumber.id}"/>
+				<input type="hidden" name="zcWarehouse.id" id="zcWarehouseId" value="$!{zcWarehouse.id}"/>
+				 <input type="hidden" id="pandianhao"></>
+    			<table width="100%" style="table-layout: fixed;">
+					<tr>
+						<th style="width:11%">盘点单号：</th>
+						<td style="width:22%" id="pandiandanhao">
+							$!{zcWarehouse.warehouseNumber}
+                        </td>
+						<th style="width:11%">日期：</th>
+						<td style="width:22%">
+							$!{zcWarehouse.createTime}
+                        </td>
+						<th style="width:11%">盘点批号：</th>
+						<td style="width:22%">
+							$!{checkNumber.check_number}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">盘点范围：</th>
+						<td style="width:22%" id="checkType">
+							
+                        </td>
+						<th style="width:11%">仓库：</th>
+						<td style="width:22%" id="orderStatus" style="text-decoration:underline">
+							$!{checkNumber.branch.branch_name}
+                        </td>
+						<th style="width:11%">品牌类别：</th>
+						<td style="width:22%">
+							$!{classifyName}
+                        </td>
+					</tr>
+					<tr>
+						<th style="width:11%">备注：</th>
+						<td colspan="2">
+							$!{checkNumber.remark}
+                        </td>
+						<th style="width:11%">原因：</th>
+						<td colspan="2">
+							$!{zcWarehouse.reason}
+                        </td>
+					</tr>
+				</table>
+			<table border="0" cellpadding="0" cellspacing="0">
+    	           <tr>
+    	           	 <td style="width:100%" align="left" >
+    	           	 货号：
+    	            <input id="serialNumber" name="goodsFile.serialNumber" type="text" class="easyui-textbox"/>
+     	           	品名：
+    	            <input id="goodsName" name="goodsFile.goods_name" type="text" class="easyui-textbox"/>
+					<a href="javascript:void(0);" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchData()">查询</a>
+                     </td>
+				   </tr>
+    	       	</table>
+			   <tr>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-checkpass" onclick="checkPandiandan(2)" plain="true">审核通过</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-checknopass" onclick="checkPandiandan(3)" plain="true">审核不通过</a>
+			   </tr>
+    		</div>
+        </form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+</body>
+<div id="selectOptions" class="easyui-window" style="width:800px;height:550px;">
+</div>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/warehouse/warehouse.js/"></script>
+<script type="text/javascript">
+$(function(){
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			searchData();
+		}
+	};
+	$('#selectOptions').window('close');
+	var checkType=viewSelectCode('pandianArea',$!{checkNumber.checkType});
+	$('#checkType').text(checkType);
+	var winHeight = $(window).height();
+	var lastIndex;
+	$('#dg').datagrid({
+		cache: false,
+		idField: 'ID', 
+		title:'商品列表', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:false, //多选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/warehouse/wareHouse/listCheckGoodsItemsJson?time="+new Date(), //数据来源
+		queryParams:{
+			'goodsFile.serialNumber':$('#serialNumber').val(),
+			'goodsFile.goods_name':$('#goodsName').val(),
+			'houseId':'$!{checkNumber.branch.id}',
+			'id':'$!{zcWarehouse.id}'
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:50,
+		pageList:[50,100,200],
+		columns:[[
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'SERIALNUMBER',title:'货号',width:'11%'},
+			{field:'GOODS_NAME',title:'商品名',width:'32%'},
+			{field:'CLASSNAME',title:'类别',width:'7%'},
+			{field:'BRANDNAME',title:'品牌',width:'7%'},
+			{field:'GOODS_UNIT',title:'单位',width:'7%'},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'10%',formatter:formatterGuige},
+			{field:'STORE',title:'系统库存',width:'8%',align:'right',formatter:function(value,res){
+				if(value=='' || value=='undefined' || value==null){
+					return '0.00';
+				}else{
+					return value;
+				}
+			}},
+			{field:'GOODS_PRICE',title:'零售价',width:'6%',align:'right',formatter:formatterNumber},
+			{field:'ACTUALCHECKNUMBER',title:'实际盘点数量',width:'10%',align:'right',formatter:formatterNumber}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(data){
+		}
+	});
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+function searchData(){
+	var queryParams = {
+	'goodsFile.serialNumber':$('#serialNumber').val(),
+	'goodsFile.goods_name':$('#goodsName').val(),
+	'houseId':'$!{checkNumber.branch.id}',
+	'id':'$!{zcWarehouse.id}'
+	};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}
+
+</script>
+</html>

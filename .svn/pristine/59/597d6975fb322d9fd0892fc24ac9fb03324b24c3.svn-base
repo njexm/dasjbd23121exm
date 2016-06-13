@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/branch/branchson.js"></script>
+<script type="text/javascript">
+$(function(){ 
+	initArea('province');
+	selectArea('$!{branchsView.zcZoning.province}','city','county');
+	selectArea('$!{branchsView.zcZoning.city}','county','county');
+	$("#province option[value='$!{branchsView.zcZoning.province}']").attr("selected", true);
+	$("#city option[value='$!{branchsView.zcZoning.city}']").attr("selected", true);
+	$("#county option[value='$!{branchsView.zcZoning.county}']").attr("selected", true);
+});
+</script>
+</head>
+<body style="background-color: #fff">
+    <div class="easyui-panel" style="height:100%;width:100%">
+    	<form method="" id="baseForm">
+			<input type="hidden" name="branch.id" id="id" value="$!{branchsView.id}"/>
+			<input type="hidden" name="branch.zcZoning.id" id="ZoningId" value="$!{branchsView.zcZoning.id}"/>
+            <div class="cell">
+        		<table width="100%">
+    				<tr>
+    					<th style="width:15%;">
+    						仓库编号：
+                        </th>
+    					<td style="width:35%;">
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="branch_code" name="branch.branch_code" type="text" style="width:100%;" class="easyui-textbox" reg="Require" tip="请填写分店编码" value="$!{branchsView.branch_code}"/>
+                        </td>
+						<th style="width:15%;">
+    						仓库名称：
+                        </th>
+    					<td style="width:35%;">
+    						<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="branch_name" name="branch.branch_name" type="text" style="width:100%;" class="easyui-textbox" reg="Require" tip="请填写分店名称" value="$!{branchsView.branch_name}"/>
+                        </td>
+    				</tr>
+    				<tr>
+    					<th style="width:15%;">
+    						仓库地址：
+                        </th>
+    					<td style="width:85%;" colspan="4">
+    						<select name="branch.zcZoning.province" id="province" onchange="selectArea(this.value,'city','county')" style="23%; height: 25px; vertical-align: middle;">
+								<option	value="">--请选择--</option>
+							</select> 
+							<select name="branch.zcZoning.city" id="city" onchange="selectArea(this.value,'county','county')" style="width: 23%; height: 25px; vertical-align: middle;">
+								<option value="">--请选择--</option>
+							</select> 
+							<select name="branch.zcZoning.county" id="county" style="width: 23%; height: 25px; vertical-align: middle;">
+								<option value="">--请选择--</option>
+							</select> 
+							<input onkeydown="if(event.keyCode==13){event.keyCode=0;return false}" id="street" name="branch.zcZoning.street" type="text" class="easyui-textbox" reg="Require" tip="请填写详细地址" value="$!{branchsView.zcZoning.street}"/>
+                        </td>
+    				</tr>
+    				<tr>
+    					<th style="width:15%;">
+    						所属分店：
+                        </th>
+    					<td style="width:35%;">
+    						<input id="branch" name="branch.branchTotal.id" style="width:100%;" type="text" value="$!{branchsView.branchTotal.id}"/>
+                        </td>
+    				</tr>
+                </table>
+    		</div>
+            <div style="height:100%;">
+    			<table width="100%" height="100">
+    				<tr align="center" >
+    					<td align="center" >
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="editBaseInfo('baseForm')">保存</a>
+                        </td>
+    					<td align="center" >
+    						<a href="#" class="easyui-linkbutton" data-options="" style="width:80px;" onclick="window.parent.closeWinForm();">关闭</a>
+                        </td>
+                    </tr>
+                </table>
+    		</div>
+        </form>
+    </div>
+</body>
+<script>
+$('#branch').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/branchTotal/selectListJson',
+    valueField:'ID',
+    textField:'BRANCH_NAME',
+	panelHeight:'120px'
+});
+</script>
+</html>

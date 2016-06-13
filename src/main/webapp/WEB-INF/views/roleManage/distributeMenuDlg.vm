@@ -1,0 +1,4 @@
+<div class="div_14">
+	<ul id="menuTree" class="ztree"></ul>
+</div>
+<input id="menuIdjsonStr" value="$!{menuIdjsonStr}" type="hidden"/>

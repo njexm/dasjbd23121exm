@@ -149,3 +149,14 @@ var getRowsInfo = function(){
 	}
 	return ids;
 };
+
+function searchAassociatorAnalyze(){
+	var queryParams={
+			'associator.associator_Category':$('#associator_Category').combobox('getValue'),
+			'associator.associator_Amount':$('#associator_Amount').combobox('getValue'),
+			'associator.associator_ConsumeAmount':$('#associator_ConsumeAmount').combobox('getValue'),
+			'associator.associator_RegisterStore':$('#associator_RegisterStore').combobox('getValue')
+		};
+	$('#dg').datagrid('options').queryParams = queryParams;
+	$("#dg").datagrid('load');
+}

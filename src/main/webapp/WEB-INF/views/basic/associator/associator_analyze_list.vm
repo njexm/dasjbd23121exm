@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <title>众彩物流</title>
+    <meta http-equiv="content-type" content="text/html;charset=utf-8"/>
+	<meta http-equiv="Cache-Control" content="no-store" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="description" content="CISDIOA"/>
+    <meta name="author" content="CISDIOA"/>
+    <!-- Import resource file -->
+    #parse(${resource_path})
+</head>
+<body>
+<div style="overflow: auto">
+    <div id="tb" class="top_search">
+    	<form class="searchForm" id="searchForm" method="post">
+    		<div class="cell">
+    			<table>
+    	           <tr>
+    	           	 <th width="8%">消费亭点：</th>
+    	             <td width="12%"><input id="associator_RegisterStore" name="associator_RegisterStore" type="text" class="easyui-textbox"/></td>
+					 <th width="8%">消费区间：</th>
+					 <td width="28%">
+						<input type="text" id="associator_Amount" name="associator_Amount" type="text" class="easyui-combobox" style="width:45%;" data-options="valueField:'value',textField:'text',data:[{'value':'0','text':'0'},{'value':'200','text':'200'},{'value':'500','text':'500'},{'value':'1000','text':'1000'},{'value':'2000','text':'2000'}]" />
+						-
+						<input type="text" id="associator_ConsumeAmount" name="associator_ConsumeAmount" type="text" class="easyui-combobox" style="width:45%;" data-options="valueField:'value',textField:'text',data:[{'value':'199','text':'199'},{'value':'499','text':'499'},{'value':'999','text':'999'},{'value':'1999','text':'1999'}]"  />
+					 </td>
+    	             <th width="8%">支付方式：</th>
+					 <td width="12%" align="left">
+						<select name="associator_Category" id="associator_Category" style="width:100px;"  class="easyui-combobox">
+								<option value="">--请选择--</option>
+    							<option value="1">宜鲜美平台订单</option>
+								<option value="3">天猫平台订单</option>
+								<option value="4">京东平台订单</option>
+								<option value="5">微信</option>
+								<option value="6">APP自有平台</option>
+								<option value="7">其他</option>
+    					</select>
+					 </td>
+					 <td width="24%">
+					 	<a href="#" class="easyui-linkbutton" iconCls="icon-new-search" onclick="searchAassociatorAnalyze();">查询</a>
+    					<a href="#" class="easyui-linkbutton" iconCls="icon-new-reduce" onclick="clearForm1()">清空</a>
+					 </td>
+    	           </tr>
+    	       	</table>
+    		</div>
+			
+    	</form>
+    </div>
+    <table id="dg" width="100%"></table>
+</div>
+
+</body>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/associator/associator.js"></script>
+<script type="text/javascript">
+	$(function(){
+	debugger;
+	//去除回车键
+	document.onkeydown=function(evt){
+		if(evt.keyCode ==13){
+			return;
+		}
+	};
+	
+	var winHeight = $(window).height();
+	$('#dg').datagrid({
+		cache: false,
+		title:'$!{title}', //标题
+		method:'post',
+		iconCls:'', //图标
+		singleSelect:true, //单选
+		height:winHeight, //高度
+		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+		striped: true, //奇偶行颜色不同
+		remoteSort: false,
+		url:"${rc.contextPath}/associator/associator/listAssociatorAnalyzeJson?time="+new Date(), //数据来源
+		queryParams:{
+			'associator.associator_Category':$('#associator_Category').combobox('getValue'),
+			'associator.associator_Amount':$('#associator_Amount').combobox('getValue'),
+			'associator.associator_ConsumeAmount':$('#associator_ConsumeAmount').combobox('getValue'),
+			'associator.associator_RegisterStore':$('#associator_RegisterStore').combobox('getValue')
+		}, //查询条件
+		pagination:true, //显示分页
+		rownumbers:true, //显示行号
+		pageSize:10,
+		pageList:[10,15,20],
+		columns:[[
+			{field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+				return "height:30px;";
+			}}, //显示复选框
+			{field:'ID',sortable:true,sortable:true,hidden:true},
+			{field:'ASSOCIATOR_CARDNUMBER',title:'卡号',width:'15%',sortable:true,sortable:true},
+			{field:'ASSOCIATOR_NAME',title:'会员名称',width:'19%',sortable:true,sortable:true},
+			{field:'BRANCH_NAME',title:'消费亭点',width:'19%',sortable:true,sortable:true},
+			{field:'MONEY',title:'消费金额',width:'12%',align:'right',sortable:true,sortable:true,formatter:formatterNumber},
+			//{field:'CREATETIME',title:'操作日期',width:'15%',sortable:true,sortable:true,formatter:formatterCompleteDate},
+			{field:'PAY_MODE',title:'支付方式',width:'16%',sortable:true,formatter:formatterStatus}
+		]],
+		toolbar:'#tb',
+		onLoadSuccess:function(){
+			$('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+		}
+	});
+	
+});
+
+$(window).resize(function(){
+    $('#dg').datagrid('resize',{
+    	width:'100%'
+    });
+});
+
+function clearForm1(){
+	 $('#associator_Category').combobox("setValue","");
+   	 $("#associator_Amount").combobox("setValue","");
+   	 $("#associator_ConsumeAmount").combobox("setValue","");
+   	 $('#associator_RegisterStore').combobox("setValue","");
+   	 searchAassociatorAnalyze();
+}
+
+
+$('#associator_RegisterStore').combobox({
+	method:'POST',
+    url:'${rc.contextPath}/branchTotal/selectListJson',
+    valueField:'ID',
+    textField:'BRANCH_NAME'
+});
+
+</script>
+</html>

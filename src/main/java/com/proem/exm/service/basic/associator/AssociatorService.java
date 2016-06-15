@@ -29,5 +29,13 @@ public interface AssociatorService extends BaseService {
 	 * @return
 	 */
 	public List<Map<String, Object>> getObjList(Object obj);
+	/**
+	 * 分页查询会员消费方式
+	 * @param page
+	 * @param obj
+	 * @return
+	 * @throws Exception
+	 */
+	public DataGrid getPageDataGridByPayInfo(Page page, Object obj) throws Exception;
 
 }

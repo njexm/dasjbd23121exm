@@ -74,4 +74,41 @@ public class AssociatorServiceImpl extends BaseServiceImpl implements
 		return list;
 	}
 
+	@Override
+	public DataGrid getPageDataGridByPayInfo(Page page, Object obj)
+			throws Exception {
+		String sql = "SELECT B.id,B.payinfo_id,D.ID AS BRANCHID,C.ASSOCIATOR_CARDNUMBER,C.ASSOCIATOR_NAME,B.pay_mode,B.MONEY ,D.BRANCH_NAME FROM  ZC_PAYINFO_ITEM B "
+					+"LEFT JOIN ZC_PAYINFO A ON A.ID = B.PAYINFO_ID "
+					+"LEFT JOIN ZC_ASSOCIATOR_INFO C ON C.ID = A.MEMBERID "
+					+"LEFT JOIN ZC_BRANCH_INFO D ON D.ID = A.branch_id "
+					+"WHERE 1=1 ";
+		sql+=conditions(obj);
+		page.setSql(sql);
+		List<Map<String, Object>> rows = associatorDao.getObjPagedList(page);
+		Long total = associatorDao.getObjListCount(page);
+		return new DataGrid(total, rows);
+	}
+	/**
+	 * 查询条件拼接
+	 * @param obj
+	 * @return
+	 */
+	private String conditions(Object obj){
+		 Associator associator = (Associator) obj;
+			String conditions = "";
+			if (StringUtil.validate(associator.getAssociator_Category())) {
+				conditions += " and B.pay_mode like'%" + associator.getAssociator_Category() + "%' ";
+			}
+			if (StringUtil.validate(associator.getAssociator_RegisterStore())) {
+				conditions += " and D.ID like'%" + associator.getAssociator_RegisterStore() + "%' ";
+			}
+			if (StringUtil.validate(associator.getAssociator_Amount())) {
+				if (StringUtil.validate(associator.getAssociator_ConsumeAmount())) {
+				conditions += " and B.MONEY between " + associator.getAssociator_Amount() + " and "+associator.getAssociator_ConsumeAmount()+"";
+			
+				}
+			}
+		 return conditions;
+	}
+
 }

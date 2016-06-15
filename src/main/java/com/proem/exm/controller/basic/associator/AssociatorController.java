@@ -295,4 +295,60 @@ public class AssociatorController extends BaseController {
 		}
 	}
 	
+	
+	/**
+	 *  初始化跳转会员销售分析页面
+	 * @param request
+	 * @param response
+	 * @param model 
+	 * @return
+	 * @throws UnsupportedEncodingException 
+	 */
+	@RequestMapping(value = "initAnalyze")
+	public ModelAndView initAnalyze(HttpServletRequest request,
+			HttpServletResponse response, Model model) throws UnsupportedEncodingException {
+		String faName=request.getParameter("faName");
+		 if(StringUtils.isBlank(faName)){
+			 faName="基础档案";
+		 }else{
+		 faName= new String(faName.getBytes("iso8859-1"),"utf-8"); 
+		 }
+		String fasonName=request.getParameter("fasonName");
+		 if(StringUtils.isBlank(fasonName)){
+			 fasonName="档案管理";
+		 }else{
+		fasonName= new String(fasonName.getBytes("iso8859-1"),"utf-8"); 
+		 }
+		String sonName=request.getParameter("sonName");
+		 if(StringUtils.isBlank(sonName)){
+			 sonName="会员销售分析";
+		 }else{
+		sonName= new String(sonName.getBytes("iso8859-1"),"utf-8"); }
+		String title="  "+faName+" > "+fasonName+" > "+sonName+"";
+		model.addAttribute("title", title);
+		ModelAndView view = createIframeView("basic/associator/associator_analyze_list");
+		return view;
+	}
+	
+	/**
+	 *  会员销售信息列表/可按条件查询
+	 * @param associator
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "listAssociatorAnalyzeJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listAssociatorAnalyzeJson(@ModelAttribute Associator associator,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			dataGrid = associatorService.getPageDataGridByPayInfo(page, associator);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
 }

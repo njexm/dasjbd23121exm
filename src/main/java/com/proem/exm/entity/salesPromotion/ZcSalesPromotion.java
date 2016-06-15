@@ -10,8 +10,10 @@ import javax.persistence.FetchType;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import com.cisdi.ctp.model.gen.Root;
@@ -146,7 +148,11 @@ public class ZcSalesPromotion extends Root{
 	public void setMemberLevel(String memberLevel) {
 		this.memberLevel = memberLevel;
 	}
-	@OneToMany(mappedBy = "Zc_SalesPromotion")
+	
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	@JoinTable(name = "zc_promotion_rel", 
+	joinColumns={@JoinColumn(table = "Zc_SalesPromotion", name= "promotion_id", referencedColumnName = "id")},
+	inverseJoinColumns={@JoinColumn(table = "zc_branch_total", name= "branch_id", referencedColumnName= "id")})
 	public List<BranchTotal> getBranchTotalList() {
 		return branchTotalList;
 	}

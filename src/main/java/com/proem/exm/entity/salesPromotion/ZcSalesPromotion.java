@@ -19,6 +19,7 @@ import javax.persistence.Table;
 import com.cisdi.ctp.model.gen.Root;
 import com.proem.exm.entity.basic.branch.BranchTotal;
 import com.proem.exm.entity.basic.code.Code;
+import com.proem.exm.entity.system.ZcUserInfo;
 
 /**
  * 促销主表
@@ -63,6 +64,10 @@ public class ZcSalesPromotion extends Root{
 	private Code ZcCodeScope ;
 	/*促销模式*/
 	private Code ZcCodeMode ;
+	/*审核状态*/
+	private int checkState;
+	
+	
 	
 	@Column(name = "PROMOTION_NUMBER")
 	public String getPromotionNumber() {
@@ -149,10 +154,11 @@ public class ZcSalesPromotion extends Root{
 		this.memberLevel = memberLevel;
 	}
 	
-	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-	@JoinTable(name = "zc_promotion_rel", 
-	joinColumns={@JoinColumn(table = "Zc_SalesPromotion", name= "promotion_id", referencedColumnName = "id")},
-	inverseJoinColumns={@JoinColumn(table = "zc_branch_total", name= "branch_id", referencedColumnName= "id")})
+		@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+	 @JoinTable(name="zc_promotion_rel",
+     joinColumns = @JoinColumn(name="promotion_id"),
+     inverseJoinColumns = @JoinColumn(name="branch_id")
+	 )
 	public List<BranchTotal> getBranchTotalList() {
 		return branchTotalList;
 	}
@@ -177,6 +183,14 @@ public class ZcSalesPromotion extends Root{
 	public void setZcCodeMode(Code zcCodeMode) {
 		ZcCodeMode = zcCodeMode;
 	}
+	@Column(name = "CHECK_STATE")
+	public int getCheckState() {
+		return checkState;
+	}
+	public void setCheckState(int checkState) {
+		this.checkState = checkState;
+	}
+	
 	
 	
 }

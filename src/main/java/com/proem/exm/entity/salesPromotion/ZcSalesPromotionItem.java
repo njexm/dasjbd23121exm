@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.cisdi.ctp.model.gen.Root;
+import com.proem.exm.entity.basic.CommodityClassify.CommodityClassify;
 import com.proem.exm.entity.basic.goodsFile.GoodsFile;
 
 /**
@@ -54,6 +55,10 @@ public class ZcSalesPromotionItem extends Root{
 	private Date endTimeFrame ;
 	/*商品信息*/
 	private GoodsFile goodsFile ;
+	/*品牌*/
+	private CommodityClassify brandClassify;
+	/*类别*/
+	private CommodityClassify ClassClassify;
 	
 	@Column(name = "salesPromotion_Id")
 	public String getSalesPromotionId() {
@@ -149,6 +154,24 @@ public class ZcSalesPromotionItem extends Root{
 	}
 	public void setGoodsFile(GoodsFile goodsFile) {
 		this.goodsFile = goodsFile;
+	}
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "Brand_Classify_id")
+	public CommodityClassify getBrandClassify() {
+		return brandClassify;
+	}
+	public void setBrandClassify(CommodityClassify brandClassify) {
+		this.brandClassify = brandClassify;
+	}
+	@ManyToOne(cascade = { CascadeType.PERSIST, CascadeType.MERGE,
+			CascadeType.REFRESH }, fetch = FetchType.LAZY)
+	@JoinColumn(name = "Class_Classify_id")
+	public CommodityClassify getClassClassify() {
+		return ClassClassify;
+	}
+	public void setClassClassify(CommodityClassify classClassify) {
+		ClassClassify = classClassify;
 	}
 	
 	

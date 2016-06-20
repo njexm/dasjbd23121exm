@@ -80,7 +80,7 @@ public class AssociatorServiceImpl extends BaseServiceImpl implements
 		String sql = "SELECT B.id,B.payinfo_id,D.ID AS BRANCHID,C.ASSOCIATOR_CARDNUMBER,C.ASSOCIATOR_NAME,B.pay_mode,B.MONEY ,D.BRANCH_NAME FROM  ZC_PAYINFO_ITEM B "
 					+"LEFT JOIN ZC_PAYINFO A ON A.ID = B.PAYINFO_ID "
 					+"LEFT JOIN ZC_ASSOCIATOR_INFO C ON C.ID = A.MEMBERID "
-					+"LEFT JOIN ZC_BRANCH_INFO D ON D.ID = A.branch_id "
+					+"LEFT JOIN ZC_BRANCH_TOTAL D ON D.ID = A.branch_id "
 					+"WHERE 1=1 ";
 		sql+=conditions(obj);
 		page.setSql(sql);

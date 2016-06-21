@@ -12,34 +12,33 @@
     <meta name="author" content="CISDIOA"/>
     <!-- Import resource file -->
     #parse(${resource_path})
-	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
 </head>
 <body>
 <div style="overflow: auto">
     <div id="tb" class="top_search">
     	<form class="searchForm" id="baseForm" method="post">
     		<div class="cell">
+				<input type="hidden" name="zcSalesPromotion.id" id="zcSalesPromotionId" value="$!{zcSalesPromotion.id}"/>
+				<input type="hidden" name="zcSalesPromotion.checkState" id="status" value="$!{purchaseReceive.checkState}"/>
 				<table border="0" cellpadding="0" cellspacing="0">
     	           <tr>
 						<th style="width:11%">促销编号：</th>
 						<td style="width:22%">
-							<input  id="promotionNumber" name="zcSalesPromotion.promotionNumber" type="text" style="width:96%" readonly/>
+							$!{zcSalesPromotion.promotionNumber}
                         </td>
 						<th style="width:11%">制单日期：</th>
 						<td>
-							<input  id="createtime" name="zcSalesPromotion.createTime" type="text" readonly>
-							</input>
+							$!{zcSalesPromotion.createTime}
                         </td>
 						<th style="width:11%">制单人：</th>
 						<td style="width:22%">
-							<input type="hidden" name="zcSalesPromotion.createMan" id="userId" value="$!{user.ctpUser.id}"></input>
-							<input  id="createMan" name="" type="text" value="$!{user.userName}" readonly/>
+							$!{zcSalesPromotion.createMan}
 						</td>
     	           </tr>
 				   <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销方式：</th>
                         <td style="width:20%">
-                            <select  id="zcCodeMode" name="zcSalesPromotion.ZcCodeMode.id" style="width:98%" onchange="searchDataGridChange();"></select>
+                            <select  id="zcCodeMode" name="zcSalesPromotion.ZcCodeMode.id" style="width:98%" onchange="searchData();searchDataGrid();"></select>
 						</td>
 						<th style="width:11%">会员等级：</th>
 						<td>
@@ -48,55 +47,68 @@
 						</td>
 						<th style="width:11%">审核人：</th>
                         <td>
-							<input  type="text" id="checkMan" name="" disabled  >
-                            </input>
+							$!{zcSalesPromotion.checkMan}
 						</td>
     	           </tr>
 				   <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>商品范围：</th>
                         <td style="width:20%">
-							<select  id="zcCodeScope" name="zcSalesPromotion.ZcCodeScope.id" style="width:98%" onchange="searchDataGridChange();"></select>
+							<select  id="zcCodeScope" name="zcSalesPromotion.ZcCodeScope.id" style="width:98%" onchange="searchData();searchDataGrid();"></select>
 						</td>
 						<th style="width:11%">审核日期：</th>
 						<td>
-							<input  id="checkDate" name="zcSalesPromotion.checkDate" type="text" disabled />
+							$!{zcSalesPromotion.checkDate}
 						</td>
 						<th style="width:11%">促销标题：</th>
 						<td>
-							<input  id="promotionTitle" name="zcSalesPromotion.promotionTitle" type="text" />
+							<input  id="promotionTitle" name="zcSalesPromotion.promotionTitle" type="text" value="$!{zcSalesPromotion.promotionTitle}"/>
                         </td>
     	           </tr>
                    <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销期限：</th>
                         <td style="width:20%">
-							<input type="text" id="promotionBeginDate" name="zcSalesPromotion.promotionBeginDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+							<input type="text" id="promotionBeginDate" name="zcSalesPromotion.promotionBeginDate" value="$!{zcSalesPromotion.promotionBeginDate}" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
 							-
-							<input type="text" id="promotionEndDate" name="zcSalesPromotion.promotionEndDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+							<input type="text" id="promotionEndDate" name="zcSalesPromotion.promotionEndDate" readonly="true" value="$!{zcSalesPromotion.promotionEndDate}" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
 						</td>
 						<th width="11%">
 						<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseBranch()" plain="true">选择门店</a>
 					 </th>
 					 <td width="20%">
-						<input id="branchCode" name="" style="width:95%;" readonly/>
+						<input id="branchCode" name="" style="width:95%;" value="$!{branchTotal}" readonly/>
                      </td>
 						<th width="11%">促销日子:</th>
 						<td width="30%">
-    						<label><input name="week" type="checkbox" value="1"/>星期一</label>
-                            <label><input name="week" type="checkbox" value="2"/>星期二</label>
-    						<label><input name="week" type="checkbox" value="3"/>星期三</label>
-    						<label><input name="week" type="checkbox" value="4"/>星期四</label>
-    						<label><input name="week" type="checkbox" value="5"/>星期五</label>
-    						<label><input name="week" type="checkbox" value="6"/>星期六</label>
-    						<label><input name="week" type="checkbox" value="7"/>星期日</label>
+    						<label><input id="week1" name="week" type="checkbox" value="1"/>星期一</label>
+                            <label><input id="week2" name="week" type="checkbox" value="2"/>星期二</label>
+    						<label><input id="week3" name="week" type="checkbox" value="3"/>星期三</label>
+    						<label><input id="week4" name="week" type="checkbox" value="4"/>星期四</label>
+    						<label><input id="week5" name="week" type="checkbox" value="5"/>星期五</label>
+    						<label><input id="week6" name="week" type="checkbox" value="6"/>星期六</label>
+    						<label><input id="week7" name="week" type="checkbox" value="7"/>星期日</label>
+						</td>
+				   </tr>
+				   <tr>
+						<th style="width:11%">终止人：</th>
+						<td>
+							$!{zcSalesPromotion.stopMan}
+						</td>
+						<th style="width:11%">终止日期：</th>
+						<td>
+							$!{zcSalesPromotion.stopDate}
+						</td>
+						<th style="width:11%">促销描述：</th>
+						<td>
+							<input  id="promotionRemark" name="zcSalesPromotion.promotionRemark" type="text" value="$!{zcSalesPromotion.promotionRemark}"/>
 						</td>
 				   </tr>
     	       	</table>
     				
     		</div>
     	</form>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="saveLineToPurchase('baseForm')" plain="true">保存</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="EidtLineToPurchase('baseForm')" plain="true">保存并提交</a>
 		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseGoods()" plain="true">选择</a>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="addGoods('1')" plain="true">增加</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="addGoodsWhileEdit('1')" plain="true">增加</a>
 		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteChose()" plain="true">删除</a>
     </div>
     <table id="dg" width="100%"></table>
@@ -109,6 +121,7 @@
 <script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/discount.js"></script>
 <script type="text/javascript">
 	$(function(){
+	debugger;
 	$('#selectOptions').window('close');
 	
 	initSelectCode('SaleScope','zcCodeScope');
@@ -117,9 +130,36 @@
 	
 	initSelectCode('memberLevel','memberLevel');
 	
-	var timesencond=formatterCompleteDateMillsecond();
-	$('#promotionNumber').val('ZKD'+timesencond);
-	$('#createtime').val(formatterDate(new Date()));
+	$("#zcCodeScope option[value='$!{zcSalesPromotion.ZcCodeScope.codeValue}']").attr("selected", true);
+	$("#zcCodeMode option[value='$!{zcSalesPromotion.ZcCodeMode.codeValue}']").attr("selected", true);
+	$("#memberLevel option[value='$!{zcSalesPromotion.memberLevel}']").attr("selected", true);
+	
+	var chk = '$!{zcSalesPromotion.promotionDays}' ;
+	var chk_week = chk.split(',');
+	for(var i in chk_week){
+		if(chk_week[i]=="1"){
+			$('#week1').attr("checked", true);
+		}
+		if(chk_week[i]=="2"){
+			$('#week2').attr("checked", true);
+		}
+		if(chk_week[i]=="3"){
+			$('#week3').attr("checked", true);
+		}
+		if(chk_week[i]=="4"){
+			$('#week4').attr("checked", true);
+		}
+		if(chk_week[i]=="5"){
+			$('#week5').attr("checked", true);
+		}
+		if(chk_week[i]=="6"){
+			$('#week6').attr("checked", true);
+		}
+		if(chk_week[i]=="7"){
+			$('#week7').attr("checked", true);
+		}
+		
+	}
 	//去除回车键
 	document.onkeydown=function(evt){
 		if(evt.keyCode !=13){
@@ -131,7 +171,7 @@
 	var winHeight = $(window).height();
 	$('#dg').datagrid({
 		cache: false,
-		title:'促销列表', //标题
+		title:'商品列表', //标题
 		method:'post',
 		iconCls:'', //图标
 		singleSelect:false, //多选
@@ -139,9 +179,11 @@
 		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
 		striped: true, //奇偶行颜色不同
 		remoteSort: false,
-		url:"${rc.contextPath}/discount/discount/listPromotionItemsNullOrderJson?time="+new Date(), //数据来源
+		url:"${rc.contextPath}/discount/discount/listPromotionItemsEditOrderJson?time="+new Date(), //数据来源
 		queryParams:{
-			
+			'zcSalesPromotion.id':$('#zcSalesPromotionId').val(),
+			'zcSalesPromotion.ZcCodeScope.codeValue':$('#zcCodeScope').val(),
+			'zcSalesPromotion.ZcCodeMode.codeValue':$('#zcCodeMode').val()
 		}, //查询条件
 		pagination:true, //显示分页
 		rownumbers:true, //显示行号
@@ -177,7 +219,8 @@
 	});
 	// 取得div层
 	var $search = $('#search');
-	
+	searchDataGrid();
+	$('#dg').datagrid("reload");
 });
 $(window).resize(function(){
     $('#dg').datagrid('resize',{
@@ -188,17 +231,14 @@ $(window).resize(function(){
 
 function searchData(){
 	var queryParams = {
-		
+			'zcSalesPromotion.id':$('#zcSalesPromotionId').val(),
+			'zcSalesPromotion.ZcCodeScope.codeValue':$('#zcCodeScope').val(),
+			'zcSalesPromotion.ZcCodeMode.codeValue':$('#zcCodeMode').val()
 	};
+	$('#dg').datagrid('options').queryParams = queryParams;
 }
 	
-	$('#storehouseId').combobox({
-		method:'POST',
-        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
-        valueField:'ID',
-		panelHeight:'200px',
-        textField:'BRANCH_NAME'
-	});
+	
 	
 </script>
 </html>

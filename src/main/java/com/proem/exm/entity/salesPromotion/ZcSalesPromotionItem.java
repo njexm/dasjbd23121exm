@@ -60,6 +60,26 @@ public class ZcSalesPromotionItem extends Root{
 	/*类别*/
 	private CommodityClassify ClassClassify;
 	
+	/* 组号 */
+	private String groupNumber;
+	
+	/* 数量 */
+	private String nums;
+	
+	@Column(name="nums")
+	public String getNums() {
+		return nums;
+	}
+	public void setNums(String nums) {
+		this.nums = nums;
+	}
+	@Column(name = "group_number")
+	public String getGroupNumber() {
+		return groupNumber;
+	}
+	public void setGroupNumber(String groupNumber) {
+		this.groupNumber = groupNumber;
+	}
 	@Column(name = "salesPromotion_Id")
 	public String getSalesPromotionId() {
 		return salesPromotionId;

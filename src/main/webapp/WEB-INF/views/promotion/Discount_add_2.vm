@@ -39,17 +39,11 @@
 				   <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销方式：</th>
                         <td style="width:20%">
-                            <select  id="zcCodeMode" name="zcSalesPromotion.ZcCodeMode.id" style="width:98%" onchange="searchDataGrid();"></select>
+                            <select  id="zcCodeMode" name="zcSalesPromotion.ZcCodeMode.id" style="width:98%" onchange="searchDataGridChange();"></select>
 						</td>
 						<th style="width:11%">会员等级：</th>
 						<td>
 							<select  id="memberLevel" name="zcSalesPromotion.memberLevel" style="width:74%" readonly >
-								<option value="">请选择</option>
-								<option value="0">无</option>
-								<option value="1">会员卡</option>
-								<option value="2">折扣卡</option>
-								<option value="3">非会员</option>
-								<option value="4">所有会员</option>
 							</select>
 						</td>
 						<th style="width:11%">审核人：</th>
@@ -61,11 +55,11 @@
 				   <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>商品范围：</th>
                         <td style="width:20%">
-							<select  id="zcCodeScope" name="zcSalesPromotion.ZcCodeScope.id" style="width:98%" onchange="searchDataGrid();"></select>
+							<select  id="zcCodeScope" name="zcSalesPromotion.ZcCodeScope.id" style="width:98%" onchange="searchDataGridChange();"></select>
 						</td>
 						<th style="width:11%">审核日期：</th>
 						<td>
-							<input  id="checkDate" name="purchaseOrder.checkDate" type="text" disabled />
+							<input  id="checkDate" name="zcSalesPromotion.checkDate" type="text" disabled />
 						</td>
 						<th style="width:11%">促销标题：</th>
 						<td>
@@ -121,6 +115,8 @@
 	
 	initSelectCode('DiscountType','zcCodeMode');
 	
+	initSelectCode('memberLevel','memberLevel');
+	
 	var timesencond=formatterCompleteDateMillsecond();
 	$('#promotionNumber').val('ZKD'+timesencond);
 	$('#createtime').val(formatterDate(new Date()));
@@ -131,11 +127,10 @@
 			addPyGoods();
 		}
 	};
-	debugger;
 	var winHeight = $(window).height();
 	$('#dg').datagrid({
 		cache: false,
-		title:'商品列表', //标题
+		title:'促销列表', //标题
 		method:'post',
 		iconCls:'', //图标
 		singleSelect:false, //多选

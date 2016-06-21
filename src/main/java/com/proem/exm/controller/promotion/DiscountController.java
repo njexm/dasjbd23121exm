@@ -35,6 +35,7 @@ import com.proem.exm.entity.basic.provider.ProviderInfo;
 import com.proem.exm.entity.purchase.PurchaseOrder;
 import com.proem.exm.entity.purchase.PurchaseOrderGoodsItems;
 import com.proem.exm.entity.purchase.PurchaseReceive;
+import com.proem.exm.entity.purchase.PurchaseReceiveItem;
 import com.proem.exm.entity.salesPromotion.ZcSalesPromotion;
 import com.proem.exm.entity.salesPromotion.ZcSalesPromotionItem;
 import com.proem.exm.entity.system.CtpUser;
@@ -125,6 +126,19 @@ public class DiscountController extends BaseController {
 		return dataGrid;
 	}
 	
+	// 打开详细页面
+		@RequestMapping("gotoDetailDiscount")
+		public ModelAndView gotoDetailDiscount(HttpServletRequest request,
+				HttpServletResponse response, Model model) {
+			String id = request.getParameter("id");
+			ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion) discountService
+					.getObjById(id, "ZcSalesPromotion");
+			model.addAttribute("zcSalesPromotion", zcSalesPromotion);
+			model.addAttribute("zcSalesPromotionId", id);
+			ModelAndView view = createIframeView("promotion/Discount_detail");
+			return view;
+		}
+	
 	/**
 	 * 打开新增页面
 	 * 
@@ -153,23 +167,80 @@ public class DiscountController extends BaseController {
 		return view;
 	}
 	
+	/**
+	 * 打开编辑页面
+	 * 
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping("gotoEditDiscountEdit")
+	public ModelAndView gotoEditDiscountEdit(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		String id = request.getParameter("id");
+		ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion) discountService
+				.getObjById(id, "ZcSalesPromotion");
+		 List<BranchTotal>  branchTotalList = zcSalesPromotion.getBranchTotalList();
+		 String branchTotal ="";
+		 for (int i = 0; i < branchTotalList.size(); i++) {
+			 branchTotal += branchTotalList.get(i).getBranch_code() +"|" ;
+		}
+		model.addAttribute("zcSalesPromotion", zcSalesPromotion);
+		model.addAttribute("id", id);
+		model.addAttribute("branchTotal", branchTotal);
+		ModelAndView view = createIframeView("promotion/Discount_edit");
+		return view;
+	}
+	
 	@RequestMapping(value = "listPromotionItemsNullOrderJson", produces = "application/json")
 	@ResponseBody
 	public DataGrid listPromotionItemsNullOrderJson(
-			@ModelAttribute ZcSalesPromotionItem zcSalesPromotionItem, String id,
+			@ModelAttribute ZcSalesPromotion zcSalesPromotion, String id,
 			HttpServletRequest request, HttpServletResponse response, Page page) {
 		DataGrid dataGrid = null;
 		try {
 			CtpUser ctpUser = (CtpUser) request.getSession().getAttribute(
 					"user");
 			dataGrid = discountService.getPromotionAddGoods(page, id,
-					zcSalesPromotionItem, ctpUser);
+					zcSalesPromotion, ctpUser);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return dataGrid;
 	}
 	
+	@RequestMapping(value = "listPromotionItemsEditOrderJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listPromotionItemsEditOrderJson(
+			@ModelAttribute ZcSalesPromotion zcSalesPromotion, String id,
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			CtpUser ctpUser = (CtpUser) request.getSession().getAttribute(
+					"user");
+			ZcSalesPromotion zcSalesPromotionNew = new ZcSalesPromotion();
+			if (zcSalesPromotion!=null ) {
+				String ids = zcSalesPromotion.getId();
+				zcSalesPromotionNew.setId(ids);
+				List<Code> listScope = discountService.getListByObj(Code.class, "CODETYPE = 'SaleScope' and CODEVALUE='"+zcSalesPromotion.getZcCodeScope().getCodeValue()+"'");
+				if (listScope!=null && listScope.size()>0) {
+					Code zcCodeScope =listScope.get(0);
+					zcSalesPromotionNew.setZcCodeScope(zcCodeScope);
+				}
+				List<Code> listMode = discountService.getListByObj(Code.class, "CODETYPE = 'DiscountType' and CODEVALUE='"+zcSalesPromotion.getZcCodeMode().getCodeValue()+"'");
+				if (listMode!=null && listMode.size()>0) {
+					Code zcCodeMode =listMode.get(0);
+					zcSalesPromotionNew.setZcCodeMode(zcCodeMode);
+				}
+			}
+			dataGrid = discountService.getPromotionEditGoods(page, 
+					zcSalesPromotionNew);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
 	
 	/**
 	 * 打开新增商品时选择商品的面板
@@ -276,7 +347,7 @@ public class DiscountController extends BaseController {
 	}
 	
 	/**
-	 * 根据商品表勾选直接生成采购订单
+	 * 根据商品表勾选直接生成促销订单
 	 * 
 	 * @param ordersView
 	 * @param request
@@ -295,7 +366,6 @@ public class DiscountController extends BaseController {
 		Date now = new Date();
 		SimpleDateFormat dateFormat = new SimpleDateFormat(
 				"yyyy-MM-dd");
-		
 		/*这个应该是获取用户信息*/
 		try {
 			if (zcCodeScope != null && !zcCodeScope.equals("")) {
@@ -312,24 +382,44 @@ public class DiscountController extends BaseController {
 					for (int i = 0; i < idStr.length; i++) {
 						String classFilyId = idStr[i];
 						CommodityClassify commodityClassify = (CommodityClassify)commodityClassifyService.getObjById(classFilyId, "CommodityClassify");
+						Long count = discountService.getCountByObj(
+								ZcSalesPromotionItem.class,
+								"SalesPromotion_id is null and CLASS_CLASSIFY_ID='"
+										+ commodityClassify.getId() + "'");
+						if (count != 0) {
+							ajaxResult = new AjaxResult(AjaxResult.SAVE,
+									AjaxResult.ERROR, AjaxResult.INFO);
+							return ajaxResult;
+						}else{
 						ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
 						zcSalesPromotionItems.setId(UuidUtils.getUUID());
 						zcSalesPromotionItems.setCreateTime(now);
 						zcSalesPromotionItems.setUpdateTime(now);
 						zcSalesPromotionItems.setClassClassify(commodityClassify);
 						discountService.saveObj(zcSalesPromotionItems);
+						}
 					}
 				}else
 				if (Double.parseDouble(zcCodeScope) ==3) {
 					for (int i = 0; i < idStr.length; i++) {
 						String brandFilyId = idStr[i];
 						CommodityClassify commodityClassify = (CommodityClassify)commodityClassifyService.getObjById(brandFilyId, "CommodityClassify");
+						Long count = discountService.getCountByObj(
+								ZcSalesPromotionItem.class,
+								"SalesPromotion_id is null and brand_CLASSIFY_ID='"
+										+ commodityClassify.getId() + "'");
+						if (count != 0) {
+							ajaxResult = new AjaxResult(AjaxResult.SAVE,
+									AjaxResult.ERROR, AjaxResult.INFO);
+							return ajaxResult;
+						}else{
 						ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
 						zcSalesPromotionItems.setId(UuidUtils.getUUID());
 						zcSalesPromotionItems.setCreateTime(now);
 						zcSalesPromotionItems.setUpdateTime(now);
 						zcSalesPromotionItems.setBrandClassify(commodityClassify);
 						discountService.saveObj(zcSalesPromotionItems);
+						}
 					}
 				}else
 				if (Double.parseDouble(zcCodeScope) ==4) {
@@ -337,12 +427,22 @@ public class DiscountController extends BaseController {
 						String goodsFileId = idStr[i];
 						GoodsFile goodsFile = (GoodsFile) goodsFileService
 								.getObjById(goodsFileId, "GoodsFile");
+						Long count = discountService.getCountByObj(
+								ZcSalesPromotionItem.class,
+								"SalesPromotion_id is null and GOODSFILE_ID='"
+										+ goodsFile.getId() + "'");
+						if (count != 0) {
+							ajaxResult = new AjaxResult(AjaxResult.SAVE,
+									AjaxResult.ERROR, AjaxResult.INFO);
+							return ajaxResult;
+						}else{
 						ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
 						zcSalesPromotionItems.setId(UuidUtils.getUUID());
 						zcSalesPromotionItems.setCreateTime(now);
 						zcSalesPromotionItems.setUpdateTime(now);
 						zcSalesPromotionItems.setGoodsFile(goodsFile);
 						discountService.saveObj(zcSalesPromotionItems);
+						}
 					}
 				}
 			}
@@ -421,7 +521,7 @@ public class DiscountController extends BaseController {
 		zcSalesPromotion.setCreateMan(userInfo.getUserName());
 		zcSalesPromotion.setPromotionDays(chkValue);
 		zcSalesPromotion.setCheckState(Constant.CHECK_STATUS_UNDO);
-		
+		zcSalesPromotion.setStopDate(zcSalesPromotion.getPromotionEndDate());
 		try {
 			Long count = discountService.getCountByObj(ZcSalesPromotion.class,
 					"Promotion_Number = '" + zcSalesPromotion.getPromotionNumber() + "'");
@@ -460,6 +560,157 @@ public class DiscountController extends BaseController {
 			}
 			discountService.saveObj(zcSalesPromotion);
 			logManageService.insertLog(request, "勾选商品信息生成采购订单", "采购订单");
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+					AjaxResult.INFO);
+			return ajaxResult;
+		} catch (Exception e) {
+			e.printStackTrace();
+			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+					AjaxResult.INFO);
+			return ajaxResult;
+		}
+	}
+	
+	/**
+	 * 修改当前商品的促销折扣订单
+	 * 
+	 * @param ordersView
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "editZcSalesPromotion", method = RequestMethod.POST, produces = "application/json")
+	@ResponseBody
+	public AjaxResult editZcSalesPromotion(
+			@ModelAttribute ZcSalesPromotion zcSalesPromotion, String orderId,
+			HttpServletRequest request, HttpServletResponse response) {
+		AjaxResult ajaxResult = null;
+		
+		ZcSalesPromotion zcSalesPromotionHave = new ZcSalesPromotion();
+		
+		String ids = request.getParameter("ids");
+		String allDiscounts = request.getParameter("allDiscount");
+		String fullBuyMoneys = request.getParameter("fullBuyMoney");
+		String fullBuyCounts = request.getParameter("fullBuyCount");
+		String discounts = request.getParameter("discount");	
+		String chkValue = request.getParameter("chkValue");
+		String branchCodes = request.getParameter("branchCode");
+		//String zcCodeModeId = request.getParameter("zcCodeMode");
+		//String zcCodeScopeId = request.getParameter("zcCodeScope");
+//		if (zcCodeModeId!=null && !zcCodeModeId.equals("")) {
+//			Code zcCodeMode = (Code)discountService.getObjById(zcCodeModeId, "Code");
+//			zcSalesPromotion.setZcCodeMode(zcCodeMode);
+//		}
+//		if (zcCodeScopeId!=null && !zcCodeScopeId.equals("")) {
+//			Code zcCodeScope = (Code)discountService.getObjById(zcCodeScopeId, "Code");
+//			zcSalesPromotion.setZcCodeScope(zcCodeScope);
+//		}
+		System.out.println(zcSalesPromotion.getZcCodeMode().getId());
+		System.out.println(zcSalesPromotion.getZcCodeScope().getId());
+		List<Code> listScope = discountService.getListByObj(Code.class, "CODETYPE = 'SaleScope' and CODEVALUE='"+zcSalesPromotion.getZcCodeScope().getId()+"'");
+		if (listScope!=null && listScope.size()>0) {
+			Code zcCodeScope =listScope.get(0);
+			zcSalesPromotionHave.setZcCodeScope(zcCodeScope);
+		}
+		List<Code> listMode = discountService.getListByObj(Code.class, "CODETYPE = 'DiscountType' and CODEVALUE='"+zcSalesPromotion.getZcCodeMode().getId()+"'");
+		if (listMode!=null && listMode.size()>0) {
+			Code zcCodeMode =listMode.get(0);
+			zcSalesPromotionHave.setZcCodeMode(zcCodeMode);
+		}
+		String[] branchCode = branchCodes.split("\\|");
+		for (int i = 0; i < branchCode.length; i++) {
+			List<BranchTotal> list =discountService.getListByObj(BranchTotal.class, "branch_Code ='"+branchCode[i]+"'");
+			if (list!=null &&list.size()>0) {
+				zcSalesPromotionHave.setBranchTotalList(list);
+			}
+		}
+		zcSalesPromotionHave.setMemberLevel(zcSalesPromotion.getMemberLevel());
+		zcSalesPromotionHave.setPromotionBeginDate(zcSalesPromotion.getPromotionBeginDate());
+		zcSalesPromotionHave.setPromotionDays(zcSalesPromotion.getPromotionDays());
+		zcSalesPromotionHave.setPromotionEndDate(zcSalesPromotion.getPromotionEndDate());
+		if (zcSalesPromotion.getPromotionRemark()!=null && !zcSalesPromotion.getPromotionRemark().equals("")) {
+			zcSalesPromotionHave.setPromotionRemark(zcSalesPromotion.getPromotionRemark());
+		}
+		if (zcSalesPromotion.getPromotionTitle()!=null && !zcSalesPromotion.getPromotionTitle().equals("")) {
+			zcSalesPromotionHave.setPromotionTitle(zcSalesPromotion.getPromotionTitle());
+		}
+		if (zcSalesPromotion.getStopMan()!=null && !zcSalesPromotion.getStopMan().equals("")) {
+			zcSalesPromotionHave.setStopMan(zcSalesPromotion.getStopMan());
+		}
+		
+		zcSalesPromotionHave.setStopDate(zcSalesPromotion.getPromotionEndDate());
+		String[] idStr = ids.split(",");
+		String[] allDiscount = allDiscounts.split(",");
+		String[] fullBuyMoney = fullBuyMoneys.split(",");
+		String[] fullBuyCount = fullBuyCounts.split(",");
+		String[] discount = discounts.split(",");
+		
+		
+		
+		
+		try {
+			if (zcSalesPromotion.getId()!=null && !zcSalesPromotion.getId().equals("")) {
+				zcSalesPromotionHave = (ZcSalesPromotion)discountService.getObjById(zcSalesPromotion.getId(), ZcSalesPromotion.class.getName());
+				zcSalesPromotionHave.setUpdateTime(new Date());
+				zcSalesPromotionHave.setPromotionDays(chkValue);
+				zcSalesPromotionHave.setCheckState(Constant.CHECK_STATUS_WAITCHECK);
+			}
+			List<ZcSalesPromotionItem> list = discountService.getListByObj(ZcSalesPromotionItem.class, "SalesPromotion_id='"+zcSalesPromotion.getId()+"'");
+			if(list!=null && list.size()>0){
+				if (idStr != null && idStr.length > 0) {
+					for (int i = 0; i < idStr.length; i++) {
+						ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+						String id = idStr[i];
+						ZcSalesPromotionItem zcSalesPromotionItem = (ZcSalesPromotionItem) discountService
+								.getObjById(id, "ZcSalesPromotionItem");
+						if (zcSalesPromotionItem != null) {
+							if (allDiscount[i]!=null && !allDiscount.equals("")) {
+								zcSalesPromotionItem.setAllDiscount(allDiscount[i]);
+							}
+							if (fullBuyMoney[i]!=null && !fullBuyMoney[i].equals("")) {
+								zcSalesPromotionItem.setFullBuyMoney(Double.parseDouble(fullBuyMoney[i]));
+							}
+							if (fullBuyCount[i]!=null && !fullBuyCount[i].equals("")) {
+								zcSalesPromotionItem.setFullBuyCount(Double.parseDouble(fullBuyCount[i]));
+							}
+							if (discount[i]!=null && !discount[i].equals("")) {
+								zcSalesPromotionItem.setDiscount(discount[i]);
+							}
+							
+							discountService.updateObj(zcSalesPromotionItem);
+						}
+					}
+				}
+			}else {
+				if (idStr != null && idStr.length > 0) {
+					for (int i = 0; i < idStr.length; i++) {
+						ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+						String id = idStr[i];
+						ZcSalesPromotionItem zcSalesPromotionItem = (ZcSalesPromotionItem) discountService
+								.getObjById(id, "ZcSalesPromotionItem");
+						if (zcSalesPromotionItem != null) {
+							zcSalesPromotionItem.setSalesPromotionId(zcSalesPromotion.getId());
+							if (allDiscount[i]!=null && !allDiscount.equals("")) {
+								zcSalesPromotionItem.setAllDiscount(allDiscount[i]);
+							}
+							if (fullBuyMoney[i]!=null && !fullBuyMoney[i].equals("")) {
+								zcSalesPromotionItem.setFullBuyMoney(Double.parseDouble(fullBuyMoney[i]));
+							}
+							if (fullBuyCount[i]!=null && !fullBuyCount[i].equals("")) {
+								zcSalesPromotionItem.setFullBuyCount(Double.parseDouble(fullBuyCount[i]));
+							}
+							if (discount[i]!=null && !discount[i].equals("")) {
+								zcSalesPromotionItem.setDiscount(discount[i]);
+							}
+							
+							discountService.updateObj(zcSalesPromotionItem);
+						}
+					}
+				}
+			}
+			
+			discountService.updateObj(zcSalesPromotionHave);
+			logManageService.insertLog(request, "勾选商品信息修改采购订单", "采购订单");
 			ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
 					AjaxResult.INFO);
 			return ajaxResult;
@@ -524,4 +775,261 @@ public class DiscountController extends BaseController {
 			}
 			return ajaxResult;
 		}
+		
+		// 新增时改变方式删除
+				@RequestMapping(value = "deleteChoseChange", method = RequestMethod.POST, produces = "application/json")
+				@ResponseBody
+				public AjaxResult deleteChoseChange(HttpServletRequest request,
+						HttpServletResponse response, String id) {
+					AjaxResult ajaxResult = null;
+					try {
+							String idStrs = request.getParameter("idStr");
+							String[] ids = idStrs.split(",");
+							for (int i = 0; i < ids.length; i++) {
+								discountService.deleteObjById(ids[i],
+										ZcSalesPromotionItem.class.getName());
+							}
+						
+						
+						logManageService.insertLog(request, "移除了新增时改变促销方式的订单详情", "促销订单详情");
+						ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.SUCCESS,
+								AjaxResult.INFO);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.FAIL,
+								AjaxResult.INFO);
+					}
+					return ajaxResult;
+				}
+				
+				/**
+				 * 打开新增商品时选择商品的面板
+				 * 
+				 * @param type
+				 * @param request
+				 * @param response
+				 * @param model
+				 * @return
+				 */
+				@RequestMapping("openAddGoods")
+				public ModelAndView openAddGoods(HttpServletRequest request,
+						HttpServletResponse response, Model model) {
+					String ids = request.getParameter("ids");
+					String allDiscounts = request.getParameter("allDiscount");
+					String fullBuyMoneys = request.getParameter("fullBuyMoney");
+					String fullBuyCounts = request.getParameter("fullBuyCount");
+					String discounts = request.getParameter("discount");	
+					String[] allDiscount = allDiscounts.split(",");
+					String[] fullBuyMoney = fullBuyMoneys.split(",");
+					String[] fullBuyCount = fullBuyCounts.split(",");
+					String[] discount = discounts.split(",");
+					if ( ids != null && ids != "") {
+						String[] idStr = ids.split(",");
+						for (int i = 0; i < idStr.length; i++) {
+							ZcSalesPromotionItem zcSalesPromotionItem = (ZcSalesPromotionItem) discountService
+									.getObjById(idStr[i], "ZcSalesPromotionItem");
+							if (allDiscount[i]!=null && !allDiscount.equals("")) {
+								zcSalesPromotionItem.setAllDiscount(allDiscount[i]);
+							}
+							if (fullBuyMoney[i]!=null && !fullBuyMoney[i].equals("")) {
+								zcSalesPromotionItem.setFullBuyMoney(Double.parseDouble(fullBuyMoney[i]));
+							}
+							if (fullBuyCount[i]!=null && !fullBuyCount[i].equals("")) {
+								zcSalesPromotionItem.setFullBuyCount(Double.parseDouble(fullBuyCount[i]));
+							}
+							if (discount[i]!=null && !discount[i].equals("")) {
+								zcSalesPromotionItem.setDiscount(discount[i]);
+							}
+							// 保存采购订单商品对象
+							discountService.updateObj(zcSalesPromotionItem);
+						}
+					}
+					String zcSalesPromotionId = request.getParameter("zcSalesPromotionId");
+					model.addAttribute("zcSalesPromotionId", zcSalesPromotionId);
+					ModelAndView view = createIframeView("purchase/purchaseReceive/purchase_receive_addGoods");
+					return view;
+				}
+				
+				
+				
+				
+				/**
+				 * 根据商品表勾选直接生成促销订单
+				 * 
+				 * @param ordersView
+				 * @param request
+				 * @param response
+				 * @return
+				 */
+				@RequestMapping(value = "addDiscountGoodsToEditItems", method = RequestMethod.POST, produces = "application/json")
+				@ResponseBody
+				public AjaxResult addDiscountGoodsToEditItems(
+						@ModelAttribute ZcSalesPromotionItem zcSalesPromotionItem,
+						HttpServletRequest request, HttpServletResponse response) {
+					AjaxResult ajaxResult = null;
+					String ids = request.getParameter("ids");
+					String zcCodeScope = request.getParameter("zcCodeScope");
+					String[] idStr = ids.split(",");
+					Date now = new Date();
+					SimpleDateFormat dateFormat = new SimpleDateFormat(
+							"yyyy-MM-dd");
+					String zcSalesPromotionId = request.getParameter("zcSalesPromotionId");
+					/*这个应该是获取用户信息*/
+					try {
+						if (zcSalesPromotionId!=null && !zcSalesPromotionId.equals("")) {
+						if (zcCodeScope != null && !zcCodeScope.equals("")) {
+							if (Double.parseDouble(zcCodeScope) ==1) {
+								
+								ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+								zcSalesPromotionItems.setId(UuidUtils.getUUID());
+								zcSalesPromotionItems.setCreateTime(now);
+								zcSalesPromotionItems.setUpdateTime(now);
+								zcSalesPromotionItems.setSalesPromotionId(zcSalesPromotionId);
+								
+								discountService.saveObj(zcSalesPromotionItems);
+							} else
+							if (Double.parseDouble(zcCodeScope) ==2) {
+								
+								for (int i = 0; i < idStr.length; i++) {
+									String classFilyId = idStr[i];
+									CommodityClassify commodityClassify = (CommodityClassify)commodityClassifyService.getObjById(classFilyId, "CommodityClassify");
+									Long count = discountService.getCountByObj(
+											ZcSalesPromotionItem.class,
+											"SalesPromotion_id = '"+zcSalesPromotionId+"' and CLASS_CLASSIFY_ID='"
+													+ commodityClassify.getId() + "'");
+									if (count != 0) {
+										ajaxResult = new AjaxResult(AjaxResult.SAVE,
+												AjaxResult.ERROR, AjaxResult.INFO);
+										return ajaxResult;
+									}else{
+									ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+									zcSalesPromotionItems.setId(UuidUtils.getUUID());
+									zcSalesPromotionItems.setCreateTime(now);
+									zcSalesPromotionItems.setUpdateTime(now);
+									zcSalesPromotionItems.setClassClassify(commodityClassify);
+									zcSalesPromotionItems.setSalesPromotionId(zcSalesPromotionId);
+									discountService.saveObj(zcSalesPromotionItems);
+									}
+								}
+							}else
+							if (Double.parseDouble(zcCodeScope) ==3) {
+								for (int i = 0; i < idStr.length; i++) {
+									String brandFilyId = idStr[i];
+									CommodityClassify commodityClassify = (CommodityClassify)commodityClassifyService.getObjById(brandFilyId, "CommodityClassify");
+									Long count = discountService.getCountByObj(
+											ZcSalesPromotionItem.class,
+											"SalesPromotion_id = '"+zcSalesPromotionId+"' and brand_CLASSIFY_ID='"
+													+ commodityClassify.getId() + "'");
+									if (count != 0) {
+										ajaxResult = new AjaxResult(AjaxResult.SAVE,
+												AjaxResult.ERROR, AjaxResult.INFO);
+										return ajaxResult;
+									}else{
+									ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+									zcSalesPromotionItems.setId(UuidUtils.getUUID());
+									zcSalesPromotionItems.setCreateTime(now);
+									zcSalesPromotionItems.setUpdateTime(now);
+									zcSalesPromotionItems.setBrandClassify(commodityClassify);
+									zcSalesPromotionItems.setSalesPromotionId(zcSalesPromotionId);
+									discountService.saveObj(zcSalesPromotionItems);
+									}
+								}
+							}else
+							if (Double.parseDouble(zcCodeScope) ==4) {
+								for (int i = 0; i < idStr.length; i++) {
+									String goodsFileId = idStr[i];
+									GoodsFile goodsFile = (GoodsFile) goodsFileService
+											.getObjById(goodsFileId, "GoodsFile");
+									Long count = discountService.getCountByObj(
+											ZcSalesPromotionItem.class,
+											"SalesPromotion_id = '"+zcSalesPromotionId+"' and GOODSFILE_ID='"
+													+ goodsFile.getId() + "'");
+									if (count != 0) {
+										ajaxResult = new AjaxResult(AjaxResult.SAVE,
+												AjaxResult.ERROR, AjaxResult.INFO);
+										return ajaxResult;
+									}else{
+									ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+									zcSalesPromotionItems.setId(UuidUtils.getUUID());
+									zcSalesPromotionItems.setCreateTime(now);
+									zcSalesPromotionItems.setUpdateTime(now);
+									zcSalesPromotionItems.setGoodsFile(goodsFile);
+									zcSalesPromotionItems.setSalesPromotionId(zcSalesPromotionId);
+									discountService.saveObj(zcSalesPromotionItems);
+									}
+								}
+							}
+						}
+						}
+						logManageService.insertLog(request, "保存了勾选的临时促销表", "折扣促销单");
+						ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+								AjaxResult.INFO);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+								AjaxResult.INFO);
+					}
+					return ajaxResult;
+				}
+				
+				/**
+				 * 编辑时全场折扣增加一行
+				 * 
+				 * @param ordersView
+				 * @param request
+				 * @param response
+				 * @return
+				 */
+				@RequestMapping(value = "addDiscountScopeWhole", method = RequestMethod.POST, produces = "application/json")
+				@ResponseBody
+				public AjaxResult addDiscountScopeWhole(
+						@ModelAttribute ZcSalesPromotionItem zcSalesPromotionItem,
+						HttpServletRequest request, HttpServletResponse response) {
+					AjaxResult ajaxResult = null;
+					String ids = request.getParameter("ids");
+					String zcCodeScope = request.getParameter("zcCodeScope");
+					String zcCodeMode = request.getParameter("zcCodeMode");
+					String[] idStr = ids.split(",");
+					Date now = new Date();
+					SimpleDateFormat dateFormat = new SimpleDateFormat(
+							"yyyy-MM-dd");
+					String zcSalesPromotionId = request.getParameter("zcSalesPromotionId");
+					/*这个应该是获取用户信息*/
+					try {
+						if (zcSalesPromotionId!=null && !zcSalesPromotionId.equals("")) {
+							ZcSalesPromotion zcSalesPromotionExist = (ZcSalesPromotion)discountService.getObjById(zcSalesPromotionId, ZcSalesPromotion.class.getName());
+							List<Code> listScope = discountService.getListByObj(Code.class, "CODETYPE = 'SaleScope' and CODEVALUE='"+zcCodeScope+"'");
+							if (listScope!=null && listScope.size()>0) {
+								Code zcCodeScopeNow =listScope.get(0);
+								zcSalesPromotionExist.setZcCodeScope(zcCodeScopeNow);
+							}
+							List<Code> listMode = discountService.getListByObj(Code.class, "CODETYPE = 'DiscountType' and CODEVALUE='"+zcCodeMode+"'");
+							if (listMode!=null && listMode.size()>0) {
+								Code zcCodeModeNow =listMode.get(0);
+								zcSalesPromotionExist.setZcCodeMode(zcCodeModeNow);
+							}
+							discountService.updateObj(zcSalesPromotionExist);
+						if (zcCodeScope != null && !zcCodeScope.equals("")) {
+							if (Double.parseDouble(zcCodeScope) ==1) {
+								
+								ZcSalesPromotionItem zcSalesPromotionItems = new ZcSalesPromotionItem();
+								zcSalesPromotionItems.setId(UuidUtils.getUUID());
+								zcSalesPromotionItems.setCreateTime(now);
+								zcSalesPromotionItems.setUpdateTime(now);
+								zcSalesPromotionItems.setSalesPromotionId(zcSalesPromotionId);
+								
+								discountService.saveObj(zcSalesPromotionItems);
+							} 
+						}
+						}
+						logManageService.insertLog(request, "保存了勾选的临时促销表", "折扣促销单");
+						ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.SUCCESS,
+								AjaxResult.INFO);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ajaxResult = new AjaxResult(AjaxResult.SAVE, AjaxResult.FAIL,
+								AjaxResult.INFO);
+					}
+					return ajaxResult;
+				}
 }

@@ -33,17 +33,10 @@
                                 </select>
                             </td>
 							<!--<th width="10%" align="left"></th>-->
-<<<<<<< HEAD
                             <td width="40%" align="left">
 								促销日期：
                                 <input type="text" id="promotionBeginDate" name="promotionBeginDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                                 -
-=======
-                            <td width="40%" align="left">
-								促销日期：
-                                <input type="text" id="promotionBeginDate" name="promotionBeginDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
-                                -
->>>>>>> branch 'master' of https://github.com/njexm/dasjbd23121exm.git
                                 <input type="text" id="promotionEndDate" name="promotionEndDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                             </td>
                         </tr>

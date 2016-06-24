@@ -18,90 +18,81 @@
 <div style="overflow: auto">
     <div id="tb" class="top_search">
     	<form class="searchForm" id="baseForm" method="post">
+			<input type="hidden" name="promotion.id" id="promotionId" value="$!{promotion.id}"/>
     		<div class="cell">
 				<table border="0" cellpadding="0" cellspacing="0">
     	           <tr>
 						<th style="width:11%">促销编号：</th>
 						<td style="width:22%">
-							<input  id="promotionNumber" name="zcSalesPromotion.promotionNumber" type="text" style="width:96%" readonly/>
+							$!{promotion.promotionNumber}
                         </td>
 						<th style="width:11%">制单日期：</th>
 						<td>
-							<input  id="createtime" name="zcSalesPromotion.createTime" type="text" readonly>
-							</input>
+							$!{promotion.createTime}
                         </td>
 						<th style="width:11%">制单人：</th>
 						<td style="width:22%">
-							<input  id="createMan" name="zcSalesPromotion.createMan" type="text" value="$!{user.userName}" readonly/>
+							$!{promotion.createMan}
 						</td>
     	           </tr>
 				   <tr>
-						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销方式：</th>
+						<th style="width:11%">促销方式：</th>
                         <td style="width:20%">
-                            <select  id="zcCodeMode" name="zcSalesPromotion.ZcCodeMode.id" style="width:98%" onchange="codeModeChange(1)"></select>
+							$!{promotion.ZcCodeMode.codeName}
 						</td>
 						<th style="width:11%">会员等级：</th>
-						<td>
-							<select  id="memberLevel" name="zcSalesPromotion.memberLevel" style="width:74%" readonly >
-								<option value="0">无</option>
-								<option value="1">会员卡</option>
-								<option value="2">折扣卡</option>
-								<option value="3">非会员</option>
-								<option value="4">所有会员</option>
-							</select>
+						<td id = "memberLevel">
 						</td>
 						<th style="width:11%">审核人：</th>
                         <td>
-							<input  type="text" id="checkMan" name="" disabled  >
-                            </input>
+							$!{promotion.checkMan}
 						</td>
     	           </tr>
 				   <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销期限：</th>
                         <td style="width:20%">
-							<input type="text" id="promotionBeginDate" name="zcSalesPromotion.promotionBeginDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
+							<span>$!{promotion.promotionBeginDate}</span>
 							-
-							<input type="text" id="promotionEndDate" name="zcSalesPromotion.promotionEndDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
+							<span>$!{promotion.promotionEndDate}</span>
+							
 						</td>
 						<th style="width:11%">审核日期：</th>
 						<td>
-							<input  id="checkDate" name="purchaseOrder.checkDate" type="text" disabled />
+							$!{promotion.checkDate}
 						</td>
 						<th style="width:11%">方案名称：</th>
 						<td>
-							<input  id="promotionTitle" name="zcSalesPromotion.promotionTitle" type="text" />
+							$!{promotion.promotionTitle}
                         </td>
     	           </tr>
                    <tr>
 					 <th width="11%">
-						<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseBranch()" plain="true">选择门店</a>
+						分店
 					 </th>
-					 <td width="20%">
-						<input id="branchCode" name="" style="width:95%;" readonly/>
+					 <td width="20%" id="branchCode">
+						
                      </td>
 					<th width="11%">促销日子:</th>
 						<td width="" colspan="3">
-    						<label><input name="week" type="checkbox" value="1"/>星期一</label>
-                            <label><input name="week" type="checkbox" value="2"/>星期二</label>
-    						<label><input name="week" type="checkbox" value="3"/>星期三</label>
-    						<label><input name="week" type="checkbox" value="4"/>星期四</label>
-    						<label><input name="week" type="checkbox" value="5"/>星期五</label>
-    						<label><input name="week" type="checkbox" value="6"/>星期六</label>
-    						<label><input name="week" type="checkbox" value="7"/>星期日</label>
+    						<label><input name="week" type="checkbox" value="1" readonly />星期一</label>
+                            <label><input name="week" type="checkbox" value="2" readonly/>星期二</label>
+    						<label><input name="week" type="checkbox" value="3" readonly/>星期三</label>
+    						<label><input name="week" type="checkbox" value="4" readonly/>星期四</label>
+    						<label><input name="week" type="checkbox" value="5" readonly/>星期五</label>
+    						<label><input name="week" type="checkbox" value="6" readonly/>星期六</label>
+    						<label><input name="week" type="checkbox" value="7" readonly/>星期日</label>
 						</td>
 				   </tr>
     	       	</table>
     		</div>
     	</form>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="save('baseForm')" plain="true">保存</a>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChooseGoods()" plain="true">选择商品</a>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteChoose()" plain="true">移除</a>
     </div>
     <table id="dg" width="100%"></table>
 </div>
 </body>
 <div id="selectOptions" class="easyui-window" style="width:900px;height:400px;">
 </div>
+<div id="flt"  name="flt" style="right:1px; POSITION:absolute; top:10px; z-index:99;"></div>
 <style>
 </style>
 <script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/specialprice.js"></script>
@@ -110,10 +101,14 @@ $(function(){
 	$('#selectOptions').window('close');
 	
 	initSelectCode('SpecialPriceType','zcCodeMode');
+	$('#memberLever').val();
+	var array = '$!{promotion.branchTotalList}';
+	$('#branchCode').val();
 	
-	var timesencond=formatterCompleteDateMillsecond();
-	$('#promotionNumber').val('TJD'+timesencond);
-	$('#createtime').val(formatterDate(new Date()));
+	if(status=='2'){
+		$('#flt').append('<img src="${rc.contextPath}/resources/image/pass.png" >');
+	}
+	
 	//去除回车键
 	document.onkeydown=function(evt){
 		if(evt.keyCode !=13){
@@ -134,7 +129,7 @@ $(function(){
 		remoteSort: false,
 		url:"${rc.contextPath}/specialPrice/listPromotionItemsNullJson?time="+new Date(), //数据来源
 		queryParams:{
-			
+			'zcSalesPromotion.id' : $('#promotionId').val()
 		}, //查询条件
 		pagination:true, //显示分页
 		rownumbers:true, //显示行号
@@ -145,16 +140,16 @@ $(function(){
 				return "height:30px";
 			}},
 			{field:'ID',sortable:true,sortable:true,hidden:true},
-			{field: 'GROUP_NUMBER', title:'组号', width:'8%', sorteable:true, align:'left', hidden:true ,formatter:formatterNumber, editor:{type:'numberbox',options:{precision:0}}},
+			{field: 'GROUP_NUMBER', title:'组号', width:'8%', sorteable:true, align:'left', hidden:true ,formatter:formatterNumber},
 			{field: 'SERIALNUMBER', title:'货号', width:'8%', sorteable:true, align:'left'},
 			{field: 'GOODS_NAME', title:'商品名', width:'20%', sorteable:true, align:'left'},
 			{field: 'GOODS_PRICE', title:'零售价', width:'8%', sorteable:true, align:'left', formatter:formatterNumber},
-			{field: 'NUMS', title:'数量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber, editor:{type:'numberbox',options:{precision:0}}},
-			{field: 'FULL_BUY_COUNT', title:'买满数量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber, editor:{type:'numberbox',options:{precision:2}}},
-			{field: 'BARGAIN_PRICE', title:'特价', width:'8%', sorteable:true, align:'right',formatter:formatterNumber,editor:{type:'numberbox',options:{precision:2}}},
-			{field: 'LIMIT_NUMBER', title:'每单限量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber, editor:{type:'numberbox',options:{precision:2}}},
-			{field: 'BEGIN_TIME_FRAME', title:'开始时间', width:'12%', sorteable:true, align:'left', editor:{type:'datetimebox'}, hidden:true},
-			{field: 'END_TIME_FRAME', title:'结束时间', width:'12%', sorteable:true, align:'left', editor:{type:'datetimebox'}, hidden:true},
+			{field: 'NUMS', title:'数量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber},
+			{field: 'FULL_BUY_COUNT', title:'买满数量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber},
+			{field: 'BARGAIN_PRICE', title:'特价', width:'8%', sorteable:true, align:'right',formatter:formatterNumber},
+			{field: 'LIMIT_NUMBER', title:'每单限量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber},
+			{field: 'BEGIN_TIME_FRAME', title:'开始时间', width:'12%', sorteable:true, align:'left', hidden:true},
+			{field: 'END_TIME_FRAME', title:'结束时间', width:'12%', sorteable:true, align:'left', hidden:true},
 			{field: 'GOODS_PURCHASE_PRICE', title:'进价', width:'8%', sorteable:true, align:'right',formatter:formatterNumber},
 			{field: 'GOODS_UNIT', title:'单位', width:'8%', sorteable:true, align:'left'},
 			{field: 'GOODS_SPECIFICATIONS', title:'规格', width:'8%', sorteable:true, align:'left'}
@@ -180,7 +175,7 @@ $(window).resize(function(){
 
 function searchData(){
 	var queryParams = {
-		
+		'zcSalesPromotion.id' : $('#promotionId').val()
 	};
 }
 	

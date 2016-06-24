@@ -155,13 +155,44 @@ function deleteChoose(){
 	for (var i = 0; i < rows.length; i++) {
 		ids += rows[i].ID + ",";
 	}
+	var data = $('#dg').datagrid('getData');
+	var type = $('#zcCodeMode').val();
+	var idStr = "";
+	var groups = "";
+	var numbers = "";
+	var prices = "";
+	var nums = "";
+	var fulls = "";
+	var begins = "";
+	var ends = ""; 
+	for (var i = 0; i < data.rows.length; i++) {
+		$('#dg').datagrid('endEdit', i);
+		$('#dg').datagrid('beginEdit', i);
+		idStr += data.rows[i].ID + ",";
+		groups += data.rows[i].GROUP_NUMBER + ",";
+		numbers += data.rows[i].LIMIT_NUMBER + ",";
+		prices += data.rows[i].BARGAIN_PRICE + ",";
+		nums += data.rows[i].NUMS + ",";
+		fulls += data.rows[i].FULL_BUY_COUNT + ",";
+		begins += data.rows[i].BEGIN_TIME_FRAME + ",";
+		ends += data.rows[i].END_TIME_FRAME + ",";
+	}
 	$.messager.confirm('确认 ', '确定要删除 ？', function(r) {
 		if (r) {
 			$.ajax({
 				type : "post",
 				url : Utils.getRootPath() + '/specialPrice/deleteChoose',
 				data : {
-					id : ids
+					id : ids,
+					type : type,
+					idStr : idStr,
+					groups : groups,
+					numbers : numbers,
+					prices : prices,
+					nums : nums,
+					fulls : fulls,
+					begins : begins,
+					ends : ends
 				},
 				async : false,
 				dataType : 'json',
@@ -216,36 +247,36 @@ function save(formId){
 		$('#dg').datagrid('endEdit', i);
 		$('#dg').datagrid('beginEdit', i);
 		if(type == "1"){
-			if(data.row[i].LIMIT_NUMBER == 0 || data.rows[i].LIMIT_NUMBER == null){
+			if(data.rows[i].LIMIT_NUMBER == 0 || data.rows[i].LIMIT_NUMBER == null){
 				$('#dg').datagrid('beginEdit', i);
 				$.messager.alert('提示', '请填写每单限量！', 'warning');
 				return;
 			}
 		}else if(type == "2"){
-			if(data.row[i].FULL_BUY_COUNT == 0 || data.rows[i].FULL_BUY_COUNT == null){
+			if(data.rows[i].FULL_BUY_COUNT == 0 || data.rows[i].FULL_BUY_COUNT == null){
 				$('#dg').datagrid('beginEdit', i);
 				$.messager.alert('提示', '请填写买满数量！', 'warning');
 				return;
 			}
 		}else if(type == "3"){
 		}else if(type == "4"){
-			if(data.row[i].BEGIN_TIME_FRAME == "undefined" || data.rows[i].BEGIN_TIME_FRAME == null){
+			if(data.rows[i].BEGIN_TIME_FRAME == "undefined" || data.rows[i].BEGIN_TIME_FRAME == null){
 				$('#dg').datagrid('beginEdit', i);
 				$.messager.alert('提示', '请填写开始时间！', 'warning');
 				return;
 			}
-			if(data.row[i].END_TIME_FRAME == "undefined" || data.rows[i].END_TIME_FRAME == null){
+			if(data.rows[i].END_TIME_FRAME == "undefined" || data.rows[i].END_TIME_FRAME == null){
 				$('#dg').datagrid('beginEdit', i);
 				$.messager.alert('提示', '请填写结束时间！', 'warning');
 				return;
 			}  
 		}else if(type == "5"){
-			if(data.row[i].NUMS == 0 || data.rows[i].NUMS == null){
+			if(data.rows[i].NUMS == 0 || data.rows[i].NUMS == null){
 				$('#dg').datagrid('beginEdit', i);
 				$.messager.alert('提示', '请填写数量！', 'warning');
 				return;
 			}
-			if(data.row[i].GROUP_NUMBER == 0 || data.rows[i].GROUP_NUMBER == null){
+			if(data.rows[i].GROUP_NUMBER == 0 || data.rows[i].GROUP_NUMBER == null){
 				$('#dg').datagrid('beginEdit', i);
 				$.messager.alert('提示', '请填写组号！', 'warning');
 				return;
@@ -261,17 +292,23 @@ function save(formId){
 	var begins = "";
 	var ends = ""; 
 	for (var i = 0; i < data.rows.length; i++) {
+		$('#dg').datagrid('endEdit', i);
+		$('#dg').datagrid('beginEdit', i);
 		ids += data.rows[i].ID + ",";
-		groups = data.rows[i].GROUP_NUMBER + ",";
-		numbers = data.rows[i].LIMIT_NUMBER + ",";
-		prices = data.rows[i].BARGAIN_PRICE + ",";
-		nums = data.rows[i].NUMS + ",";
-		fulls = data.rows[i].FULL_BUY_COUNT + ",";
-		begins = data.rows[i].BEGIN_TIME_FRAME + ",";
-		ends = data.rows[i].END_TIME_FRAME + ",";
+		groups += data.rows[i].GROUP_NUMBER + ",";
+		numbers += data.rows[i].LIMIT_NUMBER + ",";
+		prices += data.rows[i].BARGAIN_PRICE + ",";
+		nums += data.rows[i].NUMS + ",";
+		fulls += data.rows[i].FULL_BUY_COUNT + ",";
+		begins += data.rows[i].BEGIN_TIME_FRAME + ",";
+		ends += data.rows[i].END_TIME_FRAME + ",";
 	}
-	var url = Utils.getRootPath() + '/specialPrice/createItems?ids='+ids+'&groups' + groups
-		+ '&numbers'+numbers+'&prices'+prices+'&nums'+nums+'&fulls'+fulls+'&begins'+begins+'&ends'+ends;
+	var chkValue ="";//定义一个数组    
+    $('input[name="week"]:checked').each(function(){//遍历每一个名字为interest的复选框，其中选中的执行函数    
+   	 chkValue += $(this).val() +",";//将选中的值添加到数组chk_value中    
+    });
+	var url = Utils.getRootPath() + '/specialPrice/createItems?ids='+ids+'&groups=' + groups
+		+ '&numbers='+numbers+'&prices='+prices+'&nums='+nums+'&fulls='+fulls+'&begins='+begins+'&ends='+ends+'&branchs='+$('#branchCode').val()+'&chkValue='+chkValue;
 	// 数据有限性判断
 	if (validateSubmit(formId)) {
 		$.ajax({
@@ -292,4 +329,42 @@ function save(formId){
 			}
 		});
 	}
+}
+
+/**
+ * 打开分店选择页面
+ */
+function openChoseBranch() {
+	$.ajax({
+		type : "get",
+		url : Utils.getRootPath() + '/discount/discount/openChoseBranch',
+		data : {
+			
+		},
+		success : function(data) {
+			$('#selectOptions').window({
+				title : '选择分店',
+				closable : true,
+				maximizable : false,
+				modal : false,
+				draggable : false,
+				width : 900,
+				height : 500
+			});
+			$('#selectOptions').html(data);
+			$('#dg').datagrid('resize', {
+				width : '100%'
+			});
+		}
+	});
+}
+
+/**
+ * 打开详请页面
+ * @param number
+ */
+function openDetail(id){
+	var url = Utils.getRootPath()
+	+ '/specialPrice/openDetail?id=' + id;
+add(url, '特价促销单详情', 1000, 550);
 }

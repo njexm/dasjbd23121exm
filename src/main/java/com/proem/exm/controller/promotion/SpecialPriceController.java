@@ -2,6 +2,7 @@ package com.proem.exm.controller.promotion;
 
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,21 +19,18 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import com.cisdi.ctp.utils.UuidUtils;
 import com.cisdi.ctp.utils.common.StringUtils;
-import com.cisdi.ctp.utils.common.UuidUtils;
 import com.proem.exm.controller.BaseController;
-import com.proem.exm.entity.basic.branch.Branch;
+import com.proem.exm.entity.basic.branch.BranchTotal;
 import com.proem.exm.entity.basic.code.Code;
 import com.proem.exm.entity.basic.goodsFile.GoodsFile;
 import com.proem.exm.entity.salesPromotion.ZcSalesPromotion;
 import com.proem.exm.entity.salesPromotion.ZcSalesPromotionItem;
 import com.proem.exm.entity.system.ZcUserInfo;
 import com.proem.exm.entity.wholesaleGroupPurchase.WholesaleGroupPurchaseOrder;
-import com.proem.exm.entity.wholesaleGroupPurchase.WholesaleGroupPurchaseOrderItem;
-import com.proem.exm.entity.wholesaleGroupPurchase.customer.CustomerInfo;
 import com.proem.exm.service.promotion.SpecialPriceService;
 import com.proem.exm.utils.AjaxResult;
-import com.proem.exm.utils.Constant;
 import com.proem.exm.utils.DataGrid;
 import com.proem.exm.utils.Page;
 
@@ -266,6 +264,44 @@ public class SpecialPriceController extends BaseController {
 			HttpServletResponse response, String id) {
 		AjaxResult ajaxResult = null;
 		try {
+			SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
+			String type = request.getParameter("type");
+			String idstring = request.getParameter("idStr");
+			String groups = request.getParameter("groups");
+			String numbers = request.getParameter("numbers");
+			String prices = request.getParameter("prices");
+			String nums = request.getParameter("nums");
+			String fulls = request.getParameter("fulls");
+			String begins = request.getParameter("begins");
+			String ends = request.getParameter("ends");
+			String[] idArray = idstring.split(",");
+			String[] groupArray = groups.split(",");
+			String[] numberArray = numbers.split(",");
+			String[] priceArray = prices.split(",");
+			String[] numArray = nums.split(",");
+			String[] fullArray = fulls.split(",");
+			String[] beginArray = begins.split(",");
+			String[] endArray = ends.split(",");
+			if (idArray != null && idArray.length > 0) {
+				for (int i = 0; i < idArray.length; i++) {
+					String idStr = idArray[i];
+					ZcSalesPromotionItem item = (ZcSalesPromotionItem) specialPriceService.getObjById(idStr, ZcSalesPromotionItem.class.getName());
+					item.setBargainPrice(Double.valueOf(priceArray[i]));
+					if("1".equals(type)){
+						item.setLimitNumber(Double.valueOf(numberArray[i]));
+					}else if("2".equals(type)){
+						item.setFullBuyCount(Double.valueOf(fullArray[i]));
+					}else if("3".equals(type)){
+					}else if("4".equals(type)){
+						item.setBeginTimeFrame(sdf2.parse(beginArray[i]));
+						item.setEndTimeFrame(sdf2.parse(endArray[i]));
+					}else if("5".equals(type)){
+						item.setGroupNumber(groupArray[i]);
+						item.setNums(numArray[i]);
+					}
+					specialPriceService.updateObj(item);
+				}
+			}
 			String[] ids = id.split(",");
 			for (int i = 0; i < ids.length; i++) {
 				specialPriceService.deleteObjById(ids[i], ZcSalesPromotionItem.class.getName());
@@ -282,14 +318,19 @@ public class SpecialPriceController extends BaseController {
 	}
 	
 	
-	
+	/**
+	 * 新增特价单
+	 * @param promotion
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@RequestMapping(value = "createItems", method = RequestMethod.POST, produces = "application/json")
 	@ResponseBody
 	public AjaxResult createItems(
 			@ModelAttribute ZcSalesPromotion promotion,
 			HttpServletRequest request, HttpServletResponse response) {
 		AjaxResult ajaxResult = null;
-		SimpleDateFormat sdf = new SimpleDateFormat("yy-MM-dd");
 		SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss");
 		String ids = request.getParameter("ids");
 		String groups = request.getParameter("groups");
@@ -299,6 +340,8 @@ public class SpecialPriceController extends BaseController {
 		String fulls = request.getParameter("fulls");
 		String begins = request.getParameter("begins");
 		String ends = request.getParameter("ends");
+		String branchs = request.getParameter("branchs");
+		String chkValues = request.getParameter("chkValue");
 		String[] idArray = ids.split(",");
 		String[] groupArray = groups.split(",");
 		String[] numberArray = numbers.split(",");
@@ -307,12 +350,22 @@ public class SpecialPriceController extends BaseController {
 		String[] fullArray = fulls.split(",");
 		String[] beginArray = begins.split(",");
 		String[] endArray = ends.split(",");
-		
+		String[] branchArray = branchs.split("\\|");
+		promotion.setId(UuidUtils.getUUID());
+		promotion.setPromotionDays(chkValues);
+		List<BranchTotal> list = new ArrayList<BranchTotal>();
+		for (int i = 0; i < branchArray.length; i++) {
+			BranchTotal branchtotal =(BranchTotal) specialPriceService.getObjByCondition(BranchTotal.class, "branch_Code ='"+branchArray[i]+"'");
+			if (branchtotal!=null) {
+				list.add(branchtotal);
+			}
+		}
+		promotion.setBranchTotalList(list);
 		Code scope = (Code) specialPriceService.getObjByCondition(Code.class, "CODETYPE = 'SaleScope' and CODEVALUE='4'");
 		//只有商品一种模式
 		promotion.setZcCodeScope(scope);
 		Code mode = (Code)specialPriceService.getObjByCondition(Code.class, "codeType = 'SpecialPriceType' and codevalue= '"+promotion.getZcCodeMode().getId()+"'");
-		//TODO 没有加入分店的操作
+		promotion.setZcCodeMode(mode);
 		
 		try {
 			if (idArray != null && idArray.length > 0) {
@@ -320,6 +373,7 @@ public class SpecialPriceController extends BaseController {
 					String id = idArray[i];
 					ZcSalesPromotionItem item = (ZcSalesPromotionItem) specialPriceService.getObjById(id, ZcSalesPromotionItem.class.getName());
 					item.setBargainPrice(Double.valueOf(priceArray[i]));
+					item.setSalesPromotionId(promotion.getId());
 					if("1".equals(mode.getCodeValue())){
 						item.setLimitNumber(Double.valueOf(numberArray[i]));
 					}else if("2".equals(mode.getCodeValue())){
@@ -334,7 +388,7 @@ public class SpecialPriceController extends BaseController {
 					}
 					specialPriceService.updateObj(item);
 				}
-				//TODO 分店选择操作
+				
 				specialPriceService.saveObj(promotion);
 				logManageService.insertLog(request, "新增特价促销单", "特价促销单");
 				ajaxResult = new AjaxResult(AjaxResult.SAVE,
@@ -352,5 +406,47 @@ public class SpecialPriceController extends BaseController {
 			return ajaxResult;
 		}
 	}
+	
+	/**
+	 * list页面查询
+	 * @param zcSalesPromotion
+	 * @param request
+	 * @param response
+	 * @param page
+	 * @return
+	 */
+	@RequestMapping(value = "listZcSalesPromotionJson", produces = "application/json")
+	@ResponseBody
+	public DataGrid listZcSalesPromotionJson(
+			@ModelAttribute ZcSalesPromotion zcSalesPromotion, 
+			HttpServletRequest request, HttpServletResponse response, Page page) {
+		DataGrid dataGrid = null;
+		try {
+			dataGrid = specialPriceService.getPagedDataGridObj(page,
+					zcSalesPromotion);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataGrid;
+	}
+	
+	/**
+	 * 跳转到详情页面
+	 * @param request
+	 * @param response
+	 * @param model
+	 * @return
+	 */
+	@RequestMapping(value= "openDetail")
+	public ModelAndView gotoDetail(HttpServletRequest request,
+			HttpServletResponse response, Model model) {
+		// 获取页面传递的ID
+		String id = request.getParameter("id");
+		ZcSalesPromotion promotion = (ZcSalesPromotion) specialPriceService.getObjById(id, ZcSalesPromotion.class.getName());
+		model.addAttribute("promotion", promotion);
+		ModelAndView view = createIframeView("promotion/specialprice_detail");
+		return view;
+	}
+	
 	
 }

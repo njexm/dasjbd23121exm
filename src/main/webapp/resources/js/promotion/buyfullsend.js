@@ -8,21 +8,21 @@ function open(url, title, x, y) {
 	window.parent.initAdd(url, title, x, y);
 }
 
-function openDiscountItem(id) {
+function openBuyFullSendItem(id) {
 	var url = Utils.getRootPath()
-			+ '/discount/discount/gotoDetailDiscount?id='
+			+ '/buyFullSend/buyFullSend/gotoDetailBuyFullSend?id='
 			+ id;
-	add(url, '促销折扣单详情', 900, 535);
+	add(url, '促销买满送订单详情', 900, 535);
 }
 
 // 打开新增促销订单页面
 function addPromotion(title, x, y) {
-	var url = Utils.getRootPath() + '/discount/discount/gotoAddPromotion';
+	var url = Utils.getRootPath() + '/buyFullSend/buyFullSend/gotoAddPromotion';
 	add(url, title, x, y);
 }
 
 //编辑
-function editPromotion(title, x, y) {
+function editPromotionFullBuy(title, x, y) {
 
 	var rows = $('#dg').datagrid('getSelections');
 	if (rows.length == 0) {
@@ -48,7 +48,7 @@ function editPromotion(title, x, y) {
 		return;
 	} else {
 		var url = Utils.getRootPath()
-				+ '/discount/discount/gotoEditDiscountEdit?id='
+				+ '/buyFullSend/buyFullSend/gotoEditbuyFullSendEdit?id='
 				+ row.ID;
 		open(url, title, x, y);
 	}
@@ -60,7 +60,7 @@ function openChoseBranch() {
 	// 保存
 	$.ajax({
 		type : "get",
-		url : Utils.getRootPath() + '/discount/discount/openChoseBranch?zcCodeMode='
+		url : Utils.getRootPath() + '/buyFullSend/buyFullSend/openChoseBranch?zcCodeMode='
 				+ zcCodeMode + '&zcCodeScope=' + zcCodeScope,
 		data : {
 			
@@ -122,71 +122,80 @@ function searchDataGrid(){
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
 			$('#dg').datagrid('hideColumn','GOODS_NAME');
 			$('#dg').datagrid('hideColumn','GOODS_PRICE');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
 			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
-			$('#dg').datagrid('hideColumn','DISCOUNT');
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
-			$('#dg').datagrid('showColumn','ALL_DISCOUNT');
+			
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','ADD_MONEY');
 			
 		}
 		if (zcCodeScope=="2") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
 			$('#dg').datagrid('hideColumn','BRANDNAME');
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
 			$('#dg').datagrid('hideColumn','GOODS_NAME');
 			$('#dg').datagrid('hideColumn','GOODS_PRICE');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
 			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
 			$('#dg').datagrid('showColumn','CLASSCODE');
 			$('#dg').datagrid('showColumn','CLASSNAME');
-			$('#dg').datagrid('showColumn','DISCOUNT');		
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','ADD_MONEY');
 		}
 		if (zcCodeScope=="3") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
 			$('#dg').datagrid('hideColumn','GOODS_NAME');
 			$('#dg').datagrid('hideColumn','GOODS_PRICE');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
 			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
 			$('#dg').datagrid('showColumn','BRANDCODE');
 			$('#dg').datagrid('showColumn','BRANDNAME');
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','ADD_MONEY');
 		}
 		if (zcCodeScope=="4") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
 			$('#dg').datagrid('hideColumn','BRANDNAME');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
 			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
+			
 			
 			$('#dg').datagrid('showColumn','SERIALNUMBER');
 			$('#dg').datagrid('showColumn','GOODS_NAME');
 			$('#dg').datagrid('showColumn','GOODS_PRICE');
-			$('#dg').datagrid('showColumn','DISCOUNT');
 			$('#dg').datagrid('showColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('showColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('showColumn','GOODS_UNIT');
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','ADD_MONEY');
 		}
 	}
 	if (zcCodeMode =="2") {
 		if (zcCodeScope=="1") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
@@ -198,12 +207,15 @@ function searchDataGrid(){
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
-			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');	
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','REDUCE_MONEY');
 		}
 		if (zcCodeScope=="2") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
 			$('#dg').datagrid('hideColumn','BRANDNAME');
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
@@ -213,14 +225,16 @@ function searchDataGrid(){
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
 			$('#dg').datagrid('showColumn','CLASSCODE');
 			$('#dg').datagrid('showColumn','CLASSNAME');
-			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');	
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','REDUCE_MONEY');
 		}
 		if (zcCodeScope=="3") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
@@ -230,33 +244,37 @@ function searchDataGrid(){
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
 			$('#dg').datagrid('showColumn','BRANDCODE');
 			$('#dg').datagrid('showColumn','BRANDNAME');
-			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');	
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','REDUCE_MONEY');
 		}
 		if (zcCodeScope=="4") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
 			$('#dg').datagrid('hideColumn','BRANDNAME');
 			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			
 			$('#dg').datagrid('showColumn','SERIALNUMBER');
 			$('#dg').datagrid('showColumn','GOODS_NAME');
 			$('#dg').datagrid('showColumn','GOODS_PRICE');
 			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
-			$('#dg').datagrid('showColumn','DISCOUNT');
 			$('#dg').datagrid('showColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('showColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('showColumn','GOODS_UNIT');
+			$('#dg').datagrid('showColumn','REDUCE_MONEY');
 		}
 	}
 	if (zcCodeMode =="3") {
 		if (zcCodeScope=="1") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
@@ -264,73 +282,160 @@ function searchDataGrid(){
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
 			$('#dg').datagrid('hideColumn','GOODS_NAME');
 			$('#dg').datagrid('hideColumn','GOODS_PRICE');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
-			
-			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');	
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+		
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','ADD_MORE_MONEY');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
 		}
 		if (zcCodeScope=="2") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
 			$('#dg').datagrid('hideColumn','BRANDNAME');
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
 			$('#dg').datagrid('hideColumn','GOODS_NAME');
 			$('#dg').datagrid('hideColumn','GOODS_PRICE');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');	
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
 			
 			$('#dg').datagrid('showColumn','CLASSCODE');	
 			$('#dg').datagrid('showColumn','CLASSNAME');	
-			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');	
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			$('#dg').datagrid('showColumn','ADD_MORE_MONEY');
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
 		}
 		if (zcCodeScope=="3") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','SERIALNUMBER');
 			$('#dg').datagrid('hideColumn','GOODS_NAME');
 			$('#dg').datagrid('hideColumn','GOODS_PRICE');
-			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
 			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('hideColumn','GOODS_UNIT');
-			
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
 			
 			$('#dg').datagrid('showColumn','BRANDCODE');
 			$('#dg').datagrid('showColumn','BRANDNAME');
-			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');	
-			$('#dg').datagrid('showColumn','DISCOUNT');	
+			$('#dg').datagrid('showColumn','ADD_MORE_MONEY');
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
 		}
 		if (zcCodeScope=="4") {
-			$('#dg').datagrid('hideColumn','ALL_DISCOUNT');
 			$('#dg').datagrid('hideColumn','CLASSCODE');
 			$('#dg').datagrid('hideColumn','CLASSNAME');
 			$('#dg').datagrid('hideColumn','BRANDCODE');
 			$('#dg').datagrid('hideColumn','BRANDNAME');
+			$('#dg').datagrid('hideColumn','FULL_BUY_COUNT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			
+			$('#dg').datagrid('showColumn','SERIALNUMBER');
+			$('#dg').datagrid('showColumn','GOODS_NAME');
+			$('#dg').datagrid('showColumn','GOODS_PRICE');
+			$('#dg').datagrid('showColumn','ADD_MORE_MONEY');
+			$('#dg').datagrid('showColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('showColumn','GOODS_PURCHASE_PRICE');
+			$('#dg').datagrid('showColumn','GOODS_SPECIFICATIONS');
+			$('#dg').datagrid('showColumn','GOODS_UNIT');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
+		}
+	}
+	if (zcCodeMode =="4") {
+		if (zcCodeScope=="1") {
+			$('#dg').datagrid('hideColumn','CLASSCODE');
+			$('#dg').datagrid('hideColumn','CLASSNAME');
+			$('#dg').datagrid('hideColumn','BRANDCODE');
+			$('#dg').datagrid('hideColumn','BRANDNAME');
+			$('#dg').datagrid('hideColumn','SERIALNUMBER');
+			$('#dg').datagrid('hideColumn','GOODS_NAME');
+			$('#dg').datagrid('hideColumn','GOODS_PRICE');
+			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
+			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
+			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
+			
+			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
+		}
+		if (zcCodeScope=="2") {
+			$('#dg').datagrid('hideColumn','BRANDCODE');
+			$('#dg').datagrid('hideColumn','BRANDNAME');
+			$('#dg').datagrid('hideColumn','SERIALNUMBER');
+			$('#dg').datagrid('hideColumn','GOODS_NAME');
+			$('#dg').datagrid('hideColumn','GOODS_PRICE');
+			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
+			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
+			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
+			
+			$('#dg').datagrid('showColumn','CLASSCODE');	
+			$('#dg').datagrid('showColumn','CLASSNAME');	
+			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
+		}
+		if (zcCodeScope=="3") {
+			$('#dg').datagrid('hideColumn','CLASSCODE');
+			$('#dg').datagrid('hideColumn','CLASSNAME');
+			$('#dg').datagrid('hideColumn','SERIALNUMBER');
+			$('#dg').datagrid('hideColumn','GOODS_NAME');
+			$('#dg').datagrid('hideColumn','GOODS_PRICE');
+			
+			$('#dg').datagrid('hideColumn','GOODS_PURCHASE_PRICE');
+			$('#dg').datagrid('hideColumn','GOODS_SPECIFICATIONS');
+			$('#dg').datagrid('hideColumn','GOODS_UNIT');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
+			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
+			
+			$('#dg').datagrid('showColumn','BRANDCODE');
+			$('#dg').datagrid('showColumn','BRANDNAME');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
+			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');
+		}
+		if (zcCodeScope=="4") {
+			$('#dg').datagrid('hideColumn','CLASSCODE');
+			$('#dg').datagrid('hideColumn','CLASSNAME');
+			$('#dg').datagrid('hideColumn','BRANDCODE');
+			$('#dg').datagrid('hideColumn','BRANDNAME');
+			$('#dg').datagrid('hideColumn','REDUCE_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MONEY');
+			$('#dg').datagrid('hideColumn','ADD_MORE_MONEY');
 			$('#dg').datagrid('hideColumn','FULL_BUY_MONEY');
 			
 			$('#dg').datagrid('showColumn','SERIALNUMBER');
 			$('#dg').datagrid('showColumn','GOODS_NAME');
 			$('#dg').datagrid('showColumn','GOODS_PRICE');
 			$('#dg').datagrid('showColumn','FULL_BUY_COUNT');
-			$('#dg').datagrid('showColumn','DISCOUNT');
 			$('#dg').datagrid('showColumn','GOODS_PURCHASE_PRICE');
 			$('#dg').datagrid('showColumn','GOODS_SPECIFICATIONS');
 			$('#dg').datagrid('showColumn','GOODS_UNIT');
+			$('#dg').datagrid('showColumn','FREE_GOODSIDS');
 		}
 	}
-	
 	$('#dg').datagrid('reload');
 }
 
 
-function openChoseGoods(){
+function openChoseGoodsFull(){
+	debugger;
 	var zcCodeScope = $("#zcCodeScope").val();
 	if (zcCodeScope=="" || zcCodeScope == null) {
 		$.messager.alert('提示', '请选择商品范围！', 'warning');
@@ -352,9 +457,10 @@ function openChoseGoods(){
 	}
 	var idStr = "";
 	var fullBuyMoney ="";
-	var allDiscount = "";
+	var addMoreMoney = "";
 	var fullBuyCount ="";
-	var discount ="";
+	var addMoney ="";
+	var reduceMoney = "";
 	if ($('#dg').datagrid('getData')!=null) {
 		var dataRows = $('#dg').datagrid('getData').rows;
 		if (dataRows!=null && dataRows.length>0) {
@@ -369,11 +475,11 @@ function openChoseGoods(){
 		}else{
 			fullBuyMoney +=dataRows[i].FULL_BUY_MONEY +",";
 		}
-		if (dataRows[i].ALL_DISCOUNT == null || dataRows[i].ALL_DISCOUNT == ''
-			|| dataRows[i].ALL_DISCOUNT == 'undefiend'){
-			allDiscount +="0.0,";
+		if (dataRows[i].ADD_MORE_MONEY == null || dataRows[i].ADD_MORE_MONEY == ''
+			|| dataRows[i].ADD_MORE_MONEY == 'undefiend'){
+			addMoreMoney +="0.0,";
 		}else{
-			allDiscount +=dataRows[i].ALL_DISCOUNT+",";
+			addMoreMoney +=dataRows[i].ADD_MORE_MONEY+",";
 		}
 		if (dataRows[i].FULL_BUY_COUNT == null || dataRows[i].FULL_BUY_COUNT == ''
 			|| dataRows[i].FULL_BUY_COUNT == 'undefiend'){
@@ -381,32 +487,118 @@ function openChoseGoods(){
 		}else{
 			fullBuyCount +=dataRows[i].FULL_BUY_COUNT+",";
 		}
-		if (dataRows[i].DISCOUNT == null || dataRows[i].DISCOUNT == ''
-			|| dataRows[i].DISCOUNT == 'undefiend'){
-			discount +="0.0,";
+		if (dataRows[i].ADD_MONEY == null || dataRows[i].ADD_MONEY == ''
+			|| dataRows[i].ADD_MONEY == 'undefiend'){
+			addMoney +="0.0,";
 		}else{
-			discount +=dataRows[i].DISCOUNT+",";
+			addMoney +=dataRows[i].ADD_MONEY+",";
 		}
-		
+		if (dataRows[i].REDUCE_MONEY == null || dataRows[i].REDUCE_MONEY == ''
+			|| dataRows[i].REDUCE_MONEY == 'undefiend'){
+			reduceMoney +="0.0,";
+		}else{
+			reduceMoney +=dataRows[i].REDUCE_MONEY+",";
+		}
 		$('#dg').datagrid('beginEdit', i);
 	}
 		}
 	}
 	$.ajax({
 		type : "get",
-		url : Utils.getRootPath() + '/discount/discount/openChoseGoods?zcCodeScope='
+		url : Utils.getRootPath() + '/buyFullSend/buyFullSend/openChoseGoods?zcCodeScope='
 				+ zcCodeScope 
 				+ '&idStr=' + idStr
 				+ '&fullBuyMoney=' + fullBuyMoney
-				+ '&allDiscount=' + allDiscount
+				+ '&addMoreMoney=' + addMoreMoney
 				+ '&fullBuyCount=' + fullBuyCount
-				+ '&discount=' + discount,
+				+ '&addMoney=' + addMoney
+				+ '&reduceMoney=' + reduceMoney,
 		data : {
 			
 		},
 		success : function(data) {
 			$('#selectOptions').window({
 				title : title1,
+				closable : true,
+				maximizable : false,
+				modal : false,
+				draggable : false,
+				width : 900,
+				height : 500
+			});
+			$('#selectOptions').html(data);
+			$('#dg').datagrid('resize', {
+				width : '100%'
+			});
+		}
+	});
+	
+}
+//赠送商品选择
+function openChosePresent(){
+	debugger;
+	var zcCodeScope ="4";
+	var zcCodeMode = $('#zcCodeMode').val();
+	if(zcCodeMode!="3" && zcCodeMode!="4"){
+		$.messager.alert('提示', '该选择只在买满送商品活动有效！', 'warning');
+		return;
+	}
+	var rowIndex = $('#dg').datagrid('getSelections');
+	if (rowIndex.length == 0 ) {
+		$.messager.alert('提示', '请选择一条数据赠送商品！', 'warning');
+		return;
+	}
+	if(rowIndex.length >1){
+		$.messager.alert('提示', '只能选择一条数据赠送商品！', 'warning');
+		return;
+	}
+	var id="";
+	for (var i = 0; i < rowIndex.length; i++) {
+		 id = rowIndex[0].ID ;
+	}
+	
+	var dataRows = $('#dg').datagrid('getData').rows;
+	var ids = "";
+	var fullBuyMoney ="";
+	var addMoreMoney = "";
+	var fullBuyCount ="";
+	for (var i = 0; i < dataRows.length; i++) {
+		$('#dg').datagrid('endEdit', i);
+		ids += dataRows[i].ID +",";
+		if (dataRows[i].FULL_BUY_MONEY == null || dataRows[i].FULL_BUY_MONEY == ''
+			|| dataRows[i].FULL_BUY_MONEY == 'undefiend'){
+			fullBuyMoney +="0.0,";
+		}else{
+			fullBuyMoney +=dataRows[i].FULL_BUY_MONEY +",";
+		}
+		if (dataRows[i].ADD_MORE_MONEY == null || dataRows[i].ADD_MORE_MONEY == ''
+			|| dataRows[i].ADD_MORE_MONEY == 'undefiend'){
+			addMoreMoney +="0.0,";
+		}else{
+			addMoreMoney +=dataRows[i].ADD_MORE_MONEY+",";
+		}
+		if (dataRows[i].FULL_BUY_COUNT == null || dataRows[i].FULL_BUY_COUNT == ''
+			|| dataRows[i].FULL_BUY_COUNT == 'undefiend'){
+			fullBuyCount +="0.0,";
+		}else{
+			fullBuyCount +=dataRows[i].FULL_BUY_COUNT+",";
+		}
+		$('#dg').datagrid('beginEdit', i);
+	}
+	$.ajax({
+		type : "get",
+		url : Utils.getRootPath() + '/buyFullSend/buyFullSend/openChosePresent?zcCodeScope='
+				+ zcCodeScope +'&id=' +id
+				+'&fullBuyMoney=' +fullBuyMoney
+				+'&addMoreMoney=' +addMoreMoney
+				+'&fullBuyCount=' +fullBuyCount
+				+'&ids=' +ids,
+		data : {
+			
+		},
+		success : function(data) {
+			$('#selectOptions').window({
+				title : '商品列表',
 				closable : true,
 				maximizable : false,
 				modal : false,
@@ -447,14 +639,15 @@ function addGoods(num) {
 		}
 	}
 	
+	
 	var url = '';
 	if (zcSalesPromotionId==null || zcSalesPromotionId=="" || zcSalesPromotionId=='undefiend') {
 		url = Utils.getRootPath()
-		+ '/discount/discount/addDiscountGoodsToItems?ids=' + ids
+		+ '/buyFullSend/buyFullSend/addBuyFullSendGoodsToItems?ids=' + ids
 		+ '&zcCodeScope=' + zcCodeScope;
 	}else{
 	    url = Utils.getRootPath()
-			+ '/discount/discount/addDiscountGoodsToEditItems?ids=' + ids
+			+ '/buyFullSend/buyFullSend/addBuyFullSendGoodsToEditItems?ids=' + ids
 			+ '&zcCodeScope=' + zcCodeScope
 			+ '&zcSalesPromotionId=' + zcSalesPromotionId;
 	}
@@ -481,11 +674,54 @@ function addGoods(num) {
 	});
 }
 
+function addPresent(num) {
+	debugger;
+	var zcSalesPromotionItemId = $('#zcSalesPromotionItemId').val();
+	var zcCodeScope = num +"" ;
+	
+	var  ids = "";
+	if (zcCodeScope!="1") {
+		var rows = $('#goodsDg').datagrid('getSelections');
+		if (rows.length == 0 ) {
+			$.messager.alert('提示', '请选择至少一条数据！', 'warning');
+			return;
+		}
+		for (var i = 0; i < rows.length; i++) {
+			ids += rows[i].ID+",";
+		}
+	}
+	var url = Utils.getRootPath()
+			+ '/buyFullSend/buyFullSend/addBuyFullSendPresentItems?ids=' + ids
+			+ '&zcCodeScope=' + zcCodeScope
+			+ '&zcSalesPromotionItemId=' + zcSalesPromotionItemId;
+	
+	$.ajax({
+		type : "post",
+		url : url,
+		async : true,
+		dataType : 'json',
+		success : function(result) {
+			$('#selectOptions').window('close');
+			if (result.message == "保存成功") {
+				$.messager.alert('提示', '添加成功', 'info', function() {
+					$('#dg').datagrid('reload');
+				});
+			} else if (result.message == "保存error") {
+				$.messager.alert('提示', '已存在该勾选的商品，请重新确认！', 'info', function() {
+					$('#dg').datagrid('reload');
+				});
+			} else {
+				$.messager.alert('提示', '添加失败，请联系管理员！', 'error');
+				$('#dg').datagrid('reload');
+			}
+		}
+	});
+}
 
 
 
 //根据商品表直接选中行后生成促销订单
-function saveLineToPurchase(formId) {
+function saveLineToFullBuy(formId) {
 	debugger;
 	var data = $('#dg').datagrid('getData');
 	var zcCodeMode = $("#zcCodeMode").val();
@@ -507,47 +743,56 @@ function saveLineToPurchase(formId) {
 	var branchCode = $('#branchCode').val();
 	
 	var ids = "";
-	var allDiscount = "";
-	var fullBuyMoney = "";
-	var fullBuyCount = "";
-	var discount = "";
+	var fullBuyMoney ="";
+	var addMoreMoney = "";
+	var fullBuyCount ="";
+	var addMoney ="";
+	var reduceMoney = "";
+	
 	for (var i = 0; i < data.rows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
 		$('#dg').datagrid('beginEdit', i);
 		ids += data.rows[i].ID + ",";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-			|| data.rows[i].All_DISCOUNT == 'undefiend') {
-		allDiscount += "0.00,";
-	} else {
-		allDiscount += data.rows[i].All_DISCOUNT + ",";
-	}
-	if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
+		if (data.rows[i].ADD_MORE_MONEY == null || data.rows[i].ADD_MORE_MONEY == ''
+			|| data.rows[i].ADD_MORE_MONEY == 'undefiend') {
+			addMoreMoney += "0.00,";
+		} else {
+			addMoreMoney += data.rows[i].ADD_MORE_MONEY + ",";
+		}
+		if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
 		|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
 		fullBuyMoney += "0.00,";
-	} else {
+		} else {
 		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
-	}
-	if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
+		}
+		if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
 		|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
 		fullBuyCount += "0.00,";
-	} else {
+		} else {
 		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
-	}
-	if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-		|| data.rows[i].DISCOUNT == 'undefiend') {
-		discount  += "0.00,";
-	} else {
-		discount += data.rows[i].DISCOUNT + " ,";
-	}
+		}
+		if (data.rows[i].ADD_MONEY == null || data.rows[i].ADD_MONEY == ''
+		|| data.rows[i].ADD_MONEY == 'undefiend') {
+			addMoney  += "0.00,";
+		} else {
+			addMoney += data.rows[i].ADD_MONEY + " ,";
+		}
+		if (data.rows[i].REDUCE_MONEY == null || data.rows[i].REDUCE_MONEY == ''
+			|| data.rows[i].REDUCE_MONEY == 'undefiend') {
+				reduceMoney  += "0.00,";
+			} else {
+				reduceMoney += data.rows[i].REDUCE_MONEY + " ,";
+			}
 	}
 	var data = $('#dg').datagrid('getData');
 	
 	var url = Utils.getRootPath()
-			+ '/discount/discount/createZcSalesPromotion?ids=' + ids
-			+ '&allDiscount=' + allDiscount + '&data=' + data + '&fullBuyMoney=' + fullBuyMoney
-			+ '&fullBuyCount=' + fullBuyCount+ '&discount=' + discount
+			+ '/buyFullSend/buyFullSend/createZcSalesPromotion?ids=' + ids
+			+ '&addMoreMoney=' + addMoreMoney + '&data=' + data + '&fullBuyMoney=' + fullBuyMoney
+			+ '&fullBuyCount=' + fullBuyCount+ '&addMoney=' + addMoney
 			+ '&branchCode=' + branchCode
-			+ '&chkValue=' + chkValue;
+			+ '&chkValue=' + chkValue
+			+ '&reduceMoney=' + reduceMoney;
 			//+ '&zcCodeMode=' + zcCodeMode
 			//+ '&zcCodeScope=' + zcCodeScope;
 	// 数据有限性判断
@@ -561,7 +806,7 @@ function saveLineToPurchase(formId) {
 			success : function(result) {
 				if (result.result) {
 					$.messager.alert('提示', '新增成功', 'info', function() {
-						window.parent.loadDataGrid('discount');
+						window.parent.loadDataGrid('buyFullCount');
 						window.parent.closeWinForm();
 					});
 				} else if (result.message == "保存error") {
@@ -594,53 +839,64 @@ function deleteChose() {
 			ids += rows[i].ID + ",";
 		}
 	}
-	var data = $('#dg').datagrid('getData');
 	var idStr = "";
-	var allDiscount = "";
-	var fullBuyMoney = "";
-	var fullBuyCount = "";
-	var discount = "";
-	for (var i = 0; i < data.rows.length; i++) {
+	var fullBuyMoney ="";
+	var addMoreMoney = "";
+	var fullBuyCount ="";
+	var addMoney ="";
+	var reduceMoney = "";
+	if ($('#dg').datagrid('getData')!=null) {
+		var dataRows = $('#dg').datagrid('getData').rows;
+		if (dataRows!=null && dataRows.length>0) {
+			
+		
+	for (var i = 0; i < dataRows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
+		idStr += dataRows[i].ID +",";
+		if (dataRows[i].FULL_BUY_MONEY == null || dataRows[i].FULL_BUY_MONEY == ''
+			|| dataRows[i].FULL_BUY_MONEY == 'undefiend'){
+			fullBuyMoney +="0.0,";
+		}else{
+			fullBuyMoney +=dataRows[i].FULL_BUY_MONEY +",";
+		}
+		if (dataRows[i].ADD_MORE_MONEY == null || dataRows[i].ADD_MORE_MONEY == ''
+			|| dataRows[i].ADD_MORE_MONEY == 'undefiend'){
+			addMoreMoney +="0.0,";
+		}else{
+			addMoreMoney +=dataRows[i].ADD_MORE_MONEY+",";
+		}
+		if (dataRows[i].FULL_BUY_COUNT == null || dataRows[i].FULL_BUY_COUNT == ''
+			|| dataRows[i].FULL_BUY_COUNT == 'undefiend'){
+			fullBuyCount +="0.0,";
+		}else{
+			fullBuyCount +=dataRows[i].FULL_BUY_COUNT+",";
+		}
+		if (dataRows[i].ADD_MONEY == null || dataRows[i].ADD_MONEY == ''
+			|| dataRows[i].ADD_MONEY == 'undefiend'){
+			addMoney +="0.0,";
+		}else{
+			addMoney +=dataRows[i].ADD_MONEY+",";
+		}
+		if (dataRows[i].REDUCE_MONEY == null || dataRows[i].REDUCE_MONEY == ''
+			|| dataRows[i].REDUCE_MONEY == 'undefiend'){
+			reduceMoney +="0.0,";
+		}else{
+			reduceMoney +=dataRows[i].REDUCE_MONEY+",";
+		}
 		$('#dg').datagrid('beginEdit', i);
-		idStr += data.rows[i].ID + ",";
-//		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
-//		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
-//		discount += data.rows[i].DISCOUNT + " ,";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-				|| data.rows[i].All_DISCOUNT == 'undefiend') {
-			allDiscount += "0.00,";
-		} else {
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
+	}
 		}
-		if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
-			|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
-			fullBuyMoney += "0.00,";
-		} else {
-			fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
-		}
-		if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
-			|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
-			fullBuyCount += "0.00,";
-		} else {
-			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
-		}
-		if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-			|| data.rows[i].DISCOUNT == 'undefiend') {
-			discount  += "0.00,";
-		} else {
-			discount += data.rows[i].DISCOUNT + " ,";
-		}
-		}
+	}
 	$.messager.confirm('确认 ', '确定要删除 ？', function(r) {
 		if (r) {
 			$.ajax({
 				type : "post",
 				url : Utils.getRootPath()
-						+ '/discount/discount/deleteChose?allDiscount=' + allDiscount
+						+ '/buyFullSend/buyFullSend/deleteChose?addMoney=' + addMoney
 						+ '&idStr=' + idStr + '&fullBuyMoney=' + fullBuyMoney
 						+ '&fullBuyCount=' + fullBuyCount
-						+ '&discount=' + discount,
+						+ '&reduceMoney=' + reduceMoney
+						+ '&addMoreMoney=' + addMoreMoney,
 				data : {
 					id : ids
 				},
@@ -649,7 +905,7 @@ function deleteChose() {
 				success : function(result) {
 					if (result.result) {
 						$.messager.alert('提示', '删除成功', 'info', function() {
-							window.parent.loadDataGrid('discount');
+							window.parent.loadDataGrid('buyFullCount');
 							$('#dg').datagrid('reload');
 						});
 					} else if (result.status == "error") {
@@ -675,51 +931,18 @@ function deleteChoseChange() {
 	}
 	var data = $('#dg').datagrid('getData');
 	var idStr = "";
-	var allDiscount = "";
-	var fullBuyMoney = "";
-	var fullBuyCount = "";
-	var discount = "";
+	
 	for (var i = 0; i < data.rows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
 		$('#dg').datagrid('beginEdit', i);
 		idStr += data.rows[i].ID + ",";
-//		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
-//		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
-//		discount += data.rows[i].DISCOUNT + " ,";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-				|| data.rows[i].All_DISCOUNT == 'undefiend') {
-			allDiscount += "0.00,";
-		} else {
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
-		}
-		if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
-			|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
-			fullBuyMoney += "0.00,";
-		} else {
-			fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
-		}
-		if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
-			|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
-			fullBuyCount += "0.00,";
-		} else {
-			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
-		}
-		if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-			|| data.rows[i].DISCOUNT == 'undefiend') {
-			discount  += "0.00,";
-		} else {
-			discount += data.rows[i].DISCOUNT + " ,";
-		}
-		}
+	}
 	
 		
 			$.ajax({
 				type : "post",
 				url : Utils.getRootPath()
-						+ '/discount/discount/deleteChoseChange?allDiscount=' + allDiscount
-						+ '&idStr=' + idStr + '&fullBuyMoney=' + fullBuyMoney
-						+ '&fullBuyCount=' + fullBuyCount
-						+ '&discount=' + discount,
+						+ '/buyFullSend/buyFullSend/deleteChoseChange?idStr=' + idStr,
 				data : {
 					id : ids
 				},
@@ -735,7 +958,7 @@ function deleteChoseChange() {
 }
 
 //根据商品表直接选中行后生成促销订单
-function EidtLineToPurchase(formId) {
+function EidtLineToBuyFullSend(formId) {
 	debugger;
 	var data = $('#dg').datagrid('getData');
 	var zcCodeMode = $("#zcCodeMode").val();
@@ -757,19 +980,20 @@ function EidtLineToPurchase(formId) {
 	var branchCode = $('#branchCode').val();
 	
 	var ids = "";
-	var allDiscount = "";
+	var addMoney = "";
 	var fullBuyMoney = "";
 	var fullBuyCount = "";
-	var discount = "";
+	var addMoreMoney = "";
+	var reduceMoney = "";
 	for (var i = 0; i < data.rows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
 		$('#dg').datagrid('beginEdit', i);
 		ids += data.rows[i].ID + ",";
-		if(data.rows[i].All_DISCOUNT ==null || data.rows[i].All_DISCOUNT==''
-			||data.rows[i].All_DISCOUNT =='undefiend'){
-			allDiscount += "0.0,";
+		if(data.rows[i].ADD_MONEY ==null || data.rows[i].ADD_MONEY==''
+			||data.rows[i].ADD_MONEY =='undefiend'){
+			addMoney += "0.0,";
 		}else{
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
+			addMoney += data.rows[i].ADD_MONEY + ",";
 		}
 		if(data.rows[i].FULL_BUY_MONEY ==null || data.rows[i].FULL_BUY_MONEY==''
 			||data.rows[i].FULL_BUY_MONEY =='undefiend'){
@@ -785,22 +1009,29 @@ function EidtLineToPurchase(formId) {
 			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 		}
 		
-		if(data.rows[i].DISCOUNT ==null || data.rows[i].DISCOUNT==''
-			||data.rows[i].DISCOUNT =='undefiend'){
-			discount += "0.0,";
+		if(data.rows[i].ADD_MORE_MONEY ==null || data.rows[i].ADD_MORE_MONEY==''
+			||data.rows[i].ADD_MORE_MONEY =='undefiend'){
+			addMoreMoney += "0.0,";
 		}else{
-			discount += data.rows[i].DISCOUNT + ",";
+			addMoreMoney += data.rows[i].ADD_MORE_MONEY + ",";
 		}
 		
+		if(data.rows[i].REDUCE_MONEY ==null || data.rows[i].REDUCE_MONEY==''
+			||data.rows[i].REDUCE_MONEY =='undefiend'){
+			reduceMoney += "0.0,";
+		}else{
+			reduceMoney += data.rows[i].REDUCE_MONEY + ",";
+		}
 	}
 	var data = $('#dg').datagrid('getData');
 	
 	var url = Utils.getRootPath()
-			+ '/discount/discount/editZcSalesPromotion?ids=' + ids
-			+ '&allDiscount=' + allDiscount + '&data=' + data + '&fullBuyMoney=' + fullBuyMoney
-			+ '&fullBuyCount=' + fullBuyCount+ '&discount=' + discount
+			+ '/buyFullSend/buyFullSend/editZcSalesPromotion?ids=' + ids
+			+ '&addMoney=' + addMoney + '&data=' + data + '&fullBuyMoney=' + fullBuyMoney
+			+ '&fullBuyCount=' + fullBuyCount+ '&addMoreMoney=' + addMoreMoney
 			+ '&branchCode=' + branchCode
-			+ '&chkValue=' + chkValue;
+			+ '&chkValue=' + chkValue
+			+ '&reduceMoney=' + reduceMoney;
 			//+ '&zcCodeMode=' + zcCodeMode
 			//+ '&zcCodeScope=' + zcCodeScope;
 	// 数据有限性判断
@@ -814,7 +1045,7 @@ function EidtLineToPurchase(formId) {
 			success : function(result) {
 				if (result.result) {
 					$.messager.alert('提示', '修改成功', 'info', function() {
-						window.parent.loadDataGrid('discount');
+						window.parent.loadDataGrid('buyFullCount');
 						window.parent.closeWinForm();
 					});
 				} else if (result.message == "保存error") {
@@ -830,8 +1061,7 @@ function EidtLineToPurchase(formId) {
 	}
 }
 
-function openEditGoods() {
-	debugger;
+function openEditGoodsFull() {
 	var data = $('#dg').datagrid('getData');
 	var zcCodeMode = $("#zcCodeMode").val();
 	var zcCodeScope = $("#zcCodeScope").val();
@@ -843,25 +1073,23 @@ function openEditGoods() {
 		$.messager.alert('提示', '请选择促销方式！', 'warning');
 		return;
 	}
-	if (zcCodeScope=="1" && zcCodeScope != null) {
-		$.messager.alert('提示', '全场折扣无需选择', 'warning');
-		return;
-	}
+	
 	var zcSalesPromotionId = $('#zcSalesPromotionId').val();
 	
 	var ids = "";
-	var allDiscount = "";
+	var addMoney = "";
 	var fullBuyMoney = "";
 	var fullBuyCount = "";
-	var discount = "";
+	var reduceMoney = "";
+	var addMoreMoney ="";
 	for (var i = 0; i < data.rows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
-		ids +=data.rows[i].ID +",";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-			|| data.rows[i].All_DISCOUNT == 'undefiend') {
-		allDiscount += "0.00,";
+		ids += data.rows[i].ID +",";
+		if (data.rows[i].ADD_MONEY == null || data.rows[i].ADD_MONEY == ''
+			|| data.rows[i].ADD_MONEY == 'undefiend') {
+			addMoney += "0.00,";
 	} else {
-		allDiscount += data.rows[i].All_DISCOUNT + ",";
+		addMoney += data.rows[i].ADD_MONEY + ",";
 	}
 	if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
 		|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
@@ -875,11 +1103,17 @@ function openEditGoods() {
 	} else {
 		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 	}
-	if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-		|| data.rows[i].DISCOUNT == 'undefiend') {
-		discount  += "0.00,";
+	if (data.rows[i].REDUCE_MONEY == null || data.rows[i].REDUCE_MONEY == ''
+		|| data.rows[i].REDUCE_MONEY == 'undefiend') {
+		reduceMoney  += "0.00,";
 	} else {
-		discount += data.rows[i].DISCOUNT + " ,";
+		reduceMoney += data.rows[i].REDUCE_MONEY + " ,";
+	}
+	if (data.rows[i].ADD_MORE_MONEY == null || data.rows[i].ADD_MORE_MONEY == ''
+		|| data.rows[i].ADD_MORE_MONEY == 'undefiend') {
+		addMoreMoney  += "0.00,";
+	} else {
+		addMoreMoney += data.rows[i].ADD_MORE_MONEY + " ,";
 	}
 		$('#dg').datagrid('beginEdit', i);
 	}
@@ -897,11 +1131,11 @@ function openEditGoods() {
 	$.ajax({
 		type : "get",
 		url : Utils.getRootPath()
-				+ '/discount/discount/openAddGoods?ids=' + ids
-				+ '&allDiscount=' + allDiscount + '&data=' + data + '&fullBuyMoney=' + fullBuyMoney
-				+ '&fullBuyCount=' + fullBuyCount+ '&discount=' + discount
+				+ '/buyFullSend/buyFullSend/openAddGoods?ids=' + ids
+				+ '&addMoney=' + addMoney + '&data=' + data + '&fullBuyMoney=' + fullBuyMoney
+				+ '&fullBuyCount=' + fullBuyCount+ '&reduceMoney=' + reduceMoney
 				+ '&zcSalesPromotionId='+ zcSalesPromotionId
-				+ '&zcCodeScope='+ zcCodeScope,
+				+ '&addMoreMoney='+ addMoreMoney,
 		data : {},
 		success : function(data) {
 			$('#selectOptions').window({
@@ -944,11 +1178,65 @@ function addGoodsWhileEdit(num) {
 			ids += rows[i].ID+",";
 		}
 	}
+	var idStr = "";
+	var fullBuyMoney ="";
+	var addMoreMoney = "";
+	var fullBuyCount ="";
+	var addMoney ="";
+	var reduceMoney = "";
+	if ($('#dg').datagrid('getData')!=null) {
+		var dataRows = $('#dg').datagrid('getData').rows;
+		if (dataRows!=null && dataRows.length>0) {
+			
+		
+	for (var i = 0; i < dataRows.length; i++) {
+		$('#dg').datagrid('endEdit', i);
+		idStr += dataRows[i].ID +",";
+		if (dataRows[i].FULL_BUY_MONEY == null || dataRows[i].FULL_BUY_MONEY == ''
+			|| dataRows[i].FULL_BUY_MONEY == 'undefiend'){
+			fullBuyMoney +="0.0,";
+		}else{
+			fullBuyMoney +=dataRows[i].FULL_BUY_MONEY +",";
+		}
+		if (dataRows[i].ADD_MORE_MONEY == null || dataRows[i].ADD_MORE_MONEY == ''
+			|| dataRows[i].ADD_MORE_MONEY == 'undefiend'){
+			addMoreMoney +="0.0,";
+		}else{
+			addMoreMoney +=dataRows[i].ADD_MORE_MONEY+",";
+		}
+		if (dataRows[i].FULL_BUY_COUNT == null || dataRows[i].FULL_BUY_COUNT == ''
+			|| dataRows[i].FULL_BUY_COUNT == 'undefiend'){
+			fullBuyCount +="0.0,";
+		}else{
+			fullBuyCount +=dataRows[i].FULL_BUY_COUNT+",";
+		}
+		if (dataRows[i].ADD_MONEY == null || dataRows[i].ADD_MONEY == ''
+			|| dataRows[i].ADD_MONEY == 'undefiend'){
+			addMoney +="0.0,";
+		}else{
+			addMoney +=dataRows[i].ADD_MONEY+",";
+		}
+		if (dataRows[i].REDUCE_MONEY == null || dataRows[i].REDUCE_MONEY == ''
+			|| dataRows[i].REDUCE_MONEY == 'undefiend'){
+			reduceMoney +="0.0,";
+		}else{
+			reduceMoney +=dataRows[i].REDUCE_MONEY+",";
+		}
+		$('#dg').datagrid('beginEdit', i);
+	}
+		}
+	}
 	var  url = Utils.getRootPath()
-			+ '/discount/discount/addDiscountScopeWhole?ids=' + ids
+			+ '/buyFullSend/buyFullSend/addDiscountScopeWhole?ids=' + ids
 			+ '&zcCodeScope=' + zcCodeScope
 			+ '&zcSalesPromotionId=' + zcSalesPromotionId
-			+ '&zcCodeMode=' + zcCodeMode;
+			+ '&zcCodeMode=' + zcCodeMode
+			+ '&idStr=' + idStr
+			+ '&fullBuyMoney=' + fullBuyMoney
+			+ '&addMoreMoney=' + addMoreMoney
+			+ '&fullBuyCount=' + fullBuyCount
+			+ '&addMoney=' + addMoney
+			+ '&reduceMoney=' + reduceMoney;
 	
 	$.ajax({
 		type : "post",
@@ -1008,7 +1296,7 @@ function destroyInfo() {
 				$.ajax({
 					type : "post",
 					url : Utils.getRootPath()
-							+ '/discount/discount/delete',
+							+ '/buyFullSend/buyFullSend/delete',
 					data : {
 						id : ids
 					},
@@ -1017,7 +1305,7 @@ function destroyInfo() {
 					success : function(result) {
 						if (result.result) {
 							$.messager.alert('提示', '删除成功', 'info', function() {
-								window.parent.loadDataGrid('discount');
+								window.parent.loadDataGrid('buyFullCount');
 								window.parent.closeWinForm();
 							});
 						} else if (result.status == "error") {
@@ -1060,7 +1348,7 @@ function openCheck(title, x, y) {
 		return;
 	} else {
 		var url = Utils.getRootPath()
-				+ '/discount/discount/gotoEditCheck?id='
+				+ '/buyFullSend/buyFullSend/gotoEditCheck?id='
 				+ row.ID;
 		add(url, title, x, y);
 	}
@@ -1111,7 +1399,7 @@ function checkPass() {
 	}
 	var id = $('#zcSalesPromotionId').val();
 	var url = Utils.getRootPath()
-			+ '/discount/discount/checkPass?id=' + id + '&ids='
+			+ '/buyFullSend/buyFullSend/checkPass?id=' + id + '&ids='
 			+ ids + '&allDiscount=' + allDiscount
 			+ '&fullBuyMoney=' + fullBuyMoney
 			+ '&fullBuyCount=' + fullBuyCount
@@ -1126,7 +1414,7 @@ function checkPass() {
 				success : function(result) {
 					if (result.result) {
 						$.messager.alert('提示', '审核通过！', 'info', function() {
-							window.parent.loadDataGrid('discount');
+							window.parent.loadDataGrid('buyFullCount');
 							window.parent.closeWinForm();
 						});
 					} else if (result.status == "error") {
@@ -1158,7 +1446,7 @@ function checkNoPass(type) {
 function CheckItemAjax(id, reason, type) {
 	debugger;
 	var url = Utils.getRootPath()
-			+ '/discount/discount/checkNoPass';
+			+ '/buyFullSend/buyFullSend/checkNoPass';
 	$.ajax({
 		type : "post",
 		url : url,
@@ -1167,15 +1455,15 @@ function CheckItemAjax(id, reason, type) {
 			'reason' : reason,
 			'type' : type
 		},
-		async : true,
+		async : false,
 		dataType : 'json',
 		success : function(result) {
 			if (result.result) {
 				$.messager.alert('提示', '审核完成', 'info', function() {
-					window.parent.loadDataGrid('discount');
+					window.parent.loadDataGrid('buyFullCount');
 					window.parent.closeWinForm();
 				});
-			} else if(result.status=="error"){
+			} else if(result.status == "error"){
 				$.messager.alert('提示', '审核失败，请联系管理员！', 'error');
 			}
 		}

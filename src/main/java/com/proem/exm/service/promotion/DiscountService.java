@@ -27,4 +27,7 @@ public interface DiscountService extends BaseService{
 	
 	public DataGrid getPromotionEditGoods(Page page ,Object obj ) throws Exception;
 	
+	public DataGrid getPromotionDeailGoods(Page page ,Object obj ) throws Exception;
+	
+	
 }

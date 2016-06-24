@@ -115,7 +115,7 @@ public class DiscountServiceImpl implements DiscountService {
 
 	@Override
 	public DataGrid getPagedDataGridObj(Page page, Object obj) throws Exception {
-		String sql = "SELECT B.ID ,B.PROMOTION_NUMBER,B.PROMOTION_TITLE,B.PROMOTION_BEGIN_DATE,B.PROMOTION_END_DATE,B.MEMBER_LEVEL,B.STOP_MAN,B.STOP_DATE,B.CREATE_MAN ,B.check_state FROM  ZC_SALESPROMOTION B where 1=1 ";
+		String sql = "SELECT B.ID ,B.PROMOTION_NUMBER,B.PROMOTION_TITLE,B.PROMOTION_BEGIN_DATE,B.PROMOTION_END_DATE,B.MEMBER_LEVEL,B.STOP_MAN,B.STOP_DATE,B.CREATE_MAN ,B.check_state FROM  ZC_SALESPROMOTION B where 1=1 AND B.PROMOTION_NUMBER LIKE '%ZKD%' ";
 		sql += joinCondition(obj);
 		sql += "  order by B.PROMOTION_NUMBER desc";
 		page.setSql(sql);
@@ -303,6 +303,39 @@ public class DiscountServiceImpl implements DiscountService {
 			conditions += " and f.zccode_scopeid like '%" + zcSalesPromotion.getZcCodeScope().getId()
 					+ "%' ";
 		}
+		return conditions;
+	}
+
+	@Override
+	public DataGrid getPromotionDeailGoods(Page page, Object obj)
+			throws Exception {
+		String sql =" select a.*,b.id as goodsFiles_id,b.serialnumber,b.GOODS_CODE,b.GOODS_NAME,b.GOODS_PRICE,b.GOODS_PURCHASE_PRICE,b.GOODS_UNIT,b.GOODS_SPECIFICATIONS , "
+				+" c.classify_name as className , c.classify_code as classCode,d.classify_name as brandName , d.classify_code as brandCode "
+				+" from ZC_SALESPROMOTIONITEM a  "
+				+" LEFT JOIN ZC_GOODS_MASTER b on a.GOODSFILE_ID = b.id "
+				+" LEFT JOIN ZC_CLASSIFY_INFO c on c.id = a.class_classify_id "
+				+" LEFT JOIN ZC_CLASSIFY_INFO d on d.id = a.brand_classify_id "
+				+" LEFT JOIN ZC_SALESPROMOTION f on f.id = a.SALESPROMOTION_id "
+				+" where 1=1 ";
+			sql += joinDetailConditions(obj);	
+			page.setSql(sql);
+			List<Map<String, Object>> rows = discountDao.getObjPagedList(page);
+			Long total = discountDao.getObjListCount(page);
+		return new DataGrid(total,  rows);
+	}
+	
+	public String joinDetailConditions(Object obj ){
+		ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion) obj;
+		String conditions = "";
+		if (StringUtil.validate(zcSalesPromotion.getId())) {
+			conditions += " and f.id like '%" + zcSalesPromotion.getId()
+					+ "%' ";
+		}
+		if (StringUtil.validate(zcSalesPromotion.getPromotionNumber())) {
+			conditions += " and f.Promotion_number like '%" + zcSalesPromotion.getPromotionNumber()
+					+ "%' ";
+		}
+		
 		return conditions;
 	}
 	

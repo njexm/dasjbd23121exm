@@ -49,6 +49,7 @@ function formatterStatus(value) {
 	}
 };
 
+
 // 盘点范围转换
 function formatterCheckType(value) {
 	if (value == '0') {
@@ -82,6 +83,7 @@ function formatterStatusNoColour(value) {
 		return '未知';
 	}
 };
+
 
 // 状态转换
 function formatterOrderStatus(value) {

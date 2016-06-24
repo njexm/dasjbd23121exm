@@ -271,6 +271,12 @@ function loadDataGrid(type)
 	else if(type == 'specialPrice'){
 		//刷新特价单页面
 		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type == 'discount'){
+		//刷新折扣单页面
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
+	}else if(type == 'buyFullCount'){
+		//刷新折扣单页面
+		$(window.parent.document).contents().find("#iframe")[0].contentWindow.searchData();
 	}
 }
 

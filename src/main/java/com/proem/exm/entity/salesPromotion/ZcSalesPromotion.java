@@ -66,9 +66,16 @@ public class ZcSalesPromotion extends Root{
 	private Code ZcCodeMode ;
 	/*审核状态*/
 	private int checkState;
+	/*所有商品*/
+	private String branchs ; 
 	
-	
-	
+	@Column(name = "BRANCHIDS")
+	public String getBranchs() {
+		return branchs;
+	}
+	public void setBranchs(String branchs) {
+		this.branchs = branchs;
+	}
 	@Column(name = "PROMOTION_NUMBER")
 	public String getPromotionNumber() {
 		return promotionNumber;

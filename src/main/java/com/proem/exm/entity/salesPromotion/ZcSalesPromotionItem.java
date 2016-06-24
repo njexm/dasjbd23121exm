@@ -65,7 +65,25 @@ public class ZcSalesPromotionItem extends Root{
 	
 	/* 数量 */
 	private String nums;
+	/*买满多少元时 加的多少元*/
+	private String addMoreMoney ;
 	
+	private String freeGoodsIds ;
+	
+	@Column(name="free_goodsids")
+	public String getFreeGoodsIds() {
+		return freeGoodsIds;
+	}
+	public void setFreeGoodsIds(String freeGoodsIds) {
+		this.freeGoodsIds = freeGoodsIds;
+	}
+	@Column(name="add_more_money")
+	public String getAddMoreMoney() {
+		return addMoreMoney;
+	}
+	public void setAddMoreMoney(String addMoreMoney) {
+		this.addMoreMoney = addMoreMoney;
+	}
 	@Column(name="nums")
 	public String getNums() {
 		return nums;

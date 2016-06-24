@@ -77,7 +77,7 @@
     			</li>
 				<li>
 					<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="addPromotion('新增促销单',1000,800)" plain="true">新增</a>
-					<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="editPromotion('编辑促销单',1000,535)" plain="true">编辑</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="editPromotionFullBuy('编辑促销单',1000,535)" plain="true">编辑</a>
 					<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="destroyInfo()" plain="true">删除</a>
 					<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="openCheck('审核促销单',1000,535)" plain="true">审核</a>
 				</li>
@@ -88,7 +88,7 @@
 </div>
 
 </body>
-<script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/discount.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/buyfullsend.js"></script>
 <script type="text/javascript">
 	$(function(){
 	initSelectCode('Statue','state');
@@ -119,7 +119,7 @@
 		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
 		striped: true, //奇偶行颜色不同
 		remoteSort: false,
-		url:"${rc.contextPath}/discount/discount/listZcSalesPromotionJson?time="+new Date(), //数据来源
+		url:"${rc.contextPath}/buyFullSend/buyFullSend/listZcSalesPromotionJson?time="+new Date(), //数据来源
 		queryParams:{
 			'zcSalesPromotion.promotionNumber':$('#promotionNumber').val(),
 			'zcSalesPromotion.checkState':$('#state').val(),
@@ -139,7 +139,7 @@
 			}}, //显示复选框*/
 			{field:'ID',sortable:true,sortable:true,hidden:true},
 			{field:'PROMOTION_NUMBER',title:'促销编号',width:'15%',align:'left',sortable:true,sortable:true,formatter:function(value,res){
-				return "<a href='#' onclick=openDiscountItem('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+				return "<a href='#' onclick=openBuyFullSendItem('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
 			}},
 			{field:'PROMOTION_TITLE',title:'促销名称',width:'12%',align:'left',sortable:true,sortable:true},
 			{field:'PROMOTION_BEGIN_DATE',title:'开始日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},

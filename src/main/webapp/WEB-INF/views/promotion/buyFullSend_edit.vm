@@ -77,16 +77,7 @@
 					 <td width="20%">
 						<input id="branchCode" name="" style="width:95%;" value="$!{branchTotal}" readonly/>
                      </td>
-						<th width="11%">促销日子:</th>
-						<td width="30%">
-    						<label><input id="week1" name="week" type="checkbox" value="1"/>星期一</label>
-                            <label><input id="week2" name="week" type="checkbox" value="2"/>星期二</label>
-    						<label><input id="week3" name="week" type="checkbox" value="3"/>星期三</label>
-    						<label><input id="week4" name="week" type="checkbox" value="4"/>星期四</label>
-    						<label><input id="week5" name="week" type="checkbox" value="5"/>星期五</label>
-    						<label><input id="week6" name="week" type="checkbox" value="6"/>星期六</label>
-    						<label><input id="week7" name="week" type="checkbox" value="7"/>星期日</label>
-						</td>
+						
 				   </tr>
 				   <tr>
 						<th style="width:11%">终止人：</th>
@@ -102,12 +93,32 @@
 							<input  id="promotionRemark" name="zcSalesPromotion.promotionRemark" type="text" value="$!{zcSalesPromotion.promotionRemark}"/>
 						</td>
 				   </tr>
+				   <tr>
+						<th width = "11%">
+							<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChosePresent()" plain="true">赠送商品</a>
+                        </th>
+                        <td width="20%">
+							<span style='color:red'>
+								(注：该选择只在买满送商品活动有效)
+                            </span>
+                        </td>
+						<th width="11%">促销日子:</th>
+						<td width="" colspan="3">
+    						<label><input id="week1" name="week" type="checkbox" value="1"/>星期一</label>
+                            <label><input id="week2" name="week" type="checkbox" value="2"/>星期二</label>
+    						<label><input id="week3" name="week" type="checkbox" value="3"/>星期三</label>
+    						<label><input id="week4" name="week" type="checkbox" value="4"/>星期四</label>
+    						<label><input id="week5" name="week" type="checkbox" value="5"/>星期五</label>
+    						<label><input id="week6" name="week" type="checkbox" value="6"/>星期六</label>
+    						<label><input id="week7" name="week" type="checkbox" value="7"/>星期日</label>
+						</td>
+				   </tr>
     	       	</table>
     				
     		</div>
     	</form>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="EidtLineToPurchase('baseForm')" plain="true">保存并提交</a>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openEditGoods()" plain="true">选择</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-save" onclick="EidtLineToBuyFullSend('baseForm')" plain="true">保存并提交</a>
+		<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openEditGoodsFull()" plain="true">选择</a>
 		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="addGoodsWhileEdit('1')" plain="true">增加</a>
 		<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="deleteChose()" plain="true">删除</a>
     </div>
@@ -118,7 +129,7 @@
 </div>
 <style>
 </style>
-<script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/discount.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/buyfullsend.js"></script>
 <script type="text/javascript">
 	$(function(){
 	debugger;
@@ -126,7 +137,7 @@
 	
 	initSelectCode('SaleScope','zcCodeScope');
 	
-	initSelectCode('DiscountType','zcCodeMode');
+	initSelectCode('FullBuySendType','zcCodeMode');
 	
 	initSelectCode('memberLevel','memberLevel');
 	
@@ -171,7 +182,7 @@
 	var winHeight = $(window).height();
 	$('#dg').datagrid({
 		cache: false,
-		title:'折扣列表', //标题
+		title:'买满送列表', //标题
 		method:'post',
 		iconCls:'', //图标
 		singleSelect:false, //多选
@@ -179,7 +190,7 @@
 		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
 		striped: true, //奇偶行颜色不同
 		remoteSort: false,
-		url:"${rc.contextPath}/discount/discount/listPromotionItemsEditOrderJson?time="+new Date(), //数据来源
+		url:"${rc.contextPath}/buyFullSend/buyFullSend/listPromotionItemsEditOrderJson?time="+new Date(), //数据来源
 		queryParams:{
 			'zcSalesPromotion.id':$('#zcSalesPromotionId').val(),
 			'zcSalesPromotion.ZcCodeScope.codeValue':$('#zcCodeScope').val(),
@@ -194,7 +205,6 @@
 				return "height:30px";
 			}},
 			{field:'ID',sortable:true,sortable:true,hidden:true},
-			{field:'ALL_DISCOUNT',title:'全场折扣',width:'8%',sortable:true,align:'left' ,editor:{type:'numberbox',options:{precision:2}},hidden:true},
 			{field:'CLASSCODE',title:'类别编码',width:'8%',sortable:true,align:'left' ,hidden:true},
 			{field:'CLASSNAME',title:'类别名称',width:'8%',sortable:true,align:'left' ,hidden:true},
 			{field:'BRANDCODE',title:'品牌编码',width:'8%',sortable:true,align:'left' ,hidden:true},
@@ -203,8 +213,11 @@
 			{field:'GOODS_NAME',title:'商品名',width:'8%',sortable:true,sortable:true,align:'left' ,hidden:true},
 			{field:'GOODS_PRICE',title:'单价',width:'6%',sortable:true,sortable:true,formatter:formatterNumber,align:'right' ,hidden:true},
 			{field:'FULL_BUY_MONEY',title:'买满金额',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
+			{field:'ADD_MONEY',title:'赠送金额',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
+			{field:'ADD_MORE_MONEY',title:'增加金额',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
+			{field:'REDUCE_MONEY',title:'减少金额',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
 			{field:'FULL_BUY_COUNT',title:'买满数量',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
-			{field:'DISCOUNT',title:'折扣',width:'8%',align:'left',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
+			{field:'FREE_GOODSIDS',title:'赠送商品货号',width:'18%',align:'right',hidden:true},
 			{field:'GOODS_PURCHASE_PRICE',title:'进价',width:'6%',sortable:true,sortable:true,formatter:formatterNumber,align:'right' ,hidden:true},
 			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods ,hidden:true},
 			{field:'GOODS_UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left' ,hidden:true},

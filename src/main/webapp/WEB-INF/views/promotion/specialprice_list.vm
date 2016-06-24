@@ -33,10 +33,17 @@
                                 </select>
                             </td>
 							<!--<th width="10%" align="left"></th>-->
+<<<<<<< HEAD
                             <td width="40%" align="left">
 								促销日期：
                                 <input type="text" id="promotionBeginDate" name="promotionBeginDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                                 -
+=======
+                            <td width="40%" align="left">
+								促销日期：
+                                <input type="text" id="promotionBeginDate" name="promotionBeginDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
+                                -
+>>>>>>> branch 'master' of https://github.com/njexm/dasjbd23121exm.git
                                 <input type="text" id="promotionEndDate" name="promotionEndDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                             </td>
                         </tr>
@@ -79,6 +86,7 @@
 </body>
 <script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/discount.js"></script>
 <script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/specialprice.js"></script>
+<<<<<<< HEAD
 <script type="text/javascript">
     $(function(){
         initSelectCode('Statue','state');
@@ -158,6 +166,87 @@
         $('#dg').datagrid('options').queryParams = queryParams;
         $("#dg").datagrid('load');
     }
+=======
+<script type="text/javascript">
+    $(function(){
+        initSelectCode('Statue','state');
+        $('#createMan').combobox({
+        method:'POST',
+        url:'${rc.contextPath}/userInfo/selectListJson',
+        valueField:'USERID',
+        textField:'USERNAME'
+        });
+        //去除回车键
+        document.onkeydown=function(evt){
+        if(evt.keyCode ==13){
+        searchData();
+        }
+        };
+        var winHeight = $(window).height();
+        $('#dg').datagrid({
+        cache: false,
+        title:'$!{title}', //标题
+        method:'post',
+        iconCls:'', //图标
+        singleSelect:true, //单选
+        height:winHeight, //高度
+        fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
+        striped: true, //奇偶行颜色不同
+        remoteSort: false,
+        url:"${rc.contextPath}/specialPrice/listZcSalesPromotionJson?time="+new Date(), //数据来源
+        queryParams:{
+        'zcSalesPromotion.promotionNumber':$('#promotionNumber').val(),
+        'zcSalesPromotion.checkState':$('#state').val(),
+        'zcSalesPromotion.promotionBeginDate':$('#promotionBeginDate').val(),
+        'zcSalesPromotion.promotionEndDate':$('#promotionEndDate').val(),
+        'zcSalesPromotion.memberLevel':$('#memberLevel').val(),
+        'zcSalesPromotion.createMan':$('#createMan').combobox('getValue')
+        }, //查询条件
+        pagination:true, //显示分页
+        rownumbers:true, //显示行号
+        pageSize:20,
+        pageList:[20,40,60],
+        columns:[[
+        {field:'ck',checkbox:true,width:'2%',styler:function(value,rowData,rowIndex){
+        	return "height:30px;";
+        }}, //显示复选框
+        {field:'ID',sortable:true,sortable:true,hidden:true},
+        {field:'PROMOTION_NUMBER',title:'促销编号',width:'12%',align:'left',sortable:true,formatter:function(value,res){
+				return "<a href='#' onclick=openDetail('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+		}},
+        {field:'PROMOTION_TITLE',title:'促销名称',width:'10%',align:'left',sortable:true,sortable:true},
+        {field:'PROMOTION_BEGIN_DATE',title:'开始日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
+        {field:'PROMOTION_END_DATE',title:'结束日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
+        {field:'CHECK_STATE',title:'审核状态',width:'8%',align:'left', formatter : formatterStatus },
+        {field:'MEMBER_LEVEL',title:'会员等级',width:'8%',align:'left' },
+        {field:'STOP_MAN',title:'终止人',align:'left',width:'8%',sortable:true},
+        {field:'STOP_DATE',title:'终止日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
+        {field:'CREATE_MAN',title:'制单人',align:'left',width:'8%',sortable:true,sortable:true},
+        ]],
+        toolbar:'#tb',
+        onLoadSuccess:function(){
+        $('#dg').datagrid('clearSelections'); //一定要加上这一句，要不然datagrid会记住之前的选择状态，删除时会出问题
+        }
+        });
+    });
+    $(window).resize(function(){
+        $('#dg').datagrid('resize',{
+        width:'100%'
+    });
+    });
+    function searchData(){
+        var queryParams = {
+            'zcSalesPromotion.promotionNumber':$('#promotionNumber').val(),
+            'zcSalesPromotion.checkState':$('#state').val(),
+            'zcSalesPromotion.promotionBeginDate':$('#promotionBeginDate').val(),
+            'zcSalesPromotion.promotionEndDate':$('#promotionEndDate').val(),
+            'zcSalesPromotion.memberLevel':$('#memberLevel').val(),
+            'zcSalesPromotion.createMan':$('#createMan').combobox('getValue')
+        };
+        $('#dg').datagrid('options').queryParams = queryParams;
+        $("#dg").datagrid('load');
+    }
+>>>>>>> branch 'master' of https://github.com/njexm/dasjbd23121exm.git
 </script>
 <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 <script type="text/javascript" src="jquery-easyui-1.4.2/jquery.easyui.min.js"></script>

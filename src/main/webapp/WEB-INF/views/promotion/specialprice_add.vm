@@ -32,8 +32,7 @@
                         </td>
 						<th style="width:11%">制单人：</th>
 						<td style="width:22%">
-							<input type="hidden" name="zcSalesPromotion.createMan" id="userId" value="$!{user.ctpUser.id}"></input>
-							<input  id="createMan" name="" type="text" value="$!{user.userName}" readonly/>
+							<input  id="createMan" name="zcSalesPromotion.createMan" type="text" value="$!{user.userName}" readonly/>
 						</td>
     	           </tr>
 				   <tr>

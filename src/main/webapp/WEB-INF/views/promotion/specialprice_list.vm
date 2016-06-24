@@ -35,9 +35,9 @@
 							<!--<th width="10%" align="left"></th>-->
                             <td width="40%" align="left">
 								促销日期：
-                                <input type="text" id="promotionBeginDate" name="promotionBeginDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+                                <input type="text" id="promotionBeginDate" name="promotionBeginDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                                 -
-                                <input type="text" id="promotionEndDate" name="promotionEndDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+                                <input type="text" id="promotionEndDate" name="promotionEndDate" readonly="true" class="Wdate" onClick="WdatePicker({dateFmt:'yyyy-MM-dd'})"/>
                             </td>
                         </tr>
                         <tr>
@@ -105,7 +105,7 @@
         fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
         striped: true, //奇偶行颜色不同
         remoteSort: false,
-        url:"${rc.contextPath}/discount/discount/listZcSalesPromotionJson?time="+new Date(), //数据来源
+        url:"${rc.contextPath}/specialPrice/listZcSalesPromotionJson?time="+new Date(), //数据来源
         queryParams:{
         'zcSalesPromotion.promotionNumber':$('#promotionNumber').val(),
         'zcSalesPromotion.checkState':$('#state').val(),
@@ -123,7 +123,9 @@
         	return "height:30px;";
         }}, //显示复选框
         {field:'ID',sortable:true,sortable:true,hidden:true},
-        {field:'PROMOTION_NUMBER',title:'促销编号',width:'12%',align:'left',sortable:true,sortable:true},
+        {field:'PROMOTION_NUMBER',title:'促销编号',width:'12%',align:'left',sortable:true,formatter:function(value,res){
+				return "<a href='#' onclick=openDetail('"+res.ID+"') ><span style='color:blue'>"+value+"</span></a>";
+		}},
         {field:'PROMOTION_TITLE',title:'促销名称',width:'10%',align:'left',sortable:true,sortable:true},
         {field:'PROMOTION_BEGIN_DATE',title:'开始日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
         {field:'PROMOTION_END_DATE',title:'结束日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},

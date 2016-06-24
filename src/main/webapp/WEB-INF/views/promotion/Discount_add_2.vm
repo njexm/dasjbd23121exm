@@ -69,9 +69,9 @@
                    <tr>
 						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销期限：</th>
                         <td style="width:20%">
-							<input type="text" id="promotionBeginDate" name="zcSalesPromotion.promotionBeginDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+							<input type="text" id="promotionBeginDate" name="zcSalesPromotion.promotionBeginDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd '})"/>
 							-
-							<input type="text" id="promotionEndDate" name="zcSalesPromotion.promotionEndDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"/>
+							<input type="text" id="promotionEndDate" name="zcSalesPromotion.promotionEndDate" readonly="true" class="Wdate" style="width:45%;" onClick="WdatePicker({dateFmt:'yyyy-MM-dd '})"/>
 						</td>
 						<th width="11%">
 						<a href="#" class="easyui-linkbutton" iconCls="icon-new-add" onclick="openChoseBranch()" plain="true">选择门店</a>
@@ -131,7 +131,7 @@
 	var winHeight = $(window).height();
 	$('#dg').datagrid({
 		cache: false,
-		title:'促销列表', //标题
+		title:'折扣列表', //标题
 		method:'post',
 		iconCls:'', //图标
 		singleSelect:false, //多选
@@ -152,7 +152,7 @@
 				return "height:30px";
 			}},
 			{field:'ID',sortable:true,sortable:true,hidden:true},
-			{field:'ALL_DISCOUNT',title:'全场折扣',width:'8%',sortable:true,align:'left' ,editor:{type:'numberbox',options:{precision:2}},hidden:true},
+			{field:'ALL_DISCOUNT',title:'折扣',width:'8%',align:'left',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
 			{field:'CLASSCODE',title:'类别编码',width:'8%',sortable:true,align:'left' ,hidden:true},
 			{field:'CLASSNAME',title:'类别名称',width:'8%',sortable:true,align:'left' ,hidden:true},
 			{field:'BRANDCODE',title:'品牌编码',width:'8%',sortable:true,align:'left' ,hidden:true},
@@ -164,8 +164,8 @@
 			{field:'FULL_BUY_COUNT',title:'买满数量',width:'8%',align:'right',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
 			{field:'DISCOUNT',title:'折扣',width:'8%',align:'left',editor:{type:'numberbox',options:{precision:2}} ,hidden:true},
 			{field:'GOODS_PURCHASE_PRICE',title:'进价',width:'6%',sortable:true,sortable:true,formatter:formatterNumber,align:'right' ,hidden:true},
-			{field:'SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods ,hidden:true},
-			{field:'UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left' ,hidden:true},
+			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods ,hidden:true},
+			{field:'GOODS_UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left' ,hidden:true},
 		]],
 		toolbar:'#tb',
 		onLoadSuccess:function(data){

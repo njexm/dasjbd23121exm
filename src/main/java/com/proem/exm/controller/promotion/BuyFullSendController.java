@@ -102,6 +102,15 @@ public class BuyFullSendController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response, Page page) {
 		DataGrid dataGrid = null;
 		try {
+			ZcUserInfo zcUserInfo = null ;
+			 List<ZcUserInfo> zcUserInfoList = buyFullSendService.getListByObj(ZcUserInfo.class, " USER_ID ='"+zcSalesPromotion.getCreateMan()+"'");
+			if (zcUserInfoList!=null && zcUserInfoList.size()>0) {
+				zcUserInfo = zcUserInfoList.get(0);
+				if (zcUserInfo!=null && !zcUserInfo.equals("")) {
+					zcSalesPromotion.setCreateMan(zcUserInfo.getUserName());
+				}
+			}
+			
 			dataGrid = buyFullSendService.getPagedDataGridObj(page,
 					zcSalesPromotion);
 		} catch (Exception e) {
@@ -987,9 +996,9 @@ public class BuyFullSendController extends BaseController {
 		 * @param response
 		 * @return
 		 */
-		@RequestMapping(value = "addDiscountScopeWhole", method = RequestMethod.POST, produces = "application/json")
+		@RequestMapping(value = "addBuyFullSendScopeWhole", method = RequestMethod.POST, produces = "application/json")
 		@ResponseBody
-		public AjaxResult addDiscountScopeWhole(
+		public AjaxResult addBuyFullSendScopeWhole(
 				@ModelAttribute ZcSalesPromotionItem zcSalesPromotionItem,
 				HttpServletRequest request, HttpServletResponse response) {
 			AjaxResult ajaxResult = null;
@@ -1019,7 +1028,7 @@ public class BuyFullSendController extends BaseController {
 			for (int i = 0; i < idStrExist.length; i++) {
 				ZcSalesPromotionItem zcSalesPromotionItemExit = (ZcSalesPromotionItem) buyFullSendService
 						.getObjById(idStrExist[i], "ZcSalesPromotionItem");
-				if (addMoney[i] != null && !addMoney.equals("")) {
+				if (addMoney[i] != null && !addMoney[i].equals("")) {
 					zcSalesPromotionItemExit.setAddMoney(Double.parseDouble(addMoney[i]));
 				}
 				if (fullBuyMoney[i] != null && !fullBuyMoney[i].equals("")) {
@@ -1386,7 +1395,7 @@ public class BuyFullSendController extends BaseController {
 			model.addAttribute("beginDate", beginDate);
 			model.addAttribute("endDate", endDate);
 			model.addAttribute("stopDate", stopDate);
-			ModelAndView view = createIframeView("promotion/Discount_detail");
+			ModelAndView view = createIframeView("promotion/buyFullSend_detail");
 			return view;
 		}
 		
@@ -1404,4 +1413,252 @@ public class BuyFullSendController extends BaseController {
 			}
 			return dataGrid;
 		}
+		
+		// 删除
+		@RequestMapping(value = "delete", method = RequestMethod.POST, produces = "application/json")
+		@ResponseBody
+		public AjaxResult delete(HttpServletRequest request,
+				HttpServletResponse response, String id) {
+			AjaxResult ajaxResult = null;
+			try {
+				String[] ids = id.split(",");
+				for (int i = 0; i < ids.length; i++) {
+					
+					List<ZcSalesPromotionItem> zcSalesPromotionItemList = buyFullSendService
+							.getListByObj(ZcSalesPromotionItem.class,
+									"SalesPromotion_ID='" + ids[i] + "'");
+					if (zcSalesPromotionItemList != null
+							&& zcSalesPromotionItemList.size() > 0) {
+						for (int j = 0; j < zcSalesPromotionItemList.size(); j++) {
+							ZcSalesPromotionItem zcSalesPromotionItem = zcSalesPromotionItemList
+									.get(j);
+							buyFullSendService.deleteObjById(
+									zcSalesPromotionItem.getId(),
+									ZcSalesPromotionItem.class.getName());
+						}
+					}
+					
+					buyFullSendService.deleteObjById(ids[i],
+							ZcSalesPromotion.class.getName());
+				}
+				logManageService.insertLog(request, "删除勾选中的促销折扣单", "促销折扣单");
+				ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.SUCCESS,
+						AjaxResult.INFO);
+			} catch (Exception e) {
+				e.printStackTrace();
+				ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.FAIL,
+						AjaxResult.INFO);
+			}
+			return ajaxResult;
+		}
+		
+		/**
+		 * 打开审核促销单页面
+		 * 
+		 * @param request
+		 * @param response
+		 * @param model
+		 * @return
+		 */
+		@RequestMapping("gotoEditCheck")
+		public ModelAndView gotoEditCheck(HttpServletRequest request,
+				HttpServletResponse response, Model model) {
+			String id = request.getParameter("id");
+			ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion) buyFullSendService
+					.getObjById(id, "ZcSalesPromotion");
+//			List<BranchTotal> branchTotalList = zcSalesPromotion
+//					.getBranchTotalList();
+			String branchTotal = "";
+//			for (int i = 0; i < branchTotalList.size(); i++) {
+//				branchTotal += branchTotalList.get(i).getBranch_code() + "|";
+//			}
+			branchTotal = zcSalesPromotion.getBranchs();
+			String zcCodeScope = "";
+			String zcCodeScopeCode = "";
+			Code codeScope = (Code) buyFullSendService.getObjById(zcSalesPromotion
+					.getZcCodeScope().getId(), "Code");
+			if (codeScope != null) {
+				zcCodeScope = codeScope.getCodeName();
+				zcCodeScopeCode = codeScope.getCodeValue();
+			}
+			String zcCodeMode = "";
+			String zcCodeModeCode = "";
+			Code codeMode = (Code) buyFullSendService.getObjById(zcSalesPromotion
+					.getZcCodeMode().getId(), "Code");
+			if (codeMode != null) {
+				zcCodeMode = codeMode.getCodeName();
+				zcCodeModeCode = codeMode.getCodeValue();
+			}
+			List<Code> listMember = buyFullSendService.getListByObj(
+					Code.class,
+					"CODETYPE = 'memberLevel' and CODEVALUE='"
+							+ zcSalesPromotion.getMemberLevel() + "'");
+			String memberLevel = "";
+			if (listMember != null && listMember.size() > 0) {
+				Code member = listMember.get(0);
+				memberLevel = member.getCodeName();
+			}
+			String promotionDays = zcSalesPromotion.getPromotionDays();
+			String[] promotionDay ;
+			String week = "";
+			if (promotionDays!=null && !promotionDays.equals("")) {
+				 promotionDay = promotionDays.split(",");
+				 week="星期";
+				 for (int i = 0; i < promotionDay.length; i++) {
+						double num = Double.parseDouble(promotionDay[i]);
+						if (num == 1) {
+							week += "一,";
+						}
+						if (num == 2) {
+							week += "二,";
+						}
+						if (num == 3) {
+							week += "三,";
+						}
+						if (num == 4) {
+							week += "四,";
+						}
+						if (num == 5) {
+							week += "五,";
+						}
+						if (num == 6) {
+							week += "六,";
+						}
+						if (num == 7) {
+							week += "日,";
+						}
+					}
+			}
+			
+			
+			Date date = zcSalesPromotion.getPromotionBeginDate();
+			Date date2 = zcSalesPromotion.getPromotionEndDate();
+			Date date3 = zcSalesPromotion.getStopDate();
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+			String beginDate="";
+			String endDate = "";
+			String stopDate ="";
+			if (date!=null) {
+				 beginDate = sdf.format(date);
+			}
+			if (date2!=null) {
+				 endDate = sdf.format(date2);
+			}
+			if (date3!=null) {
+				 stopDate = sdf.format(date3);
+			}
+			model.addAttribute("zcSalesPromotion", zcSalesPromotion);
+			model.addAttribute("zcSalesPromotionId", id);
+			model.addAttribute("branchTotal", branchTotal);
+			model.addAttribute("zcCodeScope", zcCodeScope);
+			model.addAttribute("zcCodeMode", zcCodeMode);
+			model.addAttribute("zcCodeScopeCode", zcCodeScopeCode);
+			model.addAttribute("zcCodeModeCode", zcCodeModeCode);
+			model.addAttribute("memberLevel", memberLevel);
+			model.addAttribute("week", week);
+			model.addAttribute("beginDate", beginDate);
+			model.addAttribute("endDate", endDate);
+			model.addAttribute("stopDate", stopDate);
+			ModelAndView view = createIframeView("promotion/buyFullSend_check");
+			return view;
+		}
+		
+		// 审核通过
+				@RequestMapping(value = "checkPass", method = RequestMethod.POST, produces = "application/json")
+				@ResponseBody
+				public AjaxResult checkPass(HttpServletRequest request,
+						HttpServletResponse response) {
+					AjaxResult ajaxResult = null;
+					try {
+						String id = request.getParameter("id");
+//						String ids = request.getParameter("ids");
+//						String allDiscounts = request.getParameter("allDiscount");
+//						String fullBuyMoneys = request.getParameter("fullBuyMoney");
+//						String fullBuyCounts = request.getParameter("fullBuyCount");
+//						String discounts = request.getParameter("discount");
+//						String[] allDiscount = allDiscounts.split(",");
+//						String[] fullBuyMoney = fullBuyMoneys.split(",");
+//						String[] fullBuyCount = fullBuyCounts.split(",");
+//						String[] discount = discounts.split(",");
+						ZcUserInfo user = (ZcUserInfo) request.getSession().getAttribute(
+								"userInfo");
+						SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+						
+						ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion) buyFullSendService
+								.getObjById(id, "ZcSalesPromotion");
+							
+							
+						zcSalesPromotion.setCheckDate(new Date());
+						zcSalesPromotion.setCheckMan(user.getUserName());
+						zcSalesPromotion.setCheckState(Constant.CHECK_STATUS_PASS);
+						
+						buyFullSendService.updateObj(zcSalesPromotion);
+							logManageService.insertLog(request, "审核促销单通过", "促销折扣");
+						
+						ajaxResult = new AjaxResult(AjaxResult.UPDATE, AjaxResult.SUCCESS,
+								AjaxResult.INFO);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ajaxResult = new AjaxResult(AjaxResult.UPDATE, AjaxResult.FAIL,
+								AjaxResult.INFO);
+					}
+					return ajaxResult;
+				}
+				
+				// 审核不通过
+				@RequestMapping(value = "checkNoPass", method = RequestMethod.POST, produces = "application/json")
+				@ResponseBody
+				public AjaxResult checkNoPass(
+						@ModelAttribute ZcSalesPromotion zcSalesPromotion, String id,
+						String type, String reason, HttpServletRequest request,
+						HttpServletResponse response) {
+					AjaxResult ajaxResult = null;
+					ZcUserInfo user = (ZcUserInfo) request.getSession().getAttribute(
+							"userInfo");
+					SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+					try {
+						zcSalesPromotion = (ZcSalesPromotion) buyFullSendService
+								.getObjById(id, "ZcSalesPromotion");
+						zcSalesPromotion.setCheckMan(user.getUserName());
+						zcSalesPromotion.setCheckState(Constant.CHECK_STATUS_NOPASS);
+						zcSalesPromotion.setCheckDate(df.parse(df.format(new Date())));
+						buyFullSendService.updateObj(zcSalesPromotion);
+						logManageService.insertLog(request, "审核促销单不通过", "促销折扣");
+						ajaxResult = new AjaxResult(AjaxResult.UPDATE, AjaxResult.SUCCESS,
+								AjaxResult.INFO);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ajaxResult = new AjaxResult(AjaxResult.UPDATE, AjaxResult.FAIL,
+								AjaxResult.INFO);
+					}
+					return ajaxResult;
+				}
+				
+				// 终止
+				@RequestMapping(value = "stop", method = RequestMethod.POST, produces = "application/json")
+				@ResponseBody
+				public AjaxResult stop(HttpServletRequest request,
+						HttpServletResponse response, String id) {
+					AjaxResult ajaxResult = null;
+					ZcUserInfo user = (ZcUserInfo) request.getSession().getAttribute(
+							"userInfo");
+					try {
+						String[] ids = id.split(",");
+						for (int i = 0; i < ids.length; i++) {
+							ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion)buyFullSendService.getObjById(ids[i], ZcSalesPromotion.class.getName());
+							zcSalesPromotion.setStopDate(new Date());
+							zcSalesPromotion.setStopMan(user.getUserName());
+							zcSalesPromotion.setCheckState(Constant.CHECK_STATUS_FINISH);
+							buyFullSendService.updateObj(zcSalesPromotion);
+						}
+						logManageService.insertLog(request, "终止勾选中的促销单", "促销单");
+						ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.SUCCESS,
+								AjaxResult.INFO);
+					} catch (Exception e) {
+						e.printStackTrace();
+						ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.FAIL,
+								AjaxResult.INFO);
+					}
+					return ajaxResult;
+				}
 }

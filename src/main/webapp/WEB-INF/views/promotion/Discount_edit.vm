@@ -19,7 +19,7 @@
     	<form class="searchForm" id="baseForm" method="post">
     		<div class="cell">
 				<input type="hidden" name="zcSalesPromotion.id" id="zcSalesPromotionId" value="$!{zcSalesPromotion.id}"/>
-				<input type="hidden" name="zcSalesPromotion.checkState" id="status" value="$!{purchaseReceive.checkState}"/>
+				<input type="hidden" name="zcSalesPromotion.checkState" id="status" value="$!{zcSalesPromotion.checkState}"/>
 				<table border="0" cellpadding="0" cellspacing="0">
     	           <tr>
 						<th style="width:11%">促销编号：</th>

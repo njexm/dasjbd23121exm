@@ -206,13 +206,6 @@ function searchData(){
 	};
 }
 	
-	$('#storehouseId').combobox({
-		method:'POST',
-        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
-        valueField:'ID',
-		panelHeight:'200px',
-        textField:'BRANCH_NAME'
-	});
 	
 </script>
 </html>

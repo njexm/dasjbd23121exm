@@ -4,9 +4,12 @@ import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -112,6 +115,16 @@ public class DiscountController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response, Page page) {
 		DataGrid dataGrid = null;
 		try {
+			ZcUserInfo zcUserInfo = null ;
+			 List<ZcUserInfo> zcUserInfoList = discountService.getListByObj(ZcUserInfo.class, " USER_ID ='"+zcSalesPromotion.getCreateMan()+"'");
+			if (zcUserInfoList!=null && zcUserInfoList.size()>0) {
+				zcUserInfo = zcUserInfoList.get(0);
+				if (zcUserInfo!=null && !zcUserInfo.equals("")) {
+					zcSalesPromotion.setCreateMan(zcUserInfo.getUserName());
+				}
+			}
+			
+			
 			dataGrid = discountService.getPagedDataGridObj(page,
 					zcSalesPromotion);
 		} catch (Exception e) {
@@ -1473,4 +1486,33 @@ public class DiscountController extends BaseController {
 			}
 			return ajaxResult;
 		}
+		
+		// 终止
+		@RequestMapping(value = "stop", method = RequestMethod.POST, produces = "application/json")
+		@ResponseBody
+		public AjaxResult stop(HttpServletRequest request,
+				HttpServletResponse response, String id) {
+			AjaxResult ajaxResult = null;
+			ZcUserInfo user = (ZcUserInfo) request.getSession().getAttribute(
+					"userInfo");
+			try {
+				String[] ids = id.split(",");
+				for (int i = 0; i < ids.length; i++) {
+					ZcSalesPromotion zcSalesPromotion = (ZcSalesPromotion)discountService.getObjById(ids[i], ZcSalesPromotion.class.getName());
+					zcSalesPromotion.setStopDate(new Date());
+					zcSalesPromotion.setStopMan(user.getUserName());
+					zcSalesPromotion.setCheckState(Constant.CHECK_STATUS_FINISH);
+					discountService.updateObj(zcSalesPromotion);
+				}
+				logManageService.insertLog(request, "终止勾选中的促销折扣单", "促销折扣单");
+				ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.SUCCESS,
+						AjaxResult.INFO);
+			} catch (Exception e) {
+				e.printStackTrace();
+				ajaxResult = new AjaxResult(AjaxResult.DELETE, AjaxResult.FAIL,
+						AjaxResult.INFO);
+			}
+			return ajaxResult;
+		}
+		
 }

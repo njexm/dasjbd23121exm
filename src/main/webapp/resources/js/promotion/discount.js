@@ -364,25 +364,25 @@ function openChoseGoods(){
 		$('#dg').datagrid('endEdit', i);
 		idStr += dataRows[i].ID +",";
 		if (dataRows[i].FULL_BUY_MONEY == null || dataRows[i].FULL_BUY_MONEY == ''
-			|| dataRows[i].FULL_BUY_MONEY == 'undefiend'){
+			|| dataRows[i].FULL_BUY_MONEY == 'undefined'){
 			fullBuyMoney +="0.0,";
 		}else{
 			fullBuyMoney +=dataRows[i].FULL_BUY_MONEY +",";
 		}
 		if (dataRows[i].ALL_DISCOUNT == null || dataRows[i].ALL_DISCOUNT == ''
-			|| dataRows[i].ALL_DISCOUNT == 'undefiend'){
+			|| dataRows[i].ALL_DISCOUNT == 'undefined'){
 			allDiscount +="0.0,";
 		}else{
 			allDiscount +=dataRows[i].ALL_DISCOUNT+",";
 		}
 		if (dataRows[i].FULL_BUY_COUNT == null || dataRows[i].FULL_BUY_COUNT == ''
-			|| dataRows[i].FULL_BUY_COUNT == 'undefiend'){
+			|| dataRows[i].FULL_BUY_COUNT == 'undefined'){
 			fullBuyCount +="0.0,";
 		}else{
 			fullBuyCount +=dataRows[i].FULL_BUY_COUNT+",";
 		}
 		if (dataRows[i].DISCOUNT == null || dataRows[i].DISCOUNT == ''
-			|| dataRows[i].DISCOUNT == 'undefiend'){
+			|| dataRows[i].DISCOUNT == 'undefined'){
 			discount +="0.0,";
 		}else{
 			discount +=dataRows[i].DISCOUNT+",";
@@ -448,7 +448,7 @@ function addGoods(num) {
 	}
 	
 	var url = '';
-	if (zcSalesPromotionId==null || zcSalesPromotionId=="" || zcSalesPromotionId=='undefiend') {
+	if (zcSalesPromotionId==null || zcSalesPromotionId=="" || zcSalesPromotionId=='undefined') {
 		url = Utils.getRootPath()
 		+ '/discount/discount/addDiscountGoodsToItems?ids=' + ids
 		+ '&zcCodeScope=' + zcCodeScope;
@@ -505,36 +505,51 @@ function saveLineToPurchase(formId) {
      });
     
 	var branchCode = $('#branchCode').val();
+	if (branchCode=="" || branchCode==null || branchCode=='undefined') {
+		$.messager.alert('提示', '请选择促销门店！', 'warning');
+		return;
+	}
+	var promotionBeginDate = $('#promotionBeginDate').val();
+	var promotionEndDate = $('#promotionEndDate').val();
+	if (promotionBeginDate=="" || promotionBeginDate==null || promotionBeginDate=='undefined') {
+		$.messager.alert('提示', '请选择促销开始时间！', 'warning');
+		return;
+	}
+	if (promotionEndDate=="" || promotionEndDate==null || promotionEndDate=='undefined') {
+		$.messager.alert('提示', '请选择促销结束时间！', 'warning');
+		return;
+	}
 	
 	var ids = "";
 	var allDiscount = "";
 	var fullBuyMoney = "";
 	var fullBuyCount = "";
 	var discount = "";
+	
 	for (var i = 0; i < data.rows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
 		$('#dg').datagrid('beginEdit', i);
 		ids += data.rows[i].ID + ",";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-			|| data.rows[i].All_DISCOUNT == 'undefiend') {
+		if (data.rows[i].ALL_DISCOUNT == null || data.rows[i].ALL_DISCOUNT == ''
+			|| data.rows[i].ALL_DISCOUNT == 'undefined') {
 		allDiscount += "0.00,";
 	} else {
-		allDiscount += data.rows[i].All_DISCOUNT + ",";
+		allDiscount += data.rows[i].ALL_DISCOUNT + ",";
 	}
 	if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
-		|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
+		|| data.rows[i].FULL_BUY_MONEY == 'undefined') {
 		fullBuyMoney += "0.00,";
 	} else {
 		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 	}
 	if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
-		|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
+		|| data.rows[i].FULL_BUY_COUNT == 'undefined') {
 		fullBuyCount += "0.00,";
 	} else {
 		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 	}
 	if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-		|| data.rows[i].DISCOUNT == 'undefiend') {
+		|| data.rows[i].DISCOUNT == 'undefined') {
 		discount  += "0.00,";
 	} else {
 		discount += data.rows[i].DISCOUNT + " ,";
@@ -607,26 +622,26 @@ function deleteChose() {
 //		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 //		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 //		discount += data.rows[i].DISCOUNT + " ,";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-				|| data.rows[i].All_DISCOUNT == 'undefiend') {
+		if (data.rows[i].ALL_DISCOUNT == null || data.rows[i].ALL_DISCOUNT == ''
+				|| data.rows[i].ALL_DISCOUNT == 'undefined') {
 			allDiscount += "0.00,";
 		} else {
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
+			allDiscount += data.rows[i].ALL_DISCOUNT + ",";
 		}
 		if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
-			|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
+			|| data.rows[i].FULL_BUY_MONEY == 'undefined') {
 			fullBuyMoney += "0.00,";
 		} else {
 			fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 		}
 		if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
-			|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
+			|| data.rows[i].FULL_BUY_COUNT == 'undefined') {
 			fullBuyCount += "0.00,";
 		} else {
 			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 		}
 		if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-			|| data.rows[i].DISCOUNT == 'undefiend') {
+			|| data.rows[i].DISCOUNT == 'undefined') {
 			discount  += "0.00,";
 		} else {
 			discount += data.rows[i].DISCOUNT + " ,";
@@ -686,26 +701,26 @@ function deleteChoseChange() {
 //		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 //		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 //		discount += data.rows[i].DISCOUNT + " ,";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-				|| data.rows[i].All_DISCOUNT == 'undefiend') {
+		if (data.rows[i].ALL_DISCOUNT == null || data.rows[i].ALL_DISCOUNT == ''
+				|| data.rows[i].ALL_DISCOUNT == 'undefined') {
 			allDiscount += "0.00,";
 		} else {
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
+			allDiscount += data.rows[i].ALL_DISCOUNT + ",";
 		}
 		if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
-			|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
+			|| data.rows[i].FULL_BUY_MONEY == 'undefined') {
 			fullBuyMoney += "0.00,";
 		} else {
 			fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 		}
 		if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
-			|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
+			|| data.rows[i].FULL_BUY_COUNT == 'undefined') {
 			fullBuyCount += "0.00,";
 		} else {
 			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 		}
 		if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-			|| data.rows[i].DISCOUNT == 'undefiend') {
+			|| data.rows[i].DISCOUNT == 'undefined') {
 			discount  += "0.00,";
 		} else {
 			discount += data.rows[i].DISCOUNT + " ,";
@@ -755,6 +770,20 @@ function EidtLineToPurchase(formId) {
      });
     
 	var branchCode = $('#branchCode').val();
+	if (branchCode=="" || branchCode==null || branchCode=='undefined') {
+		$.messager.alert('提示', '请选择促销门店！', 'warning');
+		return;
+	}
+	var promotionBeginDate = $('#promotionBeginDate').val();
+	var promotionEndDate = $('#promotionEndDate').val();
+	if (promotionBeginDate=="" || promotionBeginDate==null || promotionBeginDate=='undefined') {
+		$.messager.alert('提示', '请选择促销开始时间！', 'warning');
+		return;
+	}
+	if (promotionEndDate=="" || promotionEndDate==null || promotionEndDate=='undefined') {
+		$.messager.alert('提示', '请选择促销结束时间！', 'warning');
+		return;
+	}
 	
 	var ids = "";
 	var allDiscount = "";
@@ -765,28 +794,28 @@ function EidtLineToPurchase(formId) {
 		$('#dg').datagrid('endEdit', i);
 		$('#dg').datagrid('beginEdit', i);
 		ids += data.rows[i].ID + ",";
-		if(data.rows[i].All_DISCOUNT ==null || data.rows[i].All_DISCOUNT==''
-			||data.rows[i].All_DISCOUNT =='undefiend'){
+		if(data.rows[i].ALL_DISCOUNT ==null || data.rows[i].ALL_DISCOUNT==''
+			||data.rows[i].ALL_DISCOUNT =='undefined'){
 			allDiscount += "0.0,";
 		}else{
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
+			allDiscount += data.rows[i].ALL_DISCOUNT + ",";
 		}
 		if(data.rows[i].FULL_BUY_MONEY ==null || data.rows[i].FULL_BUY_MONEY==''
-			||data.rows[i].FULL_BUY_MONEY =='undefiend'){
+			||data.rows[i].FULL_BUY_MONEY =='undefined'){
 			fullBuyMoney += "0.0,";
 		}else{
 			fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 		}
 		
 		if(data.rows[i].FULL_BUY_COUNT ==null || data.rows[i].FULL_BUY_COUNT==''
-			||data.rows[i].FULL_BUY_COUNT =='undefiend'){
+			||data.rows[i].FULL_BUY_COUNT =='undefined'){
 			fullBuyCount += "0.0,";
 		}else{
 			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 		}
 		
 		if(data.rows[i].DISCOUNT ==null || data.rows[i].DISCOUNT==''
-			||data.rows[i].DISCOUNT =='undefiend'){
+			||data.rows[i].DISCOUNT =='undefined'){
 			discount += "0.0,";
 		}else{
 			discount += data.rows[i].DISCOUNT + ",";
@@ -857,26 +886,26 @@ function openEditGoods() {
 	for (var i = 0; i < data.rows.length; i++) {
 		$('#dg').datagrid('endEdit', i);
 		ids +=data.rows[i].ID +",";
-		if (data.rows[i].All_DISCOUNT == null || data.rows[i].All_DISCOUNT == ''
-			|| data.rows[i].All_DISCOUNT == 'undefiend') {
+		if (data.rows[i].ALL_DISCOUNT == null || data.rows[i].ALL_DISCOUNT == ''
+			|| data.rows[i].ALL_DISCOUNT == 'undefined') {
 		allDiscount += "0.00,";
 	} else {
-		allDiscount += data.rows[i].All_DISCOUNT + ",";
+		allDiscount += data.rows[i].ALL_DISCOUNT + ",";
 	}
 	if (data.rows[i].FULL_BUY_MONEY == null || data.rows[i].FULL_BUY_MONEY == ''
-		|| data.rows[i].FULL_BUY_MONEY == 'undefiend') {
+		|| data.rows[i].FULL_BUY_MONEY == 'undefined') {
 		fullBuyMoney += "0.00,";
 	} else {
 		fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 	}
 	if (data.rows[i].FULL_BUY_COUNT == null || data.rows[i].FULL_BUY_COUNT == ''
-		|| data.rows[i].FULL_BUY_COUNT == 'undefiend') {
+		|| data.rows[i].FULL_BUY_COUNT == 'undefined') {
 		fullBuyCount += "0.00,";
 	} else {
 		fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 	}
 	if (data.rows[i].DISCOUNT == null || data.rows[i].DISCOUNT == ''
-		|| data.rows[i].DISCOUNT == 'undefiend') {
+		|| data.rows[i].DISCOUNT == 'undefined') {
 		discount  += "0.00,";
 	} else {
 		discount += data.rows[i].DISCOUNT + " ,";
@@ -982,16 +1011,16 @@ function destroyInfo() {
 		return;
 	}
 	var row = rows[0];
-	if (row.AUDIT_STATUS == "2") {
+	if (row.CHECK_STATE == "2") {
 		$.messager.alert('提示', '该促销单已通过审核，不可刪除！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "3") {
+	} else if (row.CHECK_STATE == "3") {
 		$.messager.alert('提示', '该促销单审核未通过，不可刪除！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "1") {
+	} else if (row.CHECK_STATE == "1") {
 		$.messager.alert('提示', '该促销单已提交，不可刪除！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "4") {
+	} else if (row.CHECK_STATE == "4") {
 		$.messager.alert('提示', '该促销单已完成，不可刪除！', 'warning');
 		return;
 	} else {
@@ -1043,19 +1072,19 @@ function openCheck(title, x, y) {
 		return;
 	}
 	var row = rows[0];
-	if (row.AUDIT_STATUS == "2") {
+	if (row.CHECK_STATE == "2") {
 		$.messager.alert('提示', '该收货单已通过审核！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "3") {
+	} else if (row.CHECK_STATE == "3") {
 		$.messager.alert('提示', '该收货单正在处理中！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "0") {
+	} else if (row.CHECK_STATE == "0") {
 		$.messager.alert('提示', '该收货单还未提交！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "4") {
+	} else if (row.CHECK_STATE == "4") {
 		$.messager.alert('提示', '该收货单已完成！', 'warning');
 		return;
-	} else if (row.AUDIT_STATUS == "5") {
+	} else if (row.CHECK_STATE == "5") {
 		$.messager.alert('提示', '该收货单已作废！', 'warning');
 		return;
 	} else {
@@ -1078,28 +1107,28 @@ function checkPass() {
 	var discount = "";
 	for (var i = 0; i < data.rows.length; i++) {
 		ids += data.rows[i].ID + ",";
-		if(data.rows[i].All_DISCOUNT ==null || data.rows[i].All_DISCOUNT==''
-			||data.rows[i].All_DISCOUNT =='undefiend'){
+		if(data.rows[i].ALL_DISCOUNT ==null || data.rows[i].ALL_DISCOUNT==''
+			||data.rows[i].ALL_DISCOUNT =='undefined'){
 			allDiscount += "0.0,";
 		}else{
-			allDiscount += data.rows[i].All_DISCOUNT + ",";
+			allDiscount += data.rows[i].ALL_DISCOUNT + ",";
 		}
 		if(data.rows[i].FULL_BUY_MONEY ==null || data.rows[i].FULL_BUY_MONEY==''
-			||data.rows[i].FULL_BUY_MONEY =='undefiend'){
+			||data.rows[i].FULL_BUY_MONEY =='undefined'){
 			fullBuyMoney += "0.0,";
 		}else{
 			fullBuyMoney += data.rows[i].FULL_BUY_MONEY + ",";
 		}
 		
 		if(data.rows[i].FULL_BUY_COUNT ==null || data.rows[i].FULL_BUY_COUNT==''
-			||data.rows[i].FULL_BUY_COUNT =='undefiend'){
+			||data.rows[i].FULL_BUY_COUNT =='undefined'){
 			fullBuyCount += "0.0,";
 		}else{
 			fullBuyCount += data.rows[i].FULL_BUY_COUNT + ",";
 		}
 		
 		if(data.rows[i].DISCOUNT ==null || data.rows[i].DISCOUNT==''
-			||data.rows[i].DISCOUNT =='undefiend'){
+			||data.rows[i].DISCOUNT =='undefined'){
 			discount += "0.0,";
 		}else{
 			discount += data.rows[i].DISCOUNT + ",";
@@ -1180,4 +1209,58 @@ function CheckItemAjax(id, reason, type) {
 			}
 		}
 	});
+}
+
+
+//终止
+function stop() {
+	debugger;
+	var rows = $('#dg').datagrid('getSelections');
+	if (rows.length == 0) {
+		$.messager.alert('提示', '请选择需要操作的数据！', 'warning');
+		return;
+	}
+	var row = rows[0];
+	if (row.CHECK_STATE != "2" && row.CHECK_STATE != "4") {
+		$.messager.alert('提示', '该促销单未通过审核,无法中止！', 'warning');
+		return;
+	}  else if (row.CHECK_STATE == "4") {
+		$.messager.alert('提示', '该促销单已完成，无需中止！', 'warning');
+		return;
+	} else {
+		var ids = "";
+		for (var i = 0; i < rows.length; i++) {
+			if (rows.length == i + 1) {
+				ids += rows[i].ID;
+			} else {
+				ids += rows[i].ID + ",";
+			}
+		}
+		$.messager.confirm('确认 ', '确定要终止？', function(r) {
+			if (r) {
+				$.ajax({
+					type : "post",
+					url : Utils.getRootPath()
+							+ '/discount/discount/stop',
+					data : {
+						id : ids
+					},
+					async : false,
+					dataType : 'json',
+					success : function(result) {
+						if (result.result) {
+							$.messager.alert('提示', '终止成功', 'info', function() {
+								window.parent.loadDataGrid('discount');
+								window.parent.closeWinForm();
+							});
+						} else if (result.status == "error") {
+							$.messager.alert('提示', '终止失败，请联系管理员！', 'error');
+						}
+					}
+				});
+			}
+			;
+		});
+	}
+	;
 }

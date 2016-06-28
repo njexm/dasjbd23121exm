@@ -109,11 +109,39 @@ public class SpecialPriceServiceImpl extends BaseServiceImpl implements SpecialP
 		}
 		if (StringUtil.validate(zcSalesPromotion.getPromotionEndDate())) {
 			conditions += " and B.PROMOTION_END_DATE<=TO_DATE('"
-					+ sdf.format(zcSalesPromotion.getPromotionEndDate())
+					+sdf.format(zcSalesPromotion.getPromotionEndDate())
 					+ "', 'YYYY-MM-DD') ";
 		}	
 		return conditions;
 		
+	}
+
+	@Override
+	public DataGrid getPagedDataGridEidtObj(Object obj, Page page)
+			throws Exception {
+		String sql = "select a.id,  a.group_number,a.GOODSFILE_ID,a.BEGIN_TIME_FRAME,a.END_TIME_FRAME,a.nums,a.bargain_Price,a.full_Buy_Count,a.limit_number,"
+				+" b.SERIALNUMBER,b.GOODS_NAME ,b.GOODS_PRICE,b.GOODS_PURCHASE_PRICE,b.GOODS_SPECIFICATIONS,b.GOODS_UNIT "        
+				+" from ZC_SALESPROMOTIONITEM a left join ZC_GOODS_MASTER b on a.goodsFile_id = b.id "
+				+ " left join zc_salespromotion z on z.id = a.SALESPROMOTION_ID "
+				+" where 1=1 ";
+		sql += joinEditCondition(obj);
+		sql += " order by a.createTime asc";
+		page.setSql(sql);
+		List<Map<String, Object>> rows = specialPriceDao.getObjPagedList(page);
+		long count = specialPriceDao.getObjListCount(page);
+		return new DataGrid(count, rows);
+	}
+	
+	private String joinEditCondition(Object obj){
+		ZcSalesPromotion promotion = (ZcSalesPromotion) obj;
+		String condition = "";
+		if(StringUtil.validate(promotion.getId())){
+			condition += " and a.SALESPROMOTION_ID = '"+promotion.getId()+"'";
+		}
+		if(StringUtil.validate(promotion.getZcCodeMode())){
+			condition += " and z.ZCCODE_MODEID = '"+promotion.getZcCodeMode().getId()+"'";
+		}
+		return condition;
 	}
 
 }

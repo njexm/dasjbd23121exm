@@ -42,6 +42,7 @@
 						</td>
 						<th style="width:11%">会员等级：</th>
 						<td id = "memberLevel">
+							$!{memberLevel}
 						</td>
 						<th style="width:11%">审核人：</th>
                         <td>
@@ -65,23 +66,32 @@
 							$!{promotion.promotionTitle}
                         </td>
     	           </tr>
+				    <tr>
+						<th style="width:11%">终止人：</th>
+						<td>
+							$!{promotion.stopMan}
+						</td>
+						<th style="width:11%">终止日期：</th>
+						<td>
+							$!{promotion.stopDate}
+						</td>
+						<th style="width:11%">促销描述：</th>
+						<td>
+							 $!{promotion.promotionRemark}
+						</td>
+				   </tr>
                    <tr>
 					 <th width="11%">
 						分店
 					 </th>
 					 <td width="20%" id="branchCode">
-						
+						$!{promotion.branchs}
                      </td>
 					<th width="11%">促销日子:</th>
-						<td width="" colspan="3">
-    						<label><input name="week" type="checkbox" value="1" readonly />星期一</label>
-                            <label><input name="week" type="checkbox" value="2" readonly/>星期二</label>
-    						<label><input name="week" type="checkbox" value="3" readonly/>星期三</label>
-    						<label><input name="week" type="checkbox" value="4" readonly/>星期四</label>
-    						<label><input name="week" type="checkbox" value="5" readonly/>星期五</label>
-    						<label><input name="week" type="checkbox" value="6" readonly/>星期六</label>
-    						<label><input name="week" type="checkbox" value="7" readonly/>星期日</label>
-						</td>
+					<td width="20%">
+						$!{week}
+                    </td>
+						
 				   </tr>
     	       	</table>
     		</div>

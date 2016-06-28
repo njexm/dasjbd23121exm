@@ -80,6 +80,7 @@
 					<a href="#" class="easyui-linkbutton" iconCls="icon-new-edit" onclick="editPromotionFullBuy('编辑促销单',1000,535)" plain="true">编辑</a>
 					<a href="#" class="easyui-linkbutton" iconCls="icon-new-delete" onclick="destroyInfo()" plain="true">删除</a>
 					<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="openCheck('审核促销单',1000,535)" plain="true">审核</a>
+					<a href="#" class="easyui-linkbutton" iconCls="icon-new-check" onclick="stop()" plain="true">终止</a>
 				</li>
     		</ul>
     	</form>
@@ -145,7 +146,26 @@
 			{field:'PROMOTION_BEGIN_DATE',title:'开始日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
 			{field:'PROMOTION_END_DATE',title:'结束日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
 			{field:'CHECK_STATE',title:'审核状态',width:'6%',align:'left', formatter : formatterStatus },
-			{field:'MEMBER_LEVEL',title:'会员等级',width:'6%',align:'left'},
+			{field:'MEMBER_LEVEL',title:'会员等级',width:'6%',align:'left' , formatter : function(value,row,index){
+				if(value=="1"){
+					return "无" ;
+				}else
+				if(value=="2"){
+					return "会员卡" ;
+				}else
+				if(value=="3"){
+					return "折扣卡" ;
+				}else
+				if(value=="4"){
+					return "非会员" ;
+				}else
+				if(value=="5"){
+					return "所有用户" ;
+				}else
+				{
+					return "未知" ;
+				}
+			}},
 			{field:'STOP_MAN',title:'中止人',align:'left',width:'6%',sortable:true},
 			{field:'STOP_DATE',title:'中止日期',align:'left',width:'12%',sortable:true,sortable:true,formatter:formatterCompleteDate},
 			{field:'CREATE_MAN',title:'制单人',align:'left',width:'9%',sortable:true,sortable:true},

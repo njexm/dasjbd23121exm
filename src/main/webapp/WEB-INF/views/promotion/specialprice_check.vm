@@ -12,16 +12,14 @@
     <meta name="author" content="CISDIOA"/>
     <!-- Import resource file -->
     #parse(${resource_path})
+	<script type="text/javascript" src="${rc.contextPath}/resources/js/basic/goods_file/goods_file.js"></script>
 </head>
 <body>
 <div style="overflow: auto">
     <div id="tb" class="top_search">
     	<form class="searchForm" id="baseForm" method="post">
+			<input type="hidden" name="promotion.id" id="zcSalesPromotionId" value="$!{zcSalesPromotionId}"/>
     		<div class="cell">
-				<input type="hidden" name="zcSalesPromotion.id" id="zcSalesPromotionId" value="$!{zcSalesPromotionId}"/>
-				<input type="hidden" name="zcSalesPromotion.zcCodeScope.codeValue" id="zcCodeScope" value="$!{zcCodeScopeCode}"/>
-				<input type="hidden" name="zcSalesPromotion.zcCodeMode.codeValue" id="zcCodeMode" value="$!{zcCodeModeCode}"/>
-				
 				<table border="0" cellpadding="0" cellspacing="0">
     	           <tr>
 						<th style="width:11%">促销编号：</th>
@@ -38,12 +36,12 @@
 						</td>
     	           </tr>
 				   <tr>
-						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销方式：</th>
+						<th style="width:11%">促销方式：</th>
                         <td style="width:20%">
-                            $!{zcCodeMode}
+							$!{zcCodeMode}
 						</td>
 						<th style="width:11%">会员等级：</th>
-						<td>
+						<td id = "memberLevel">
 							$!{memberLevel}
 						</td>
 						<th style="width:11%">审核人：</th>
@@ -52,35 +50,22 @@
 						</td>
     	           </tr>
 				   <tr>
-						<th style="width:11%"><span style='color:red'>*&nbsp;</span>商品范围：</th>
+						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销期限：</th>
                         <td style="width:20%">
-							$!{zcCodeScope}
+							<span>$!{beginDate}</span>
+							-
+							<span>$!{endDate}</span>
+							
 						</td>
 						<th style="width:11%">审核日期：</th>
 						<td>
 							$!{zcSalesPromotion.checkDate}
 						</td>
-						<th style="width:11%">促销标题：</th>
+						<th style="width:11%">方案名称：</th>
 						<td>
 							$!{zcSalesPromotion.promotionTitle}
                         </td>
     	           </tr>
-                   <tr>
-						<th style="width:11%"><span style='color:red'>*&nbsp;</span>促销期限：</th>
-                        <td style="width:20%">
-							$!{beginDate}-$!{endDate}
-						</td>
-						<th width="11%">
-						门店编号
-					 </th>
-					 <td width="20%">
-						$!{branchTotal}
-                     </td>
-						<th width="11%">促销日子:</th>
-						<td width="30%">
-    						$!{week}
-						</td>
-				   </tr>
 				   <tr>
 						<th style="width:11%">终止人：</th>
 						<td>
@@ -88,23 +73,30 @@
 						</td>
 						<th style="width:11%">终止日期：</th>
 						<td>
-							$!{stopDate}
+							$!{zcSalesPromotion.stopDate}
 						</td>
 						<th style="width:11%">促销描述：</th>
 						<td>
-							$!{zcSalesPromotion.promotionRemark}
+							 $!{zcSalesPromotion.promotionRemark}
 						</td>
 				   </tr>
-				   <tr >
-						<th style="width:11%">订单状态：</th>
-						<td id="state">
+                   <tr>
+					 <th width="11%">
+						分店
+					 </th>
+					 <td width="20%" id="branchCode">
+						$!{branchTotal}
+                     </td>
+					<th width="11%">促销日子:</th>
+						<td width="20%" >
+    						$!{week}
 						</td>
-                   </tr>
+				   </tr>
     	       	</table>
     		</div>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-new-checkpass" onclick="checkPass()" plain="true">审核通过</a>
+			<a href="#" class="easyui-linkbutton" iconCls="icon-new-checknopass" onclick="checkNoPass(1)" plain="true">审核不通过</a>
     	</form>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-checkpass" onclick="checkPass()" plain="true">审核通过</a>
-		<a href="#" class="easyui-linkbutton" iconCls="icon-new-checknopass" onclick="checkNoPass(1)" plain="true">审核不通过</a>
     </div>
     <table id="dg" width="100%"></table>
 </div>
@@ -114,35 +106,31 @@
 <div id="flt"  name="flt" style="right:1px; POSITION:absolute; top:10px; z-index:99;"></div>
 <style>
 </style>
-<script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/discount.js"></script>
+<script type="text/javascript" src="${rc.contextPath}/resources/js/promotion/specialprice.js"></script>
 <script type="text/javascript">
-	$(function(){
-	debugger;
+$(function(){
 	$('#selectOptions').window('close');
 	
+	initSelectCode('SpecialPriceType','zcCodeMode');
+	$('#memberLever').val();
+	var array = '$!{promotion.branchTotalList}';
+	$('#branchCode').val();
 	
-		
-		var status='$!{zcSalesPromotion.checkState}';
-		
-		var newstatus=formatterStatusNoColour(status);
-		
-		$('#state').text(newstatus);
-		if(status=='2'){
+	if(status=='2'){
 		$('#flt').append('<img src="${rc.contextPath}/resources/image/pass.png" >');
-		}
+	}
+	
 	//去除回车键
 	document.onkeydown=function(evt){
 		if(evt.keyCode !=13){
 		}else{
 			addPyGoods();
 		}
-		$('input,select,',$('#baseForm')).prop('readonly',true);
 	};
-	debugger;
 	var winHeight = $(window).height();
 	$('#dg').datagrid({
 		cache: false,
-		title:'折扣列表', //标题
+		title:'商品列表', //标题
 		method:'post',
 		iconCls:'', //图标
 		singleSelect:false, //多选
@@ -150,9 +138,9 @@
 		fitColumns: true, //自动调整各列，用了这个属性，下面各列的宽度值就只是一个比例。
 		striped: true, //奇偶行颜色不同
 		remoteSort: false,
-		url:"${rc.contextPath}/discount/discount/listPromotionItemsDetailOrderJson?time="+new Date(), //数据来源
+		url:"${rc.contextPath}/specialPrice/listPromotionItemsNullJson?time="+new Date(), //数据来源
 		queryParams:{
-			'zcSalesPromotion.id':$('#zcSalesPromotionId').val(),
+			'zcSalesPromotion.id' : $('#zcSalesPromotionId').val()
 		}, //查询条件
 		pagination:true, //显示分页
 		rownumbers:true, //显示行号
@@ -163,20 +151,19 @@
 				return "height:30px";
 			}},
 			{field:'ID',sortable:true,sortable:true,hidden:true},
-			{field:'ALL_DISCOUNT',title:'全场折扣',width:'8%',sortable:true,align:'left' ,hidden:true},
-			{field:'CLASSCODE',title:'类别编码',width:'8%',sortable:true,align:'left' ,hidden:true},
-			{field:'CLASSNAME',title:'类别名称',width:'8%',sortable:true,align:'left' ,hidden:true},
-			{field:'BRANDCODE',title:'品牌编码',width:'8%',sortable:true,align:'left' ,hidden:true},
-			{field:'BRANDNAME',title:'品牌名称',width:'8%',sortable:true,align:'left' ,hidden:true},
-			{field:'SERIALNUMBER',title:'商品编号',width:'8%',sortable:true,align:'left' ,hidden:true},
-			{field:'GOODS_NAME',title:'商品名',width:'8%',sortable:true,sortable:true,align:'left' ,hidden:true},
-			{field:'GOODS_PRICE',title:'单价',width:'6%',sortable:true,sortable:true,formatter:formatterNumber,align:'right' ,hidden:true},
-			{field:'FULL_BUY_MONEY',title:'买满金额',width:'8%',align:'right',hidden:true},
-			{field:'FULL_BUY_COUNT',title:'买满数量',width:'8%',align:'right' ,hidden:true},
-			{field:'DISCOUNT',title:'折扣',width:'8%',align:'left' ,hidden:true},
-			{field:'GOODS_PURCHASE_PRICE',title:'进价',width:'6%',sortable:true,sortable:true,formatter:formatterNumber,align:'right' ,hidden:true},
-			{field:'GOODS_SPECIFICATIONS',title:'规格',width:'8%',sortable:true,sortable:true,align:'left',formatter:showGoods ,hidden:true},
-			{field:'GOODS_UNIT',title:'单位',width:'8%',sortable:true,sortable:true,align:'left' ,hidden:true},
+			{field: 'GROUP_NUMBER', title:'组号', width:'8%', sorteable:true, align:'left', hidden:true ,formatter:formatterNumber},
+			{field: 'SERIALNUMBER', title:'货号', width:'8%', sorteable:true, align:'left'},
+			{field: 'GOODS_NAME', title:'商品名', width:'20%', sorteable:true, align:'left'},
+			{field: 'GOODS_PRICE', title:'零售价', width:'8%', sorteable:true, align:'left', formatter:formatterNumber},
+			{field: 'NUMS', title:'数量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber},
+			{field: 'FULL_BUY_COUNT', title:'买满数量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber},
+			{field: 'BARGAIN_PRICE', title:'特价', width:'8%', sorteable:true, align:'right',formatter:formatterNumber},
+			{field: 'LIMIT_NUMBER', title:'每单限量', width:'8%', sorteable:true, align:'right', hidden:true ,formatter:formatterNumber},
+			{field: 'BEGIN_TIME_FRAME', title:'开始时间', width:'12%', sorteable:true, align:'left', hidden:true},
+			{field: 'END_TIME_FRAME', title:'结束时间', width:'12%', sorteable:true, align:'left', hidden:true},
+			{field: 'GOODS_PURCHASE_PRICE', title:'进价', width:'8%', sorteable:true, align:'right',formatter:formatterNumber},
+			{field: 'GOODS_UNIT', title:'单位', width:'8%', sorteable:true, align:'left'},
+			{field: 'GOODS_SPECIFICATIONS', title:'规格', width:'8%', sorteable:true, align:'left'}
 		]],
 		toolbar:'#tb',
 		onLoadSuccess:function(data){
@@ -188,8 +175,7 @@
 	});
 	// 取得div层
 	var $search = $('#search');
-	searchDataGrid();
-	$('#dg').datagrid("reload");
+	
 });
 $(window).resize(function(){
     $('#dg').datagrid('resize',{
@@ -200,12 +186,17 @@ $(window).resize(function(){
 
 function searchData(){
 	var queryParams = {
-			'zcSalesPromotion.id':$('#zcSalesPromotionId').val(),
+		'zcSalesPromotion.id' : $('#zcSalesPromotionId').val()
 	};
-	$('#dg').datagrid('options').queryParams = queryParams;
 }
 	
-	
+	$('#storehouseId').combobox({
+		method:'POST',
+        url:'${rc.contextPath}/purchase/purchaseOrder/listJson',
+        valueField:'ID',
+		panelHeight:'200px',
+        textField:'BRANCH_NAME'
+	});
 	
 </script>
 </html>

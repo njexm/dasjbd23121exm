@@ -146,12 +146,12 @@ public class DiscountServiceImpl implements DiscountService {
 		if (StringUtil.validate(zcSalesPromotion.getPromotionBeginDate())) {
 			conditions += " and B.PROMOTION_BEGIN_DATE>=TO_DATE('"
 					+ sdf.format(zcSalesPromotion.getPromotionBeginDate())
-					+ "', 'YYYY-MM-DD HH24:MI:SS') ";
+					+ "', 'YYYY-MM-DD HH24:MI:SS ') ";
 		}
 		if (StringUtil.validate(zcSalesPromotion.getPromotionEndDate())) {
 			conditions += " and B.PROMOTION_END_DATE<=TO_DATE('"
 					+ sdf.format(zcSalesPromotion.getPromotionEndDate())
-					+ "', 'YYYY-MM-DD HH24:MI:SS') ";
+					+ "', 'YYYY-MM-DD HH24:MI:SS ') ";
 		}	
 		return conditions;
 		

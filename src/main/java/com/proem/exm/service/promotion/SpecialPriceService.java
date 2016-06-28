@@ -14,6 +14,7 @@ public interface SpecialPriceService extends BaseService{
 
 	DataGrid getPagedDataGridObj(Page page, ZcSalesPromotion zcSalesPromotion) throws Exception;
 
+	DataGrid getPagedDataGridEidtObj(Object obj, Page page) throws Exception;
 	
 
 }
